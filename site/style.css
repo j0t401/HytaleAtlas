@@ -5,3 +5,7 @@
 #poi-picker{display:grid;grid-template-columns:1fr 1fr;gap:5px;max-height:260px;overflow:auto}.poi-choice{display:flex;align-items:center;gap:5px;text-align:left;font-size:10px;padding:4px;min-width:0}.poi-choice span{overflow:hidden;text-overflow:ellipsis}.poi-choice canvas{flex:0 0 32px}.poi-choice[aria-pressed="true"]{border:1px solid #76dab1;background:#183b34}
 
 .strata-zone{display:flex;gap:7px;font-size:11px;margin:4px 0}.strata-zone>span:first-child{width:12px;height:12px;flex-shrink:0;border-radius:3px}
+
+#poi-picker{display:block;max-height:480px}.poi-group{border:1px solid #304252;border-left:3px solid var(--rarity,#8593a3);border-radius:6px;padding:8px;margin:7px 0}.poi-group summary{font-weight:600;font-size:11px;color:var(--rarity,#c5d6de)}.rarity-Common{--rarity:#c6d0d8}.rarity-Uncommon{--rarity:#70c78d}.rarity-Rare{--rarity:#64aaf3}.rarity-Epic{--rarity:#c388ee}.rarity-Legendary{--rarity:#efbd5c}.poi-actions{display:flex;gap:5px;margin:8px 0}.poi-actions button{font-size:10px;padding:6px}.poi-row{display:grid;grid-template-columns:minmax(0,1fr) 78px;gap:4px;margin:4px 0}.poi-row select{font-size:9px;padding:3px}.poi-choice span{white-space:normal}.poi-choice:disabled{opacity:.55;cursor:help}.poi-row .poi-choice{width:100%}#poi-labels{width:15px}
+
+.poi-choice canvas{width:32px;height:32px;cursor:pointer}

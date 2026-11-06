@@ -1,6 +1,6 @@
 {
   "name": "hytale-atlas",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
-  "description": "Mapa de semillas de Hytale con capas subterráneas y caché de teselas"
+  "description": "Mapa de semillas con filtros por categoría y rareza, capas subterráneas y anclas de prefabs"
 }
