@@ -6,14 +6,8 @@
   "installCommand": null,
   "outputDirectory": "site",
   "headers": [
-    {
-      "source": "/engine/(.*)\\.wasm",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/wasm"
-        }
-      ]
-    }
+    {"source":"/engine/(.*)\\.wasm","headers":[{"key":"Content-Type","value":"application/wasm"}]},
+    {"source":"/engine/assets/(.*)","headers":[{"key":"Cache-Control","value":"public, max-age=31536000, immutable"}]},
+    {"source":"/(.*)\\.(js|css|json|html)","headers":[{"key":"Cache-Control","value":"public, max-age=0, must-revalidate"}]}
   ]
 }

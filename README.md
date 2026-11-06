@@ -1,41 +1,38 @@
-# Hytale Atlas · prototipo independiente
+# Hytale Atlas 0.6.0
 
-Corrección 0.4.1: el archivo `site/index.html` abierto directamente por `file://` muestra ahora instrucciones de arranque. Abre **Iniciar Atlas.cmd**, mantén su ventana abierta y utiliza la dirección **http://127.0.0.1:8766/**. Se verificó visualmente en Zen Browser que la semilla 42 dibuja la vista completa y que la cuadrícula se activa sobre el mapa existente. Los fallos de descarga y arranque del motor se muestran en pantalla; las descargas tienen un tiempo límite. Se redujo el número inicial de teselas y el servidor evita conservar scripts antiguos en caché.
+Web estática compatible con la estructura de `j0t401/HytaleAtlas` y Vercel. Perfil comprobado: Default WorldGen V1 de Hytale 0.8.0-pre.4.
 
-Abre `Iniciar Atlas.cmd`. Necesita Python 3 solamente para servir los archivos de la web en localhost:8766. El cálculo ocurre en un Web Worker del navegador con JavaScript y WebAssembly. No lee archivos del juego, no inicia Java, no inicia el servidor de Hytale. Para alojarlo en una web, publica el contenido de `site/` en un servidor estático que admita Web Workers y WebAssembly; los visitantes no necesitan Python ni Hytale.
+## Subir a tu repositorio
 
-Introduce una semilla y arrastra el mapa. La rueda cambia el zoom alrededor del cursor. También puedes escribir coordenadas, resaltar un bioma y mostrar una cuadrícula instantáneamente, exportar la vista PNG y compartir la URL. Solo cambiar la semilla reinicia sus datos; los controles de presentación reutilizan las teselas ya calculadas. La caché conserva 180 teselas o las necesarias para la vista actual si es mayor; se prioriza la vista actual al desplazarse. El alejamiento utiliza muestreo de menor resolución, no un escaneo exhaustivo.
+Reemplaza `site/`, `vercel.json` y `package.json` en la raíz del repositorio por los de este paquete. Conserva tus otros archivos y ajustes. La carpeta de salida de Vercel sigue siendo `site`; no hace falta instalar dependencias, ejecutar un build ni crear funciones de servidor. El paquete está preparado localmente: no se ha hecho push ni se ha publicado en tu cuenta.
 
-## Estado real
+Para probarlo en Windows, abre `Iniciar Atlas.cmd`. No abras `site/index.html` directamente. El visor funciona sin Java, sin ejecutar Hytale y sin leer su instalación.
 
-Implementado: cálculo independiente de zonas y biomas de superficie del perfil Default V1 de 0.8.0-pre.4, usando una instantánea numérica preparada durante el desarrollo. No hay carga de archivos de Hytale durante el uso. La instantánea de versión se descarga desde el mismo servidor web. No se incluyen el servidor del juego ni sus modelos/texturas.
+## Cambios
 
-Comparación con el generador instalado: coincidencia de zona y bioma en 65.536 puntos distintos de 12345 y 4.096 de 42. Operaciones de ruido y hash: 180 casos contra Java con error cero. Estas comprobaciones no prueban todo el espacio de semillas ni las coordenadas extremas.
+- Vista previa de las teselas antes de completar sus muestras. Las teselas de biomas de toda la vista se calculan antes del trabajo de agua.
+- Agua de los ríos calculada a partir del bioma, su máscara de agua, sus niveles y la altura interpolada del terreno base. Se dibuja en azul y se puede ocultar al instante.
+- Los biomas llamados River conservan el color terrestre original cuando no hay agua sobre el terreno. No se colorea todo el valle como cauce.
+- Tres niveles de detalle. Rápido usa menos muestras en pantalla; Detallado y Máximo detalle permiten inspeccionar cauces pequeños. Al alejarse se muestrea el mundo: un cauce más estrecho que la distancia entre muestras puede no verse. Acerca el mapa para inspeccionarlo.
+- Se agrupan los movimientos del cursor por fotograma y se cancela el cálculo que queda fuera de la vista.
+- Caché acotada de puntos y teselas. Los datos de altura y estructuras se cargan después del motor inicial de biomas.
+- Tablas climáticas binarias sin pérdida, con archivos comprimidos y nombres derivados de su contenido. Los datos iniciales estimados con gzip bajan de 371.165 a 145.834 bytes; el transporte real depende de la compresión de Vercel. El JSON inicial baja de 7.053.259 a 763.948 bytes y el resto se carga después.
+- Configuración de caché para los binarios inmutables; HTML, scripts y configuración se revalidan para recibir actualizaciones. Véase la [documentación de Vercel](https://vercel.com/docs/caching/cache-control-headers).
 
-Rango de navegación técnico: -2.147.483.648 a 2.147.483.647 en X/Z, por el dominio entero de la implementación V1. **No está verificado que ese sea el límite jugable de Hytale ni que el port coincida en sus extremos.** No se ha copiado el borde de Minecraft. La web calcula cualquier vista solicitada dentro del rango habilitado; no precalcula cada bloque del mundo. La vista lejana es una muestra y puede omitir biomas pequeños hasta acercarse.
+## Precisión y trabajo pendiente
 
-Pendiente: estructuras, madera, minerales, generación de cuevas, biomas subterráneos y mobs de aparición fija dentro del motor independiente. No aparecen marcadores ficticios ni se sustituyen los datos por distribuciones inventadas. El extractor anterior conserva las capas detalladas de sus exportaciones concretas, pero depende del juego y no es este motor.
+Los ríos representan agua respecto al terreno base. Las modificaciones por cuevas, cubiertas, puentes u otros prefabs no están incluidas todavía en esa capa. El agua se afina después del dibujo de biomas y puede tardar más, especialmente con Máximo detalle. La mejora de la vista previa no implica que todo el cálculo final sea doce veces más rápido.
 
-Alcance solicitado para mobs: mostrar únicamente los que la generación coloca de forma garantizada en un punto fijo. Quedan excluidos los hábitats de aparición aleatoria. Un SpawnMarker con coordenadas fijas no basta por sí solo: hay que resolver su configuración, posibles elecciones ponderadas, condiciones y desplazamientos de posición antes de afirmar que un mob concreto aparece siempre en ese punto. El icono representará su punto de aparición inicial, no su posición después de moverse ni su presencia tras una muerte en una partida guardada. Esta selección aún no está implementada en el motor independiente.
+Se conservan Spawn, Temple y el ancla fija X/Z del gólem del templo. El resto de estructuras repetidas, templos, minerales, maderas, cofres, otros mobs fijos y capas subterráneas sigue pendiente de integración y validación. El catálogo numérico de prefabs y el motor de colocación en desarrollo no se presentan como puntos finales en esta versión. No se han añadido posiciones aproximadas o aleatorias para rellenar el mapa.
 
-Solo se incluye 0.8.0-pre.4. Las próximas pre-release requieren una instantánea y verificación nuevas; no se selecciona automáticamente una versión desconocida.
+No hay un cuadrado central de escaneo: se solicitan cálculos para la región navegada, incluso a grandes distancias. Esto no significa que todos los bloques de todo el dominio estén precalculados. Los filtros disponibles son de presentación y no reinician la semilla.
 
-## Referencia
+## Verificación
 
-Se analizó https://www.chunkbase.com/apps/seed-map como referencia funcional: semilla, versión, coordenadas, navegación, capas y enlaces compartidos. No se encontró un repositorio oficial de Seed Map. No se copió su código ni sus recursos gráficos.
+`VERIFICACION-rios-motor.json`: 524.288 valores de tablas idénticos, 900 muestras de bioma y 360 puntos de río contra el generador original (129 con agua y 231 secos).
 
-El prototipo todavía no cumple todas las capas solicitadas; no debe presentarse como buscador completo de recursos o mobs.
+`VERIFICACION-rendimiento.json`: comparación local con Node VM; primera vista previa alrededor de 90 ms, frente a unos 1.094 ms para una tesela anterior. La tesela completa de biomas conservó las mismas 4.096 muestras. No es una medición del navegador ni una garantía de tiempos de Vercel. La capa de agua se mide por separado.
 
-## Despliegue en Vercel
+Pruebas de interfaz simulada: filtros sin peticiones de regeneración, agua azul, movimientos agrupados, semilla de 64 bits, navegación lejana y errores de apertura visibles. Todos los archivos estáticos se sirvieron correctamente por HTTP local. No se realizó inspección visual con control del PC.
 
-El proyecto está preparado para desplegarse en Vercel de dos formas:
-
-1. **Desde la consola o archivo ejecutable:**
-   - Haz doble clic en `Desplegar a Vercel.cmd` (o ejecuta `npx vercel --prod` en la terminal).
-   - Inicia sesión si te lo solicita en el navegador y confirma la configuración predeterminada.
-
-2. **Desde GitHub / Dashboard de Vercel:**
-   - Sube este proyecto a tu repositorio de GitHub.
-   - En [Vercel](https://vercel.com/new), importa el repositorio.
-   - El archivo `vercel.json` ya se encarga automáticamente de indicar que la carpeta a publicar es `site/` y configurar los tipos MIME para WebAssembly. No necesitas configurar comandos de build ni instalar dependencias.
-
+No afiliado con Hypixel Studios. Los archivos del extractor de desarrollo no forman parte de este paquete.

@@ -1,10 +1,1 @@
-{
-  "name": "hytale-atlas",
-  "version": "0.4.1",
-  "description": "Explorador de semillas y mapa de biomas de superficie para Hytale en WebAssembly",
-  "private": true,
-  "scripts": {
-    "deploy": "vercel --prod",
-    "preview": "vercel"
-  }
-}
+{"name":"hytale-atlas","version":"0.6.0","private":true,"description":"Mapa estático de semillas de Hytale con vista progresiva y agua de ríos sobre terreno base"}

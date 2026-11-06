@@ -10,7 +10,7 @@ class V1Kernel{
  }
  static decodeGraph(raw){
   const cache=new Array(raw.nodes.length);
-  const decode=v=>{if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(decode);if('$ref'in v){const i=v.$ref;if(cache[i])return cache[i];const o={_id:i};cache[i]=o;for(const[k,x]of Object.entries(raw.nodes[i]))o[k]=decode(x);return o;}if('$long'in v)return BigInt(v.$long);if('$enum'in v)return v.value;if('$biome'in v)return{$biome:v.$biome};if('$zone'in v)return{$zone:v.$zone};if('$map'in v)return new Map(v.$map.map(([k,x])=>[decode(k),decode(x)]));if('$weighted'in v)return{weighted:v.$weighted.map(([k,x])=>[decode(k),x])};if('$bits'in v)return new Set(v.$bits);return Object.fromEntries(Object.entries(v).map(([k,x])=>[k,decode(x)]));};
+  const decode=v=>{if(v===null||typeof v!=='object')return v;if(ArrayBuffer.isView(v))return v;if(Array.isArray(v))return v.map(decode);if('$ref'in v){const i=v.$ref;if(cache[i])return cache[i];const o={_id:i};cache[i]=o;for(const[k,x]of Object.entries(raw.nodes[i]))o[k]=decode(x);return o;}if('$long'in v)return BigInt(v.$long);if('$enum'in v)return v.value;if('$biome'in v)return{$biome:v.$biome};if('$zone'in v)return{$zone:v.$zone};if('$map'in v)return new Map(v.$map.map(([k,x])=>[decode(k),decode(x)]));if('$weighted'in v)return{weighted:v.$weighted.map(([k,x])=>[decode(k),x])};if('$bits'in v)return new Set(v.$bits);return Object.fromEntries(Object.entries(v).map(([k,x])=>[k,decode(x)]));};
   return{data:decode(Object.fromEntries(Object.entries(raw).filter(([k])=>k!=='nodes'))),cache};
  }
  weighted(w,r){const entries=w.weighted;if(entries.length===1)return entries[0][0];let value=Math.min(r,.99999)*entries.reduce((s,e)=>s+e[1],0);for(const[k,weight]of entries){value-=weight;if(value<=9.99999999995449e-6)return k;}throw Error('Invalid weighted lookup');}
@@ -112,7 +112,8 @@ class V1Kernel{
   if(possible.length===1)return{zone:this.zones.get(possible[0].$zone),fade};
   const p=this.point(this.data.zonePoints,s,x,y),index=(this.hash.hash3(s,p.ix,p.iy)&0x7fffffff)%possible.length;return{zone:this.zones.get(possible[index].$zone),fade:p.distance};
  }
- at(x,y){const zoneResult=this.zoneAt(x,y),zone=zoneResult.zone,p=this.point(zone.points,this.seed,x,y),tile=this.weighted(zone.tiles,this.hash.random3(this.seed,p.ix,p.iy));let biome=this.biomes.get(tile.$biome);
+ at(x,y){const key=x+','+y;if(this.biomeCache.has(key))return this.biomeCache.get(key);const result=this.computeAt(x,y);this.biomeCache.set(key,result);if(this.biomeCache.size>50000)this.biomeCache.delete(this.biomeCache.keys().next().value);return result;}
+ computeAt(x,y){const zoneResult=this.zoneAt(x,y),zone=zoneResult.zone,p=this.point(zone.points,this.seed,x,y),tile=this.weighted(zone.tiles,this.hash.random3(this.seed,p.ix,p.iy));let biome=this.biomes.get(tile.$biome);
   for(const ref of zone.custom){const custom=this.biomes.get(ref.$biome),g=custom.custom;if(!g.biomeMask.set.includes(biome.id))continue;const noise=this.noise(g.noiseProperty,this.seed,x,y),fade=custom.fade;let factor=0;if(zoneResult.fade<fade.maskFadeSum){factor=1-V1Noise.limit((zoneResult.fade-fade.maskFadeStart)/fade.maskFadeLength);if(factor<1e-5)continue;}if(this.threshold(g.threshold,noise,factor)){biome=custom;break;}}
   return{zone:zone.name,zoneId:zone.id,biome:biome.name,biomeId:biome.id,color:biome.color,border:zoneResult.fade};
  }

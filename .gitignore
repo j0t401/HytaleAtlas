@@ -1,24 +1,8 @@
-# Vercel
-.vercel
-
-# Scripts locales y herramientas de desarrollo (no necesarias para Vercel)
+.vercel/
+__pycache__/
+*.py[cod]
+node_modules/
+*.log
 *.cmd
 serve.py
 VERIFICACION-*.json
-
-# Python / Local Dev
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Node / Logs
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Sistema operativo y editores
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/

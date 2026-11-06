@@ -1,25 +1,38 @@
 'use strict';
-importScripts('engine/noise2d.js','engine/core.js','engine/terrain.js','engine/fixed-spawns.js');
-let kernel, generation=0, queue=[], running=false,minCoordinate=-2147483648,maxCoordinate=2147483647,fixedProfiles;
-async function getFile(path){const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),20000);try{const response=await fetch(path,{signal:controller.signal});if(!response.ok)throw Error('No se pudo descargar '+path+' (HTTP '+response.status+')');const data=await response.arrayBuffer();return data;}finally{clearTimeout(timeout);}}
-const ready=Promise.all([getFile('engine/kernel.json').then(b=>JSON.parse(new TextDecoder().decode(b))),getFile('engine/hash64.wasm').then(b=>WebAssembly.instantiate(b)),getFile('data/fixed-spawns.json').then(b=>JSON.parse(new TextDecoder().decode(b)))]).then(([raw,wasm,profiles])=>{kernel=new V1Kernel(raw,wasm.instance.exports);fixedProfiles=profiles;minCoordinate=raw.minChunkCoord*32;maxCoordinate=(raw.maxChunkCoord+1)*32-1;return raw;});
+importScripts('engine/noise2d.js','engine/core.js','engine/terrain.js','engine/fixed-spawns.js','engine/graph-data.js','engine/rivers.js');
+let kernel,detailKernel,detailRaw,detailPromise,fixedProfiles,generation=0,queue=[],running=false,active=null,wanted=new Map(),minCoordinate=-2147483648,maxCoordinate=2147483647;
+const colors=new Map(),riverIds=new Set(),tileData=new Map(),pause=()=>new Promise(r=>setTimeout(r,0));
+async function getFile(path){const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),30000);try{const response=await fetch(path,{signal:controller.signal});if(!response.ok)throw Error('No se pudo descargar '+path+' (HTTP '+response.status+')');return await response.arrayBuffer();}finally{clearTimeout(timeout);}}
+const ready=Promise.all([V1GraphData.load('engine/map-kernel.json',getFile),getFile('engine/hash64.wasm').then(b=>WebAssembly.instantiate(b))]).then(([raw,wasm])=>{kernel=new V1Kernel(raw,wasm.instance.exports);minCoordinate=raw.minChunkCoord*32;maxCoordinate=(raw.maxChunkCoord+1)*32-1;for(const b of raw.biomes){colors.set(b.id,parseInt(b.color.slice(1),16));if(/^River(?:_|$)/.test(b.name))riverIds.add(b.id);}return{raw,hash:wasm.instance.exports};});
 ready.catch(e=>postMessage({type:'error',message:'No se pudo cargar el motor. '+String(e.message||e)}));
-const pause=()=>new Promise(r=>setTimeout(r,0));
-async function pump(){
- if(running)return;running=true;
- try{while(queue.length){const task=queue.shift(),epoch=generation,{key,x,z,step,n}=task;const pixels=new Uint8ClampedArray(n*n*4),ids=new Uint16Array(n*n);let cancelled=false;
-  for(let row=0;row<n;row++){
-   for(let col=0;col<n;col++){const wx=x+col*step,wz=z+row*step,i=row*n+col;if(wx<minCoordinate||wx>maxCoordinate||wz<minCoordinate||wz>maxCoordinate)continue;
-    const b=kernel.at(wx,wz),color=parseInt(b.color.slice(1),16);ids[i]=b.biomeId;pixels[i*4]=color>>>16;pixels[i*4+1]=(color>>>8)&255;pixels[i*4+2]=color&255;pixels[i*4+3]=255;}
-   if(row%8===7){await pause();if(epoch!==generation){cancelled=true;break;}}
+function metadata(type,raw,extra={}){postMessage({type,generation,biomes:raw.biomes.map(b=>({id:b.id,name:b.name,color:b.color})),version:raw.version,minCoordinate,maxCoordinate,...extra});}
+function publishDetails(){detailKernel.seed=kernel.seed;detailKernel.unique=kernel.unique;detailKernel.biomeCache=kernel.biomeCache;detailKernel.terrainCache?.clear();const structures=detailKernel.uniqueStructures();metadata('details',detailRaw,{structures,fixedSpawns:detailKernel.fixedSpawnAnchors(fixedProfiles,structures)});}
+function details(){if(!detailPromise)detailPromise=Promise.all([ready,V1GraphData.load('engine/kernel.json',getFile),getFile('data/fixed-spawns.json')]).then(([base,raw,profiles])=>{detailRaw=raw;fixedProfiles=JSON.parse(new TextDecoder().decode(profiles));detailKernel=new V1Kernel(raw,base.hash);publishDetails();return detailKernel;}).catch(e=>{detailPromise=null;postMessage({type:'error',generation,message:'No se pudo cargar el detalle: '+e.message});throw e;});return detailPromise;}
+async function render(task,preview){
+ const epoch=generation,factor=preview?4:1,n=Math.ceil(task.n/factor),step=task.step*factor,{key,x,z}=task,pixels=new Uint8ClampedArray(n*n*4),ids=new Uint16Array(n*n),water=new Uint8Array(n*n);
+ const obsolete=()=>epoch!==generation||!wanted.has(key);
+ let start=performance.now();
+ for(let row=0;row<n;row++){
+  for(let col=0;col<n;col++){const wx=x+col*step,wz=z+row*step,i=row*n+col;if(wx<minCoordinate||wx>maxCoordinate||wz<minCoordinate||wz>maxCoordinate)continue;
+   const b=kernel.at(wx,wz),color=colors.get(b.biomeId);ids[i]=b.biomeId;pixels[i*4]=color>>>16;pixels[i*4+1]=(color>>>8)&255;pixels[i*4+2]=color&255;pixels[i*4+3]=255;
   }
-  if(!cancelled)postMessage({type:'tile',generation:epoch,key,x,z,step,n,pixels,ids},[pixels.buffer,ids.buffer]);
-  // Bound the point cache even during very long exploration sessions.
-  if(kernel.biomeCache.size>50000)kernel.biomeCache.clear();
- }}catch(e){postMessage({type:'error',message:String(e.message||e)});}finally{running=false;}
+  if(performance.now()-start>12){await pause();if(obsolete())return;start=performance.now();}
+ }
+ if(!obsolete()){if(!preview){tileData.delete(key);tileData.set(key,{ids});while(tileData.size>180)tileData.delete(tileData.keys().next().value);}postMessage({type:'tile',generation:epoch,key,x,z,step,n,preview,waterPending:!preview,pixels,ids,water});}
 }
-onmessage=async({data})=>{try{const raw=await ready;
- if(data.type==='seed'){generation=data.generation;queue=[];kernel.setSeed(data.seed);const structures=kernel.uniqueStructures();postMessage({type:'ready',generation,biomes:raw.biomes.map(b=>({id:b.id,name:b.name,color:b.color})),version:raw.version,minCoordinate,maxCoordinate,structures,fixedSpawns:kernel.fixedSpawnAnchors(fixedProfiles,structures)});}
- if(data.type==='view'&&data.generation===generation){queue=data.tasks;pump();}
- if(data.type==='point'&&data.generation===generation){if(!Number.isInteger(data.x)||!Number.isInteger(data.z)||data.x<minCoordinate||data.x>maxCoordinate||data.z<minCoordinate||data.z>maxCoordinate)throw Error('Coordenadas fuera del límite del generador V1');const col=kernel.terrainColumn(data.x,data.z),environment=kernel.environmentAt(data.x,data.z);postMessage({type:'point',generation,request:data.request,x:data.x,z:data.z,result:{...kernel.at(data.x,data.z),height:col.height,environment:raw.environmentNames[String(environment)]||String(environment)}});}
-}catch(e){postMessage({type:'error',message:String(e.message||e)});}};
+async function renderWater(task){
+ const epoch=generation,{key,x,z,step,n}=task,obsolete=()=>epoch!==generation||!wanted.has(key);await details();if(obsolete())return;
+ if(!tileData.has(key)){await render(task,false);if(obsolete())return;}
+ const ids=tileData.get(key).ids,water=new Uint8Array(n*n);let start=performance.now(),published=start;
+ for(let i=0;i<ids.length;i++){
+  if(riverIds.has(ids[i])){const wx=x+i%n*step,wz=z+Math.floor(i/n)*step;if(wx>=minCoordinate&&wx<=maxCoordinate&&wz>=minCoordinate&&wz<=maxCoordinate&&detailKernel.riverSurface(wx,wz,ids[i]))water[i]=1;}
+  if(performance.now()-start>12){if(performance.now()-published>80){postMessage({type:'water',generation:epoch,key,water,waterPending:true});published=performance.now();}await pause();if(obsolete())return;start=performance.now();}
+ }
+ if(!obsolete())postMessage({type:'water',generation:epoch,key,water,waterPending:false});
+}
+async function pump(){if(running)return;running=true;try{while(queue.length){active=queue.shift();if(wanted.has(active.task.key)){if(active.stage===2)await renderWater(active.task);else await render(active.task,active.stage===0);}active=null;}}catch(e){postMessage({type:'error',generation,message:String(e.message||e)});}finally{running=false;active=null;}}
+onmessage=async({data})=>{try{const {raw}=await ready;
+ if(data.type==='seed'){generation=data.generation;queue=[];wanted.clear();tileData.clear();kernel.setSeed(data.seed);metadata('ready',raw);if(detailKernel)publishDetails();}
+ if(data.type==='view'&&data.generation===generation){wanted=new Map(data.tasks.map(t=>[t.key,t]));const jobs=[];for(const stage of [0,1,2])for(const task of data.tasks){if(stage===0&&task.hasPreview||stage===1&&task.hasBiomes)continue;if(active?.generation===generation&&active.task.key===task.key&&active.stage===stage)continue;jobs.push({task,stage,generation});}queue=jobs;pump();}
+ if(data.type==='point'&&data.generation===generation){const epoch=generation,k=await details();if(epoch!==generation)return;if(!Number.isInteger(data.x)||!Number.isInteger(data.z)||data.x<minCoordinate||data.x>maxCoordinate||data.z<minCoordinate||data.z>maxCoordinate)throw Error('Coordenadas fuera del límite del generador V1');const col=k.terrainColumn(data.x,data.z),environment=k.environmentAt(data.x,data.z);postMessage({type:'point',generation,request:data.request,x:data.x,z:data.z,result:{...kernel.at(data.x,data.z),height:col.height,environment:detailRaw.environmentNames[String(environment)]||String(environment)}});}
+}catch(e){postMessage({type:'error',generation,message:String(e.message||e)});}};
