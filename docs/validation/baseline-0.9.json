@@ -1,0 +1,117 @@
+{
+  "scope": "Historical reports from Atlas 0.9.0, not a benchmark or certification of this build.",
+  "reports": {
+    "VERIFICACION-anclas": {
+      "lightweightRegionalAnchorFixtures": 6,
+      "errors": 0
+    },
+    "VERIFICACION-cache-subsuelo": {
+      "surfaceAndAllStrataTogether": true,
+      "noCaveOrBlockDataLoaded": true,
+      "persistentTileRestoredWithoutGeneration": true,
+      "samples": 1024,
+      "firstTileMs": 668.2233,
+      "scope": "Node worker VM with an IndexedDB test double; not a browser benchmark."
+    },
+    "VERIFICACION-catalogo-anclas": {
+      "nativeFixedAnchors": 5,
+      "errors": 0,
+      "goldenwoodResourceMembers": 4,
+      "golemTypes": 7,
+      "fixedGolemTypes": 5,
+      "noFabricatedCoordinatesForUnplacedGolems": true
+    },
+    "VERIFICACION-consulta-catalogo": {
+      "firstSurfaceAnchorsMs": 7126.9087,
+      "allRegionAnchorsMs": 9862.152,
+      "scope": "Node VM with local filesystem fetch; not a browser benchmark",
+      "surfacePoints": 22,
+      "allPoints": 31,
+      "chestsBeforeFinalBlocks": true,
+      "nativeGolemBeforeCavePass": true,
+      "noVoxelBuffersDownloaded": true,
+      "cacheReused": true,
+      "errors": 0
+    },
+    "VERIFICACION-decoraciones-ligeras": {
+      "nativeCaveGraphs": 16,
+      "decorationPrefabAnchors": 98,
+      "errors": 0,
+      "noVoxelBuffersLoaded": true
+    },
+    "VERIFICACION-geometria-ligera": {
+      "cases": 36,
+      "nodes": 1224,
+      "carvingSamples": 0,
+      "maxError": 0,
+      "failures": []
+    },
+    "VERIFICACION-http": {
+      "files": 20,
+      "errors": 0,
+      "javascriptSyntaxFiles": 32,
+      "gzipJSONParsed": true,
+      "serverClosed": true
+    },
+    "VERIFICACION-integracion": {
+      "chunk": [-5, 4],
+      "environmentVoxels": 327680,
+      "resourceGroups": 4,
+      "structures": 27,
+      "markerAnchors": 0,
+      "workerErrors": 0,
+      "scope": "Integration smoke test; full world engine checked separately against six coherent native reference chunks."
+    },
+    "VERIFICACION-interfaz-puntos": {
+      "undergroundToggleUsesStoredData": true,
+      "noCaveWorkerForUnderground": true,
+      "allSelectedIconsAtFarZoom": true,
+      "labelsControlledByUser": true,
+      "categoryAndRarityFilters": true,
+      "portalIconUnified": true,
+      "visibleNames": true,
+      "zoomReusesPoints": true,
+      "individualIconButtons": true,
+      "visualBrowserInspection": false
+    },
+    "VERIFICACION-motor": {
+      "datasetId": "c49f3f51d3d85e57cbe4555a6294b79bfd49bde4c145bde9b324efa3b46a9b3a",
+      "cases": 6,
+      "stages": ["blocks", "caves", "prefabs", "water"],
+      "fieldComparisons": 31457280,
+      "errors": 0,
+      "originalDiscrepantFixtureIncluded": true,
+      "scope": "Six native reference chunks; not a proof for all seeds and coordinates."
+    },
+    "VERIFICACION-objetos-rapidos": {
+      "firstSurfaceAnchorsMs": 336.3965999999999,
+      "allRegionAnchorsMs": 1158.3618999999999,
+      "scope": "Node VM with local filesystem fetch; not a browser benchmark",
+      "surfacePoints": 3,
+      "allPoints": 3,
+      "chestsBeforeFinalBlocks": true,
+      "nativeGolemBeforeCavePass": true,
+      "noVoxelBuffersDownloaded": true,
+      "cacheReused": true,
+      "errors": 0
+    },
+    "VERIFICACION-puntos": {
+      "regionMs": 3129.7912,
+      "scope": "Node VM; not a browser benchmark",
+      "points": 36,
+      "types": 299,
+      "visibleMobName": true,
+      "noBlockBuffersDownloaded": true,
+      "subsetReusesRegion": true,
+      "errors": 0
+    },
+    "VERIFICACION-subsuelo": {
+      "columns": 64,
+      "environmentComparisons": 20480,
+      "errors": 0,
+      "noCaveGeneration": true,
+      "noBlockGeneration": true,
+      "allHeightsStored": true
+    }
+  }
+}

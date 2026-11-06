@@ -1,10 +1,64 @@
 'use strict';
-function installV1Conditions(Kernel){
- const P=Kernel.prototype,I=typeof module!=='undefined'?require('./random.js'):globalThis.V1Integer,sets=new WeakMap();
- P.chooseRandom=function(w,rng){return this.weighted(w,w.weighted.length===1?0:rng.nextDouble());};
- P.mapCondition=function(c,seed,x,z){if(c.type==='DefaultCoordinateCondition')return c.result;if(c.type==='RandomCoordinateCondition')return I.random(seed,x,z)<=c.chance;if(c.type==='NoiseMaskCondition')return this.threshold(c.condition,this.noise(c.noiseMask,seed,x,z));throw Error('Unsupported map condition '+c.type);};
- P.blockCondition=function(c,block,fluid){if(c.type==='ConstantBlockFluidCondition'||c.type==='ConstantIntCondition')return c.result;if(c.type==='FilteredBlockFluidCondition')return !this.blockCondition(c.filter,block,fluid)&&this.blockCondition(c.condition,block,fluid);if(c.type==='FilteredBlockFluidCondition$$Lambda')return block===c.arg$1&&fluid===0;if(c.type!=='HashSetBlockFluidCondition')throw Error('Unsupported block/fluid condition '+c.type);let set=sets.get(c);if(!set){set=new Set(c.set);sets.set(c,set);}return set.has(BigInt.asIntN(64,BigInt(block)<<32n|BigInt(fluid>>>0)));};
- P.heightCondition=function(c,seed,x,z,y,rng){if(c.type==='DefaultCoordinateRndCondition')return c.result;if(c.type!=='HeightCondition')throw Error('Unsupported height condition '+c.type);const threshold=this.heightThreshold(c.interpreter,x,z,y,this.heightContext(c.interpreter,x,z));return threshold>0&&(threshold>=1||threshold>rng.nextDouble());};
- P.coordinateValue=function(c,seed,x,z,hash){switch(c.type){case'ConstantCoordinateDoubleSupplier':case'ConstantDoubleCoordinateSupplier':return c.value??c.result;case'RandomCoordinateDoubleSupplier':return this.range(c.range,hash===undefined?I.random(seed,x,z):I.random(seed,x,z,hash));case'DoubleRangeNoiseSupplier':return this.range(c.range,this.noise(c.noiseProperty,seed,x,z));default:throw Error('Unsupported value supplier '+c.type);}};
+function installV1Conditions(Kernel) {
+  const P = Kernel.prototype,
+    I = typeof module !== 'undefined' ? require('./random.js') : globalThis.V1Integer,
+    sets = new WeakMap();
+  P.chooseRandom = function (w, rng) {
+    return this.weighted(w, w.weighted.length === 1 ? 0 : rng.nextDouble());
+  };
+  P.mapCondition = function (c, seed, x, z) {
+    if (c.type === 'DefaultCoordinateCondition') return c.result;
+    if (c.type === 'RandomCoordinateCondition') return I.random(seed, x, z) <= c.chance;
+    if (c.type === 'NoiseMaskCondition')
+      return this.threshold(c.condition, this.noise(c.noiseMask, seed, x, z));
+    throw Error('Unsupported map condition ' + c.type);
+  };
+  P.blockCondition = function (c, block, fluid) {
+    if (c.type === 'ConstantBlockFluidCondition' || c.type === 'ConstantIntCondition')
+      return c.result;
+    if (c.type === 'FilteredBlockFluidCondition')
+      return (
+        !this.blockCondition(c.filter, block, fluid) &&
+        this.blockCondition(c.condition, block, fluid)
+      );
+    if (c.type === 'FilteredBlockFluidCondition$$Lambda') return block === c.arg$1 && fluid === 0;
+    if (c.type !== 'HashSetBlockFluidCondition')
+      throw Error('Unsupported block/fluid condition ' + c.type);
+    let set = sets.get(c);
+    if (!set) {
+      set = new Set(c.set);
+      sets.set(c, set);
+    }
+    return set.has(BigInt.asIntN(64, (BigInt(block) << 32n) | BigInt(fluid >>> 0)));
+  };
+  P.heightCondition = function (c, seed, x, z, y, rng) {
+    if (c.type === 'DefaultCoordinateRndCondition') return c.result;
+    if (c.type !== 'HeightCondition') throw Error('Unsupported height condition ' + c.type);
+    const threshold = this.heightThreshold(
+      c.interpreter,
+      x,
+      z,
+      y,
+      this.heightContext(c.interpreter, x, z),
+    );
+    return threshold > 0 && (threshold >= 1 || threshold > rng.nextDouble());
+  };
+  P.coordinateValue = function (c, seed, x, z, hash) {
+    switch (c.type) {
+      case 'ConstantCoordinateDoubleSupplier':
+      case 'ConstantDoubleCoordinateSupplier':
+        return c.value ?? c.result;
+      case 'RandomCoordinateDoubleSupplier':
+        return this.range(
+          c.range,
+          hash === undefined ? I.random(seed, x, z) : I.random(seed, x, z, hash),
+        );
+      case 'DoubleRangeNoiseSupplier':
+        return this.range(c.range, this.noise(c.noiseProperty, seed, x, z));
+      default:
+        throw Error('Unsupported value supplier ' + c.type);
+    }
+  };
 }
-if(typeof module!=='undefined')module.exports=installV1Conditions;else installV1Conditions(globalThis.V1Kernel);
+if (typeof module !== 'undefined') module.exports = installV1Conditions;
+else installV1Conditions(globalThis.V1Kernel);

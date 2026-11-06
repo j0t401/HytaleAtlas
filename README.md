@@ -1,39 +1,98 @@
-# Hytale Atlas 0.9.0 experimental
+# Hytale Atlas
 
-Reemplaza site/, package.json y vercel.json en tu repositorio para actualizar GitHub/Vercel. La salida sigue siendo site y no requiere compilación. Para uso local abre Iniciar Atlas.cmd. No se hizo push ni despliegue.
+Explorador de semillas de Hytale con mapa oscuro en 2D, biomas de superficie y subsuelo, estructuras, recursos y marcadores fijos de mobs. Se publica como una web estática: los cálculos se ejecutan en el navegador, sin servidor de Hytale ni archivos del juego en el PC del visitante.
 
-## Selección y categorías
+**Atlas 0.10.0 · perfil incluido: Hytale 0.8.0-pre.4, WorldGen V1 · experimental.** El número del Atlas es independiente de la versión del juego. Las pre-releases nuevas necesitan otro perfil de datos y validación; el proyecto no lo actualiza automáticamente.
 
-Los iconos seleccionados se muestran a cualquier zoom: se eliminaron los umbrales que ocultaban recursos, mobs y estructuras. Mostrar nombres es una opción independiente, también disponible a cualquier zoom. La superposición espacial de iconos sigue siendo posible cuando se seleccionan muchos elementos; los controles permiten reducir la selección. Los puntos visibles no se eliminan por superar el límite habitual de la caché.
+## Empezar
 
-El catálogo se organiza en estructuras, gólems, otros mobs fijos, maderas, minerales y cofres/contenedores. Cada categoría se subdivide por rareza, permite mostrar u ocultar el grupo, y se puede filtrar mediante búsqueda, tipo y rareza. Los biomas de superficie se agrupan por zona en el selector.
+```sh
+git clone https://github.com/j0t401/HytaleAtlas.git
+cd HytaleAtlas
+python serve.py
+```
 
-Las rarezas del Atlas son una clasificación editorial orientativa para organizar los filtros; no son probabilidades medidas de aparición ni una afirmación de rareza oficial del juego. Cada tipo permite cambiar su rareza y el navegador guarda esos cambios localmente. Cuando existen calidades explícitas del juego compatibles con el catálogo, tienen precedencia como valor inicial.
+En Windows también puedes abrir `Iniciar Atlas.cmd`. Usa la dirección HTTP que imprime el lanzador y mantén su ventana abierta. No abras `site/index.html` directamente por `file://`. Python 3.10 o posterior basta para servir la web; Node.js 24 se utiliza para desarrollar y ejecutar pruebas.
 
-Todos los templos de portal utilizan structure:portal y el mismo icono, incluido el templo único. Otros templos y entradas conservan su propia categoría.
+Para trabajar en el código:
 
-## Goldenwood y gólems
+```sh
+npm ci
+npm start
+```
 
-Se añadió Goldenwood Log, que se encuentra buscando también Golden Log o tronco dorado. En los datos instalados es una categoría de recurso: incluye Amber Log, Palm Tree Log, Sallow Log y Wild Wisteria Log. El filtro muestra anclas de los prefabs que contienen esos troncos; no se inventó una especie o un bioma exclusivo para Goldenwood.
+Prettier es una dependencia de desarrollo. La web publicada no necesita instalar paquetes npm ni ejecutar una compilación.
 
-Se muestran siete tipos de gólem del catálogo instalado. Earth, Flame, Frost, Sand y Firesteel tienen reglas elegibles de marcador fijo. Thunder y Void Guardian están identificados como sin ancla fija en este perfil y sus opciones de localización están deshabilitadas. No se les asignaron coordenadas ficticias. Incluso un marcador fijo requiere las condiciones de aparición y el estado del juego para que exista un NPC vivo.
+## Usar el mapa
 
-## Anclas rápidas y comprobación final
+1. Introduce la semilla y pulsa **Explorar semilla**. Arrastra el mapa, usa la rueda o salta a coordenadas.
+2. Abre una categoría del catálogo y selecciona sus iconos. Las categorías y rarezas empiezan plegadas; buscar o aplicar filtros abre los resultados correspondientes.
+3. Los iconos elegidos permanecen visibles a cualquier zoom. **Mostrar nombres** controla las etiquetas por separado.
+4. Selecciona **Zonas subterráneas** y una altura Y para ver los entornos del subsuelo. Las franjas de Y=0..319 se guardan con cada tesela de superficie; cambiar la capa o altura no genera cuevas completas.
+5. Las anclas de cofres, maderas y mobs aparecen primero mediante sus prefabs. **Verificar con bloques finales** ejecuta el cálculo detallado, que cuesta más. Los minerales del terreno activan ese cálculo porque no dependen solo de estructuras.
 
-Antes se esperaba al cálculo completo del chunk para publicar cofres y mobs. Ahora se consulta un índice compacto de entradas garantizadas de prefabs y sus marcadores fijos. Las anclas superficiales se publican primero; después se consultan los nodos y decoraciones de estructuras subterráneas, sin descargar los buffers completos de bloques. Las consultas densas de maderas/minerales se dividen en regiones menores, independientemente del zoom.
+Las rarezas son categorías orientativas y editables del Atlas, no probabilidades de aparición medidas. Goldenwood Log es una categoría de recurso que agrupa los troncos compatibles del juego. El catálogo identifica siete gólems: cinco con reglas de marcador fijo y dos sin ancla fija localizable en este perfil. Un ancla no garantiza que exista un NPC vivo si no se cumplen las condiciones del juego.
 
-Estas posiciones se identifican como Ancla de prefab. La verificación de bloques finales sigue disponible y es más lenta: comprueba el resultado del mundo incluyendo máscaras y reemplazos. Los minerales del terreno la activan porque no dependen solo de estructuras. La lectura ligera expande hijos deterministas con una sola elección y sin condiciones heredadas de altura; otras ramas requieren el cálculo detallado. Los contenedores se reconocen por nombres de bloques Chest/Container: sigue siendo una heurística. No se garantiza cobertura completa de todas las colocaciones posibles mediante la consulta ligera.
+## Cómo funciona
 
-La memoria y IndexedDB conservan consultas y chunks entre cambios de selección y zoom. La primera consulta de un lugar o tipo nuevo necesita cálculo. No se precalcula todo el dominio del mundo de una sola vez. El almacenamiento persistente es de mejor esfuerzo y el navegador puede eliminarlo. Al activar la verificación desde lejos se programan lotes de hasta 64 chunks sin construir primero una lista enorme de toda la vista.
+El servidor estático entrega código y datos numéricos. Tres Web Workers separan los costes:
 
-## Subsuelo
+| Worker            | Trabajo                                                                                                                             |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `worker.js`       | Biomas, teselas de superficie y franjas de entornos subterráneos.                                                                   |
+| `poi-worker.js`   | Consultas regionales de estructuras y anclas de prefabs, incluidos nodos y decoraciones subterráneas.                               |
+| `world-worker.js` | Terreno, cuevas, colocación de prefabs y agua interna para comprobar bloques finales. Solo devuelve resúmenes útiles para el visor. |
 
-Cada tesela conserva conjuntamente superficie y franjas de entornos subterráneos para Y=0..319. Mostrar la capa o cambiar de altura reutiliza lo guardado a cualquier zoom. Representa las zonas geográficas de las capas nativas, no la geometría de túneles o los entornos añadidos por decorar cuevas. El cálculo de la capa geográfica no activa el motor completo de bloques. Los ríos continúan desactivados.
+La interfaz dibuja con Canvas 2D y sprites reutilizados. Los filtros actúan sobre puntos calculados; la caché en memoria e IndexedDB permite reutilizarlos al cambiar zoom o selección. Las nuevas vistas se calculan progresivamente: no se precalcula todo el dominio del mundo de una sola vez. El navegador puede desalojar el almacenamiento persistente.
 
-## Validación y alcance
+El cálculo conserva la aritmética, las conversiones y el orden del generador de referencia. Las semillas se conservan como texto de 64 bits; este perfil V1 usa sus 32 bits inferiores. El subsuelo muestra zonas geográficas por altura, no la geometría de cada túnel.
 
-Los informes VERIFICACION-*.json registran las pruebas. La interfaz comprobó iconos en todos los zooms, nombres controlados por el usuario, filtros y reutilización de puntos. La consulta rápida publicó dos cofres y el gólem nativo del templo antes de terminar la fase subterránea, sin descargar buffers de bloques; las cifras de tiempo son locales en Node, no un benchmark de Vercel. Activar todo el catálogo puede seguir siendo costoso.
+Lee [arquitectura](docs/ARCHITECTURE.md) para seguir el flujo completo y [datos y formatos](docs/DATA.md) para entender los recursos generados.
 
-Coincidieron cinco anclas nativas del gólem del templo; 36 referencias de geometría con 1.224 nodos; 16 grafos de cuevas con 98 colocaciones de decoración; seis referencias de anclas superficiales; y 20.480 valores de entorno subterráneo. La base del motor detallado conserva la validación anterior de seis chunks y 31.457.280 campos sin diferencias (informe heredado, sin cambios numéricos de esa ruta en esta versión). Estas muestras no certifican todas las semillas y coordenadas. Se comprobaron sintaxis y servicio HTTP; no se inspeccionó visualmente un despliegue en navegador.
+## Dónde modificar cada cosa
 
-Perfil de datos incluido: Hytale 0.8.0-pre.4 / WorldGen V1. El número 0.9.0 corresponde al Atlas. El perfil no se actualiza automáticamente con nuevas pre-releases. El visitante no necesita archivos del juego en su PC. Véase ANALISIS-Orbis.md para el análisis previo de consultas separadas.
+| Quieres cambiar…                                         | Archivo o función                                                                                               |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Colores, diseño y tamaños                                | [`site/style.css`](site/style.css).                                                                             |
+| Formularios, textos y paneles                            | [`site/index.html`](site/index.html).                                                                           |
+| Cámara, zoom, resolución de las teselas, exportación PNG | [`site/app.js`](site/app.js): `plan`, `zoomAt`, `draw`.                                                         |
+| Iconos y categorías plegadas                             | [`site/points-ui.js`](site/points-ui.js): `poiSprite`, `poiGroup`, `renderPoiPicker`.                           |
+| Categorías de estructuras y rarezas iniciales            | [`site/poi-labels.js`](site/poi-labels.js): `structureType`, `atlasRarity`.                                     |
+| Tamaño de las consultas y caché de anclas                | [`site/poi-worker.js`](site/poi-worker.js), [`site/points-ui.js`](site/points-ui.js): `queryPOIs`.              |
+| Programación del cálculo detallado                       | [`site/integration.js`](site/integration.js): `requestIntegration`.                                             |
+| Lectura de un prefab numérico                            | [`site/engine/prefab-data.js`](site/engine/prefab-data.js), [`tools/prefab-assets.py`](tools/prefab-assets.py). |
+| Regenerar índices ligeros o editar su catálogo           | [`tools/rebuild-poi.py`](tools/rebuild-poi.py); consulta [DATA](docs/DATA.md).                                  |
+| Reglas de generación                                     | [`site/engine/`](site/engine/); conserva las referencias nativas al modificar la aritmética.                    |
+| Alojamiento y caché HTTP                                 | [`vercel.json`](vercel.json).                                                                                   |
+
+Los nombres y ubicaciones de recursos nuevos deben proceder del perfil y de sus reglas. Añadir una opción a la interfaz no crea por sí solo un cálculo válido para ese recurso.
+
+## Comprobar cambios
+
+```sh
+npm run format
+npm run format:check
+npm run check
+npm test
+npm run test:world
+```
+
+`check` revisa sintaxis, entradas estáticas y referencias de los contenedores. `test` comprueba filtros, categorías plegadas, cachés, capas, geometría y anclas. `test:world` compara las cuatro fases de seis chunks con huellas capturadas del generador nativo. Se incluyen fixtures compactos: no necesitas instalar Hytale para ejecutar estas pruebas. `npm run test:all` ejecuta ambas suites.
+
+GitHub Actions ejecuta formato, comprobaciones y pruebas en cada push o pull request. Los resultados históricos están separados en [`docs/validation/`](docs/validation/); no sustituyen las pruebas de los cambios nuevos. Las muestras no certifican todas las semillas y coordenadas.
+
+## Publicar
+
+Conecta el repositorio a Vercel y conserva `vercel.json`: **Output Directory = `site`**, sin comando de build ni instalación para producción. La misma carpeta puede servirse desde otro alojamiento estático que admita Web Workers, WebAssembly y archivos binarios. Comprueba rutas y tipos MIME si cambias de proveedor. La parte completa de prefabs requiere un navegador con `DecompressionStream`.
+
+Los contenedores `.apf` y las tablas de clima usan nombres ligados al contenido para permitir caché prolongada. Los scripts y configuraciones se revalidan. Si cambias el formato o la semántica de una caché, incrementa su prefijo; no mezcles perfiles con diferentes `datasetId`.
+
+## Rendimiento y límites
+
+La versión 0.10 conserva las muestras, alturas, franjas e iconos. Reduce trabajo innecesario: controles diferidos, buffers transferidos, resúmenes de chunks sin matrices duplicadas y un único archivo por prefab. Los contenedores conservan todos los bloques y metadatos sin pérdidas. [CHANGELOG](CHANGELOG.md) resume los cambios.
+
+La primera consulta de muchos tipos puede tardar; los tiempos de los informes son pruebas locales en Node, no un benchmark de Vercel. Los ríos de superficie siguen desactivados. El suavizado visual no añade precisión a las muestras. Las anclas ligeras no garantizan el bloque final tras máscaras o reemplazos; algunas ramas de prefabs requieren verificación detallada. Los contenedores se reconocen por nombres de bloque, por lo que su clasificación sigue siendo heurística.
+
+## Contribuir y licencia
+
+Consulta [CONTRIBUTING](CONTRIBUTING.md) para proponer mejoras. El código original usa [MIT](LICENSE). Los datos derivados del juego y otros materiales se identifican por separado en [THIRD_PARTY](THIRD_PARTY.md); no se presentan como recursos originales MIT. Proyecto independiente, sin afiliación con Hypixel Studios.

@@ -1,30 +1,271 @@
 'use strict';
 /** Ordinary V1 prefab candidates, exclusions and category overlaps. */
-class V1SurfacePrefabs{
- canonical(path){return path.replace(/\.(?:prefab\.json|lpf)$/,'');}
- constructor(k,geometry){this.k=k;this.geometry=geometry;this.I=typeof module!=='undefined'?require('./random.js'):globalThis.V1Integer;this.zExtents=new Map();for(const z of k.data.zones){const ids=[...z.tiles.weighted.map(e=>e[0].$biome),...z.custom.map(e=>e.$biome)];this.zExtents.set(z.name,Math.max(0,...ids.map(id=>Math.max(0,...(k.biomes.get(id).prefabs?.entries||[]).map(e=>e.prefabPatternGenerator.maxSize)))));}this.maxExtent=Math.max(...this.zExtents.values());}
- rotated(bounds,rotation){const r=Number(rotation.split('_')[1])/90,corners=[];for(const x of [bounds[0],bounds[3]])for(const z of [bounds[2],bounds[5]])corners.push(r===0?[x,z]:r===1?[z,-x]:r===2?[-x,-z]:[-z,x]);return[Math.min(...corners.map(c=>c[0])),bounds[1],Math.min(...corners.map(c=>c[1])),Math.max(...corners.map(c=>c[0])),bounds[4],Math.max(...corners.map(c=>c[1]))];}
- unique(){return this.k.uniqueStructures().map(s=>{const g=this.k.data.zones.flatMap(z=>z.uniquePrefabs?.generators||[]).find(g=>g.name===s.name);return{...s,priority:g.category.priority,config:g.configuration};});}
- biomes(cx,cz){const k=this.k,minX=cx*32-5,minZ=cz*32-5,maxX=cx*32+36,maxZ=cz*32+36,found=new Set();
-  for(let x=minX;x<=maxX;x++)for(let z=minZ;z<=maxZ;z++){const id=k.at(x,z).biomeId;if(k.biomes.get(id).prefabs)found.add(id);}
-  for(let z=minZ-this.maxExtent;z<=maxZ+this.maxExtent;z+=8)for(let x=minX-this.maxExtent;x<=maxX+this.maxExtent;x+=8){if(x>=minX&&z>=minZ&&x<=maxX&&z<=maxZ)continue;const zone=k.zoneAt(x,z).zone,ext=this.zExtents.get(zone.name);if(x<minX-ext||z<minZ-ext||x>maxX+ext||z>maxZ+ext)continue;const point=k.point(zone.points,k.seed,x,z),ref=k.weighted(zone.tiles,k.hash.random3(k.seed,point.ix,point.iy)),b=k.biomes.get(ref.$biome);if(b.prefabs)found.add(b.id);for(const c of zone.custom){const custom=k.biomes.get(c.$biome);if(custom.prefabs&&custom.custom.biomeMask.set.includes(b.id))found.add(custom.id);}}
-  return[...found].sort((a,b)=>a-b);
- }
- extent(entry){if(entry._extent!==undefined)return entry._extent;let max=0;for(const [p]of entry.prefabs.weighted){const b=this.geometry[this.canonical(p.path)]?.boundsWithChildren;if(!b)throw Error('Missing prefab bounds '+p.path);max=Math.max(max,b[3]-b[0],b[5]-b[2]);}return entry._extent=max;}
- maxWater(b,x,z){let level=-2147483648;for(const e of b.water.entries){const lo=Math.floor(this.k.supplier(e.min,x,z)),hi=Math.floor(this.k.supplier(e.max,x,z));if(lo<=hi&&hi>level)level=hi;}return level<0?-2147483648:level;}
- height(p,b,x,z,rng){let y;const k=this.k;if(p.onWater&&p.deepSearch){y=-2147483648;for(const e of b.water.entries){const max=Math.floor(k.supplier(e.max,x,z));if(max!==-2147483648&&k.heightCondition(p.heightCondition,k.seed,x,z,max,rng)){y=max;break;}}}else if(p.onWater)y=this.maxWater(b,x,z);else if(!p.deepSearch)y=k.terrainColumn(x,z).height;else{const col=k.terrainColumn(x,z);y=0;for(let py=col.highest;py>0;py--){const t=col.threshold(py);if(k.heightThreshold(p.heightThresholdInterpreter,x,z,py)>0&&(t>col.noise||t===1)){y=py;break;}}}return(y+Math.floor(k.coordinateValue(p.displacement,(k.seed+p.seedOffset)|0,x,z)))|0;}
- parent(entry,b,x,y,z,rng){const k=this.k,c=entry.prefabPatternGenerator.parentCondition;if(c.type==='ConstantBlockFluidCondition'||c.type==='ConstantIntCondition')return c.result;let cover={blockId:0,fluidId:0};for(const v of b.covers.entries){if(y>=320||!(rng.nextDouble()<v.coverDensity)||!k.condition(v.mapCondition,x,z)||!k.heightCondition(v.heightCondition,k.seed,x,z,y,rng))continue;const part=k.chooseRandom(v.entries,rng);if(part&&part.offset===-1){cover=part.entry;break;}}if((cover.blockId!==0||cover.fluidId!==0)&&!k.blockCondition(c,cover.blockId,cover.fluidId))return false;const top=k.topBlock(b,x,z);return k.blockCondition(c,top.blockId,top.fluidId);}
- collect(cx,cz,region){const k=this.k,biomes=region?[...k.biomes.keys()].filter(id=>k.biomes.get(id).prefabs).sort((a,b)=>a-b):this.biomes(cx,cz),uniques=this.unique(),candidates=[];
-  for(const id of biomes){const b=k.biomes.get(id);let index=0;for(const entry of b.prefabs.entries){index++;if(region?.entryAllowed&&!region.entryAllowed(entry))continue;const p=entry.prefabPatternGenerator,extent=this.extent(entry),prefabSeed=this.I.hash(k.seed,b.id,index);for(const point of k.collectPoints(p.gridGenerator,(region?.minX??cx*32)-extent,(region?.minZ??cz*32)-extent,(region?.maxX??cx*32+31)+extent,(region?.maxZ??cz*32+31)+extent)){
-   const x=Math.floor(point.x),z=Math.floor(point.z),rng=new this.I.FastRandom(this.I.signed(this.I.hash(prefabSeed,x,z)*1609272495n));if(!k.condition(p.mapCondition,x,z))continue;if(p.exclusionRadius>0&&uniques.some(u=>p.category.priority<u.priority&&BigInt(x-u.x)**2n+BigInt(z-u.z)**2n<=BigInt(p.exclusionRadius)**2n))continue;if(k.at(x,z).biomeId!==id)continue;
-   const supplier=k.chooseRandom(entry.prefabs,rng);if(!supplier)continue;const rotations=p.rotations||['ROTATION_0','ROTATION_90','ROTATION_180','ROTATION_270'],rotation=rotations[rng.nextInt(rotations.length)],y=this.height(p,b,x,z,rng);if(!k.heightCondition(p.heightCondition,k.seed,x,z,y,rng)||!this.parent(entry,b,x,y,z,rng))continue;
-   const info=this.geometry[this.canonical(supplier.path)],bounds=this.rotated(info.bounds,rotation);let valid=true;
-   for(const check of p.baseChecks){const sizeX=bounds[3]-bounds[0],sizeZ=bounds[5]-bounds[2];if(Math.max(sizeX,sizeZ)<check.prefabSize)continue;const midX=(x*2+bounds[0]+bounds[3])>>1,midZ=(z*2+bounds[2]+bounds[5])>>1,threshold=y+bounds[1]-check.heightTolerance,rx=Math.floor(Math.fround(Math.fround(sizeX>>1)*check.baseScale)),rz=Math.floor(Math.fround(Math.fround(sizeZ>>1)*check.baseScale));if(rx>3&&(k.terrainColumn(midX-rx,midZ).height<threshold||k.terrainColumn(midX+rx,midZ).height<threshold)||rz>3&&(k.terrainColumn(midX,midZ-rz).height<threshold||k.terrainColumn(midX,midZ+rz).height<threshold))valid=false;break;}
-   if(valid)candidates.push({x,y,z,path:this.canonical(supplier.path),priority:p.category.priority,rotation,entry,pattern:p,bounds,invalidated:false});
-  }}}
-  const minPriority=Math.min(...candidates.map(c=>c.priority));
-  for(const c of candidates){if(c.priority<=minPriority||c.invalidated)continue;for(const other of candidates)if(c.priority>other.priority&&c.bounds.slice(0,3).every((v,i)=>{const a=[c.x,c.y,c.z][i],o=[other.x,other.y,other.z][i];return a+c.bounds[i+3]>=o+other.bounds[i]&&a+v<=o+other.bounds[i+3];}))other.invalidated=true;}
-  return{biomes,candidates,uniques};
- }
+class V1SurfacePrefabs {
+  canonical(path) {
+    return path.replace(/\.(?:prefab\.json|lpf)$/, '');
+  }
+  constructor(k, geometry) {
+    this.k = k;
+    this.geometry = geometry;
+    this.I = typeof module !== 'undefined' ? require('./random.js') : globalThis.V1Integer;
+    this.zExtents = new Map();
+    for (const z of k.data.zones) {
+      const ids = [...z.tiles.weighted.map((e) => e[0].$biome), ...z.custom.map((e) => e.$biome)];
+      this.zExtents.set(
+        z.name,
+        Math.max(
+          0,
+          ...ids.map((id) =>
+            Math.max(
+              0,
+              ...(k.biomes.get(id).prefabs?.entries || []).map(
+                (e) => e.prefabPatternGenerator.maxSize,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    this.maxExtent = Math.max(...this.zExtents.values());
+  }
+  rotated(bounds, rotation) {
+    const r = Number(rotation.split('_')[1]) / 90,
+      corners = [];
+    for (const x of [bounds[0], bounds[3]])
+      for (const z of [bounds[2], bounds[5]])
+        corners.push(r === 0 ? [x, z] : r === 1 ? [z, -x] : r === 2 ? [-x, -z] : [-z, x]);
+    return [
+      Math.min(...corners.map((c) => c[0])),
+      bounds[1],
+      Math.min(...corners.map((c) => c[1])),
+      Math.max(...corners.map((c) => c[0])),
+      bounds[4],
+      Math.max(...corners.map((c) => c[1])),
+    ];
+  }
+  unique() {
+    return this.k.uniqueStructures().map((s) => {
+      const g = this.k.data.zones
+        .flatMap((z) => z.uniquePrefabs?.generators || [])
+        .find((g) => g.name === s.name);
+      return { ...s, priority: g.category.priority, config: g.configuration };
+    });
+  }
+  biomes(cx, cz) {
+    const k = this.k,
+      minX = cx * 32 - 5,
+      minZ = cz * 32 - 5,
+      maxX = cx * 32 + 36,
+      maxZ = cz * 32 + 36,
+      found = new Set();
+    for (let x = minX; x <= maxX; x++)
+      for (let z = minZ; z <= maxZ; z++) {
+        const id = k.at(x, z).biomeId;
+        if (k.biomes.get(id).prefabs) found.add(id);
+      }
+    for (let z = minZ - this.maxExtent; z <= maxZ + this.maxExtent; z += 8)
+      for (let x = minX - this.maxExtent; x <= maxX + this.maxExtent; x += 8) {
+        if (x >= minX && z >= minZ && x <= maxX && z <= maxZ) continue;
+        const zone = k.zoneAt(x, z).zone,
+          ext = this.zExtents.get(zone.name);
+        if (x < minX - ext || z < minZ - ext || x > maxX + ext || z > maxZ + ext) continue;
+        const point = k.point(zone.points, k.seed, x, z),
+          ref = k.weighted(zone.tiles, k.hash.random3(k.seed, point.ix, point.iy)),
+          b = k.biomes.get(ref.$biome);
+        if (b.prefabs) found.add(b.id);
+        for (const c of zone.custom) {
+          const custom = k.biomes.get(c.$biome);
+          if (custom.prefabs && custom.custom.biomeMask.set.includes(b.id)) found.add(custom.id);
+        }
+      }
+    return [...found].sort((a, b) => a - b);
+  }
+  extent(entry) {
+    if (entry._extent !== undefined) return entry._extent;
+    let max = 0;
+    for (const [p] of entry.prefabs.weighted) {
+      const b = this.geometry[this.canonical(p.path)]?.boundsWithChildren;
+      if (!b) throw Error('Missing prefab bounds ' + p.path);
+      max = Math.max(max, b[3] - b[0], b[5] - b[2]);
+    }
+    return (entry._extent = max);
+  }
+  maxWater(b, x, z) {
+    let level = -2147483648;
+    for (const e of b.water.entries) {
+      const lo = Math.floor(this.k.supplier(e.min, x, z)),
+        hi = Math.floor(this.k.supplier(e.max, x, z));
+      if (lo <= hi && hi > level) level = hi;
+    }
+    return level < 0 ? -2147483648 : level;
+  }
+  height(p, b, x, z, rng) {
+    let y;
+    const k = this.k;
+    if (p.onWater && p.deepSearch) {
+      y = -2147483648;
+      for (const e of b.water.entries) {
+        const max = Math.floor(k.supplier(e.max, x, z));
+        if (max !== -2147483648 && k.heightCondition(p.heightCondition, k.seed, x, z, max, rng)) {
+          y = max;
+          break;
+        }
+      }
+    } else if (p.onWater) y = this.maxWater(b, x, z);
+    else if (!p.deepSearch) y = k.terrainColumn(x, z).height;
+    else {
+      const col = k.terrainColumn(x, z);
+      y = 0;
+      for (let py = col.highest; py > 0; py--) {
+        const t = col.threshold(py);
+        if (
+          k.heightThreshold(p.heightThresholdInterpreter, x, z, py) > 0 &&
+          (t > col.noise || t === 1)
+        ) {
+          y = py;
+          break;
+        }
+      }
+    }
+    return (
+      (y + Math.floor(k.coordinateValue(p.displacement, (k.seed + p.seedOffset) | 0, x, z))) | 0
+    );
+  }
+  parent(entry, b, x, y, z, rng) {
+    const k = this.k,
+      c = entry.prefabPatternGenerator.parentCondition;
+    if (c.type === 'ConstantBlockFluidCondition' || c.type === 'ConstantIntCondition')
+      return c.result;
+    let cover = { blockId: 0, fluidId: 0 };
+    for (const v of b.covers.entries) {
+      if (
+        y >= 320 ||
+        !(rng.nextDouble() < v.coverDensity) ||
+        !k.condition(v.mapCondition, x, z) ||
+        !k.heightCondition(v.heightCondition, k.seed, x, z, y, rng)
+      )
+        continue;
+      const part = k.chooseRandom(v.entries, rng);
+      if (part && part.offset === -1) {
+        cover = part.entry;
+        break;
+      }
+    }
+    if (
+      (cover.blockId !== 0 || cover.fluidId !== 0) &&
+      !k.blockCondition(c, cover.blockId, cover.fluidId)
+    )
+      return false;
+    const top = k.topBlock(b, x, z);
+    return k.blockCondition(c, top.blockId, top.fluidId);
+  }
+  collect(cx, cz, region) {
+    const k = this.k,
+      biomes = region
+        ? [...k.biomes.keys()].filter((id) => k.biomes.get(id).prefabs).sort((a, b) => a - b)
+        : this.biomes(cx, cz),
+      uniques = this.unique(),
+      candidates = [];
+    for (const id of biomes) {
+      const b = k.biomes.get(id);
+      let index = 0;
+      for (const entry of b.prefabs.entries) {
+        index++;
+        if (region?.entryAllowed && !region.entryAllowed(entry)) continue;
+        const p = entry.prefabPatternGenerator,
+          extent = this.extent(entry),
+          prefabSeed = this.I.hash(k.seed, b.id, index);
+        for (const point of k.collectPoints(
+          p.gridGenerator,
+          (region?.minX ?? cx * 32) - extent,
+          (region?.minZ ?? cz * 32) - extent,
+          (region?.maxX ?? cx * 32 + 31) + extent,
+          (region?.maxZ ?? cz * 32 + 31) + extent,
+        )) {
+          const x = Math.floor(point.x),
+            z = Math.floor(point.z),
+            rng = new this.I.FastRandom(this.I.signed(this.I.hash(prefabSeed, x, z) * 1609272495n));
+          if (!k.condition(p.mapCondition, x, z)) continue;
+          if (
+            p.exclusionRadius > 0 &&
+            uniques.some(
+              (u) =>
+                p.category.priority < u.priority &&
+                BigInt(x - u.x) ** 2n + BigInt(z - u.z) ** 2n <= BigInt(p.exclusionRadius) ** 2n,
+            )
+          )
+            continue;
+          if (k.at(x, z).biomeId !== id) continue;
+          const supplier = k.chooseRandom(entry.prefabs, rng);
+          if (!supplier) continue;
+          const rotations = p.rotations || [
+              'ROTATION_0',
+              'ROTATION_90',
+              'ROTATION_180',
+              'ROTATION_270',
+            ],
+            rotation = rotations[rng.nextInt(rotations.length)],
+            y = this.height(p, b, x, z, rng);
+          if (
+            !k.heightCondition(p.heightCondition, k.seed, x, z, y, rng) ||
+            !this.parent(entry, b, x, y, z, rng)
+          )
+            continue;
+          const info = this.geometry[this.canonical(supplier.path)],
+            bounds = this.rotated(info.bounds, rotation);
+          let valid = true;
+          for (const check of p.baseChecks) {
+            const sizeX = bounds[3] - bounds[0],
+              sizeZ = bounds[5] - bounds[2];
+            if (Math.max(sizeX, sizeZ) < check.prefabSize) continue;
+            const midX = (x * 2 + bounds[0] + bounds[3]) >> 1,
+              midZ = (z * 2 + bounds[2] + bounds[5]) >> 1,
+              threshold = y + bounds[1] - check.heightTolerance,
+              rx = Math.floor(Math.fround(Math.fround(sizeX >> 1) * check.baseScale)),
+              rz = Math.floor(Math.fround(Math.fround(sizeZ >> 1) * check.baseScale));
+            if (
+              (rx > 3 &&
+                (k.terrainColumn(midX - rx, midZ).height < threshold ||
+                  k.terrainColumn(midX + rx, midZ).height < threshold)) ||
+              (rz > 3 &&
+                (k.terrainColumn(midX, midZ - rz).height < threshold ||
+                  k.terrainColumn(midX, midZ + rz).height < threshold))
+            )
+              valid = false;
+            break;
+          }
+          if (valid)
+            candidates.push({
+              x,
+              y,
+              z,
+              path: this.canonical(supplier.path),
+              priority: p.category.priority,
+              rotation,
+              entry,
+              pattern: p,
+              bounds,
+              invalidated: false,
+            });
+        }
+      }
+    }
+    const minPriority = Math.min(...candidates.map((c) => c.priority));
+    for (const c of candidates) {
+      if (c.priority <= minPriority || c.invalidated) continue;
+      for (const other of candidates)
+        if (
+          c.priority > other.priority &&
+          c.bounds.slice(0, 3).every((v, i) => {
+            const a = [c.x, c.y, c.z][i],
+              o = [other.x, other.y, other.z][i];
+            return a + c.bounds[i + 3] >= o + other.bounds[i] && a + v <= o + other.bounds[i + 3];
+          })
+        )
+          other.invalidated = true;
+    }
+    return { biomes, candidates, uniques };
+  }
 }
-globalThis.V1SurfacePrefabs=V1SurfacePrefabs;if(typeof module!=='undefined')module.exports=V1SurfacePrefabs;
+globalThis.V1SurfacePrefabs = V1SurfacePrefabs;
+if (typeof module !== 'undefined') module.exports = V1SurfacePrefabs;

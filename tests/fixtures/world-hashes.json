@@ -1,0 +1,68 @@
+[
+  {
+    "seed": 12345,
+    "chunkX": -5,
+    "chunkZ": 4,
+    "hashes": {
+      "blocks": "3b5e0e83b0565bfb9af05b72d08a020d76291492e2621b19db1c3f18e325eb0a",
+      "caves": "efde909a488a45de19b81d7737d048ff269c3ffc579973bdf1969fe1476f9e5d",
+      "prefabs": "5ef7745824b5302975f6ae705637d479b91b51ad6b224005efbe186929a86d83",
+      "water": "5ef7745824b5302975f6ae705637d479b91b51ad6b224005efbe186929a86d83"
+    }
+  },
+  {
+    "seed": 42,
+    "chunkX": 0,
+    "chunkZ": 0,
+    "hashes": {
+      "blocks": "dd763d3239c3dd347c9431b92b9ad07eb2ca9c8edc2a1442adb5a846a8eabedf",
+      "caves": "43b0d11bc16f694ddf6ebd69db8c6ba304871984a9f8f01119c97e56e2ebf61c",
+      "prefabs": "015841d1fe805d5932f26a2fe00de09589237a5387cba3cf23ad8653cafaf206",
+      "water": "b634f74bf6aa204002dec49ded5343b95a3dfde75124112ead9c5258dab790e1"
+    }
+  },
+  {
+    "seed": 12345,
+    "chunkX": 90,
+    "chunkZ": 26,
+    "hashes": {
+      "blocks": "334b67f9ea8df00d2578935ad00aade8f915365f1ed0c9eb477a840417ee435a",
+      "caves": "0dfc987364c49f2306e4f333ec3907597b603ce6841cac8362a79b0c64543228",
+      "prefabs": "c9fe63f03f7851b82c5ad8b058e9a49a50f89c14b6eb0544869776295bd3ea8a",
+      "water": "622b9e6ad5c943237fe45c865d8ac144b41b316d7ef7188ff441dc6b1a98313b"
+    }
+  },
+  {
+    "seed": 12345,
+    "chunkX": 120,
+    "chunkZ": -100,
+    "hashes": {
+      "blocks": "8f5e291d985222917b4ecf1e8828dcad3f5fccf4bab2436c5f35a6b98d8549c4",
+      "caves": "813d2f69a26e71d3457803ca1eb2a833019fd1067b179be70a820fb0463442a0",
+      "prefabs": "813d2f69a26e71d3457803ca1eb2a833019fd1067b179be70a820fb0463442a0",
+      "water": "3d2dc6f5a47f79248c605aa294292cfb638024c7bb78bf2bb1710c24f8457dc5"
+    }
+  },
+  {
+    "seed": 42,
+    "chunkX": -120,
+    "chunkZ": 70,
+    "hashes": {
+      "blocks": "66f054f0e46456b65fdb839b47e63bb7f00cc7e2be0de4e378c7e493a4e351f8",
+      "caves": "9d7c5fcaf37bcb8d67c140c13020e1b519599210fc0b7a7d300598292048a323",
+      "prefabs": "d3a6b326b199b3ab99997e68b59b92b68395916a5a5c14e0f3d81b1b0a5425f8",
+      "water": "7cd850766baf1908ec48f264dd69cd596ecc88d25d403750d742b0879a8a8e1e"
+    }
+  },
+  {
+    "seed": -1934851622,
+    "chunkX": 50,
+    "chunkZ": 50,
+    "hashes": {
+      "blocks": "70a3f724163274ed69197f8aa94f9991b6177d501a377de96596f458c234639c",
+      "caves": "9ee66351189dd926b176a35e8a16bb11a92f555a80a9f36da292d39b156e6c43",
+      "prefabs": "9ee66351189dd926b176a35e8a16bb11a92f555a80a9f36da292d39b156e6c43",
+      "water": "9ee66351189dd926b176a35e8a16bb11a92f555a80a9f36da292d39b156e6c43"
+    }
+  }
+]

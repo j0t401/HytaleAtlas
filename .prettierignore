@@ -1,0 +1,10 @@
+node_modules/
+site/data/
+site/engine/assets/
+site/engine/*.json
+site/engine/*.gz
+site/engine/*.bin
+site/engine/*.wasm
+tests/fixtures/
+package-lock.json
+__pycache__/

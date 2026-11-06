@@ -1,10 +1,96 @@
 'use strict';
-function structureType(path){const s=path.toLowerCase();if(/portal/.test(s))return 'structure:portal';for(const [word,key]of [['temple','temple'],['dungeon','dungeon'],['mineshaft','mine'],['shipwreck','shipwreck'],['ruin','ruins'],['village','village'],['farm','farm'],['camp','camp'],['statue','statue'],['bridge','bridge'],['tower','tower'],['house','house'],['altar','altar'],['tomb','tomb']])if(s.includes(word))return 'structure:'+key;return 'structure:other';}
-const structureNames={temple:'Templos y entradas',dungeon:'Mazmorras',mine:'Minas',shipwreck:'Naufragios',ruins:'Ruinas',village:'Aldeas',farm:'Granjas',camp:'Campamentos',statue:'Estatuas',bridge:'Puentes',portal:'Templos de portal',tower:'Torres',house:'Casas',altar:'Altares',tomb:'Tumbas',other:'Otras estructuras'};
-function readableStructure(key){return structureNames[key.split(':')[1]]||'Estructura';}
-function markerRank(key,kind){if(key==='unique:portal'||key==='structure:portal')return 5;if(key==='structure:temple'||key==='structure:dungeon')return 4;if(kind==='structures')return 3;return 1;}
-function markerVisible(){return true;}
-const poiRarityNames={Common:'Común',Uncommon:'Poco común',Rare:'Rara',Epic:'Épica',Legendary:'Legendaria',Unclassified:'Sin clasificar'};
-function atlasRarity(t){if(t.raritySource==='game'&&poiRarityNames[t.rarity])return t.rarity;if(t.key==='structure:portal')return 'Legendary';if(t.kind==='structures')return /temple|dungeon/.test(t.key)?'Epic':'Uncommon';if(t.kind==='chest')return 'Uncommon';if(t.kind==='mob')return /Dragon/.test(t.key)?'Legendary':/Golem|Boss|Broodmother|Hedera|Yeti/.test(t.key)?'Epic':'Common';if(t.kind==='wood')return /Goldenwood|Amber|Wisteria|Crystal|Spiral|Stormbark|Fire$/.test(t.key)?'Rare':/Ice|Azure|Poisoned|Petrified/.test(t.key)?'Uncommon':'Common';if(t.kind==='ore')return /Mithril/.test(t.key)?'Legendary':/Adamantite/.test(t.key)?'Epic':/Gold|Thorium|Cobalt|Silver/.test(t.key)?'Rare':'Common';return 'Unclassified';}
-function poiFamily(t){return t.kind==='mob'&&/Golem/.test(t.key)?'golems':t.kind;}
-const poiFamilyNames={structures:'Estructuras',golems:'Gólems',mob:'Otros mobs fijos',wood:'Maderas',ore:'Minerales',chest:'Cofres y contenedores'};
+function structureType(path) {
+  const s = path.toLowerCase();
+  if (/portal/.test(s)) return 'structure:portal';
+  for (const [word, key] of [
+    ['temple', 'temple'],
+    ['dungeon', 'dungeon'],
+    ['mineshaft', 'mine'],
+    ['shipwreck', 'shipwreck'],
+    ['ruin', 'ruins'],
+    ['village', 'village'],
+    ['farm', 'farm'],
+    ['camp', 'camp'],
+    ['statue', 'statue'],
+    ['bridge', 'bridge'],
+    ['tower', 'tower'],
+    ['house', 'house'],
+    ['altar', 'altar'],
+    ['tomb', 'tomb'],
+  ])
+    if (s.includes(word)) return 'structure:' + key;
+  return 'structure:other';
+}
+const structureNames = {
+  temple: 'Templos y entradas',
+  dungeon: 'Mazmorras',
+  mine: 'Minas',
+  shipwreck: 'Naufragios',
+  ruins: 'Ruinas',
+  village: 'Aldeas',
+  farm: 'Granjas',
+  camp: 'Campamentos',
+  statue: 'Estatuas',
+  bridge: 'Puentes',
+  portal: 'Templos de portal',
+  tower: 'Torres',
+  house: 'Casas',
+  altar: 'Altares',
+  tomb: 'Tumbas',
+  other: 'Otras estructuras',
+};
+function readableStructure(key) {
+  return structureNames[key.split(':')[1]] || 'Estructura';
+}
+function markerRank(key, kind) {
+  if (key === 'unique:portal' || key === 'structure:portal') return 5;
+  if (key === 'structure:temple' || key === 'structure:dungeon') return 4;
+  if (kind === 'structures') return 3;
+  return 1;
+}
+const poiRarityNames = {
+  Common: 'Común',
+  Uncommon: 'Poco común',
+  Rare: 'Rara',
+  Epic: 'Épica',
+  Legendary: 'Legendaria',
+  Unclassified: 'Sin clasificar',
+};
+function atlasRarity(t) {
+  if (t.raritySource === 'game' && poiRarityNames[t.rarity]) return t.rarity;
+  if (t.key === 'structure:portal') return 'Legendary';
+  if (t.kind === 'structures') return /temple|dungeon/.test(t.key) ? 'Epic' : 'Uncommon';
+  if (t.kind === 'chest') return 'Uncommon';
+  if (t.kind === 'mob')
+    return /Dragon/.test(t.key)
+      ? 'Legendary'
+      : /Golem|Boss|Broodmother|Hedera|Yeti/.test(t.key)
+        ? 'Epic'
+        : 'Common';
+  if (t.kind === 'wood')
+    return /Goldenwood|Amber|Wisteria|Crystal|Spiral|Stormbark|Fire$/.test(t.key)
+      ? 'Rare'
+      : /Ice|Azure|Poisoned|Petrified/.test(t.key)
+        ? 'Uncommon'
+        : 'Common';
+  if (t.kind === 'ore')
+    return /Mithril/.test(t.key)
+      ? 'Legendary'
+      : /Adamantite/.test(t.key)
+        ? 'Epic'
+        : /Gold|Thorium|Cobalt|Silver/.test(t.key)
+          ? 'Rare'
+          : 'Common';
+  return 'Unclassified';
+}
+function poiFamily(t) {
+  return t.kind === 'mob' && /Golem/.test(t.key) ? 'golems' : t.kind;
+}
+const poiFamilyNames = {
+  structures: 'Estructuras',
+  golems: 'Gólems',
+  mob: 'Otros mobs fijos',
+  wood: 'Maderas',
+  ore: 'Minerales',
+  chest: 'Cofres y contenedores',
+};
