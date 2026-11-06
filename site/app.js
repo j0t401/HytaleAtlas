@@ -2,7 +2,7 @@
 const $=id=>document.getElementById(id),canvas=$('canvas'),ctx=canvas.getContext('2d');
 const fileMode=location.protocol==='file:';
 let worker,workerFailed=false;
-try{worker=fileMode?{postMessage(){}}:new Worker('worker.js?v=0.6.0');}catch(e){workerFailed=true;worker={postMessage(){}};$('status').textContent='No se pudo iniciar el motor: '+e.message;}
+try{worker=fileMode?{postMessage(){}}:new Worker('worker.js?v=0.7.0');}catch(e){workerFailed=true;worker={postMessage(){}};$('status').textContent='No se pudo iniciar el motor: '+e.message;}
 if(fileMode){const notice=document.createElement('div');notice.className='startup-notice';notice.innerHTML='<strong>Abre el Atlas con su lanzador</strong><p>Este archivo se abrió directamente desde una carpeta. Para cargar el motor, abre <b>Iniciar Atlas.cmd</b> y mantén su ventana abierta.</p><a href="http://127.0.0.1:8766/">Abrir la dirección local del Atlas →</a>'; $('map').appendChild(notice);$('status').textContent='Hace falta abrir la dirección HTTP local';$('progress').textContent='Abre Iniciar Atlas.cmd';}
 let MIN=-2147482784,MAX=2147482783;const N=64,LIMIT=180;
 let cx=0,cz=0,zoom=.18,w=0,h=0,epoch=0,initialized=false,seed='12345',tiles=new Map(),catalog=new Map(),visible=[],drawQueued=false,pointer=null,hover=0,hoverTimer,viewTimer,viewQueued=false,structures=[],fixedSpawns=[];
@@ -11,12 +11,12 @@ const url=new URLSearchParams(location.hash.slice(1));
 if(url.has('seed'))$('seed').value=url.get('seed');
 if(Number.isFinite(Number(url.get('x'))))cx=clamp(Number(url.get('x')));
 if(Number.isFinite(Number(url.get('z'))))cz=clamp(Number(url.get('z')));
-if(url.has('zoom')&&Number.isFinite(Number(url.get('zoom'))))zoom=Math.max(2**-24,Math.min(32,Number(url.get('zoom'))));
+if(url.has('zoom')&&Number.isFinite(Number(url.get('zoom'))))zoom=Math.max(0.08,Math.min(32,Number(url.get('zoom'))));
 function world(px,py){return{x:clamp(Math.floor(cx+(px-w/2)/zoom)),z:clamp(Math.floor(cz+(py-h/2)/zoom))};}
-function plan(){const step=2**Math.max(0,Math.ceil(Math.log2(Number($('quality').value||3)/zoom))),span=N*step,left=cx-w/2/zoom,top=cz-h/2/zoom,result=[];
+function plan(){const step=2**Math.max(0,Math.ceil(Math.log2(Number($('quality').value||1.4)/zoom))),span=N*step,left=cx-w/2/zoom,top=cz-h/2/zoom,result=[];
  for(let tz=Math.floor(Math.max(MIN,top)/span);tz<=Math.floor(Math.min(MAX,top+h/zoom)/span);tz++)for(let tx=Math.floor(Math.max(MIN,left)/span);tx<=Math.floor(Math.min(MAX,left+w/zoom)/span);tx++)result.push({key:`${step}/${tx}/${tz}`,x:tx*span,z:tz*span,step,n:N});
  return result.sort((a,b)=>(a.x+span/2-cx)**2+(a.z+span/2-cz)**2-((b.x+span/2-cx)**2+(b.z+span/2-cz)**2));}
-function requestView(){if(!initialized)return;visible=plan();const needed=visible.filter(t=>!tiles.has(t.key)||tiles.get(t.key).preview||tiles.get(t.key).waterPending).map(t=>({...t,hasPreview:tiles.has(t.key),hasBiomes:tiles.has(t.key)&&!tiles.get(t.key).preview}));worker.postMessage({type:'view',generation:epoch,tasks:needed});$('progress').textContent=needed.length?`${needed.length} teselas pendientes · detalle ${visible[0]?.step||1} bloques`:'Vista calculada';schedule();clearTimeout(viewTimer);viewTimer=setTimeout(saveHash,200);}
+function requestView(){if(!initialized)return;if(typeof queueIntegration==='function')queueIntegration();visible=plan();const needed=visible.filter(t=>!tiles.has(t.key)||tiles.get(t.key).preview||tiles.get(t.key).waterPending).map(t=>({...t,hasPreview:tiles.has(t.key),hasBiomes:tiles.has(t.key)&&!tiles.get(t.key).preview}));worker.postMessage({type:'view',generation:epoch,tasks:needed});$('progress').textContent=needed.length?`${needed.length} teselas pendientes · detalle ${visible[0]?.step||1} bloques`:'Vista calculada';schedule();clearTimeout(viewTimer);viewTimer=setTimeout(saveHash,200);}
 function requestViewSoon(){schedule();if(viewQueued)return;viewQueued=true;requestAnimationFrame(()=>{viewQueued=false;requestView();});}
 function saveHash(){const u=new URLSearchParams({seed,version:'0.8.0-pre.4',x:Math.round(cx),z:Math.round(cz),zoom:zoom.toPrecision(7)});history.replaceState(null,'','#'+u);}
 function schedule(){if(!drawQueued){drawQueued=true;requestAnimationFrame(draw);}}
@@ -25,7 +25,7 @@ function drawStructure(s){const x=(s.x-cx)*zoom+w/2,y=(s.z-cz)*zoom+h/2;if(x< -2
  else{ctx.beginPath();ctx.moveTo(-15,-6);ctx.lineTo(0,-17);ctx.lineTo(15,-6);ctx.closePath();ctx.fill();ctx.stroke();for(const px of [-11,-3,5]){ctx.fillRect(px,-5,6,16);ctx.strokeRect(px,-5,6,16);}ctx.fillRect(-16,11,32,5);ctx.strokeRect(-16,11,32,5);}
  ctx.shadowBlur=0;ctx.font='bold 11px Segoe UI';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#0d1721';ctx.strokeText(s.name,0,30);ctx.fillStyle='#fff1d0';ctx.fillText(s.name,0,30);ctx.restore();}
 function drawFixedMob(s){const x=(s.x-cx)*zoom+w/2,y=(s.z-cz)*zoom+h/2;if(x< -20||x>w+20||y< -20||y>h+40)return;ctx.save();ctx.translate(x,y-22);ctx.lineWidth=2;ctx.strokeStyle='#11202b';ctx.shadowColor='#000a';ctx.shadowBlur=5;ctx.fillStyle='#8e9e87';for(const r of [[-8,-9,16,9],[-10,1,20,13],[-16,2,6,12],[10,2,6,12],[-8,14,6,5],[2,14,6,5]]){ctx.fillRect(...r);ctx.strokeRect(...r);}ctx.shadowBlur=0;ctx.fillStyle='#2d4943';ctx.fillRect(-5,-6,3,2);ctx.fillRect(2,-6,3,2);ctx.fillStyle='#92f4c0';ctx.beginPath();ctx.moveTo(0,2);ctx.lineTo(5,7);ctx.lineTo(0,12);ctx.lineTo(-5,7);ctx.closePath();ctx.fill();ctx.fillStyle='#c2e7cd';ctx.beginPath();ctx.moveTo(-3,19);ctx.lineTo(3,19);ctx.lineTo(0,22);ctx.closePath();ctx.fill();ctx.restore();}
-function draw(){drawQueued=false;ctx.fillStyle='#101922';ctx.fillRect(0,0,w,h);ctx.imageSmoothingEnabled=false;
+function draw(){drawQueued=false;ctx.fillStyle='#101922';ctx.fillRect(0,0,w,h);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
  // Retain already computed resolutions while the next level arrives.
  const ordered=[...tiles.values()].sort((a,b)=>b.step-a.step);
  const selected=$('highlight').value,showRivers=$('rivers').checked;
@@ -33,9 +33,10 @@ function draw(){drawQueued=false;ctx.fillStyle='#101922';ctx.fillRect(0,0,w,h);c
   let image=t.image;
   if(selected!==''||showRivers&&t.water?.some(v=>v)){const maskId=selected+'|'+showRivers;if(t.maskId!==maskId){const pixels=new Uint8ClampedArray(t.pixels);for(let i=0;i<t.ids.length;i++){if(showRivers&&t.water?.[i]){pixels[i*4]=39;pixels[i*4+1]=115;pixels[i*4+2]=164;}if(selected!==''&&t.ids[i]!==Number(selected)){pixels[i*4]=Math.round(pixels[i*4]*.16);pixels[i*4+1]=Math.round(pixels[i*4+1]*.16);pixels[i*4+2]=Math.round(pixels[i*4+2]*.16);}}t.mask=document.createElement('canvas');t.mask.width=t.mask.height=t.n;t.mask.getContext('2d').putImageData(new ImageData(pixels,t.n,t.n),0,0);t.maskId=maskId;}image=t.mask;}
   ctx.drawImage(image,x,z,size+.2,size+.2);}
+ if(typeof drawIntegration==='function')drawIntegration();
  if($('grid').checked){const spacing=2**Math.ceil(Math.log2(100/zoom));ctx.strokeStyle='#d9e8ef33';ctx.lineWidth=1;ctx.beginPath();for(let x=Math.ceil((cx-w/2/zoom)/spacing)*spacing;x<cx+w/2/zoom;x+=spacing){const px=(x-cx)*zoom+w/2;ctx.moveTo(px,0);ctx.lineTo(px,h);}for(let z=Math.ceil((cz-h/2/zoom)/spacing)*spacing;z<cz+h/2/zoom;z+=spacing){const py=(z-cz)*zoom+h/2;ctx.moveTo(0,py);ctx.lineTo(w,py);}ctx.stroke();}
- if($('structures').checked)for(const s of structures)drawStructure(s);
- if($('fixed-mobs').checked)for(const s of fixedSpawns)drawFixedMob(s);
+ if($('structures').checked&&$('stratum').value==='surface')for(const s of structures)drawStructure(s);
+ if($('fixed-mobs').checked&&$('stratum').value==='surface')for(const s of fixedSpawns)drawFixedMob(s);
  const scale=2**Math.floor(Math.log2(100/zoom));$('scale').textContent=`${scale.toLocaleString('es')} bloques`;$('scale').style.width=Math.max(40,scale*zoom)+'px';
 }
 worker.onmessage=({data:d})=>{if(d.type==='error'){$('status').textContent='Error: '+d.message;return;}if(d.generation!==epoch)return;
@@ -56,7 +57,7 @@ $('fixed-mobs').onchange=schedule;
 $('highlight').onchange=schedule;
 $('rivers').onchange=schedule;
 $('quality').onchange=requestView;
-function zoomAt(factor,px=w/2,py=h/2){const before={x:cx+(px-w/2)/zoom,z:cz+(py-h/2)/zoom};zoom=Math.max(2**-24,Math.min(32,zoom*factor));cx=clamp(before.x-(px-w/2)/zoom);cz=clamp(before.z-(py-h/2)/zoom);requestViewSoon();}
+function zoomAt(factor,px=w/2,py=h/2){const before={x:cx+(px-w/2)/zoom,z:cz+(py-h/2)/zoom};zoom=Math.max(0.08,Math.min(32,zoom*factor));cx=clamp(before.x-(px-w/2)/zoom);cz=clamp(before.z-(py-h/2)/zoom);requestViewSoon();}
 $('plus').onclick=()=>zoomAt(2);$('minus').onclick=()=>zoomAt(.5);
 canvas.onwheel=e=>{e.preventDefault();const r=canvas.getBoundingClientRect();zoomAt(2**(-e.deltaY/350),e.clientX-r.left,e.clientY-r.top);};
 canvas.onpointerdown=e=>{pointer={id:e.pointerId,x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId);};

@@ -18,7 +18,7 @@ async function render(task,preview){
   }
   if(performance.now()-start>12){await pause();if(obsolete())return;start=performance.now();}
  }
- if(!obsolete()){if(!preview){tileData.delete(key);tileData.set(key,{ids});while(tileData.size>180)tileData.delete(tileData.keys().next().value);}postMessage({type:'tile',generation:epoch,key,x,z,step,n,preview,waterPending:!preview,pixels,ids,water});}
+ if(!obsolete()){if(!preview){tileData.delete(key);tileData.set(key,{ids});while(tileData.size>180)tileData.delete(tileData.keys().next().value);}postMessage({type:'tile',generation:epoch,key,x,z,step,n,preview,waterPending:false,pixels,ids,water});}
 }
 async function renderWater(task){
  const epoch=generation,{key,x,z,step,n}=task,obsolete=()=>epoch!==generation||!wanted.has(key);await details();if(obsolete())return;
@@ -32,7 +32,7 @@ async function renderWater(task){
 }
 async function pump(){if(running)return;running=true;try{while(queue.length){active=queue.shift();if(wanted.has(active.task.key)){if(active.stage===2)await renderWater(active.task);else await render(active.task,active.stage===0);}active=null;}}catch(e){postMessage({type:'error',generation,message:String(e.message||e)});}finally{running=false;active=null;}}
 onmessage=async({data})=>{try{const {raw}=await ready;
- if(data.type==='seed'){generation=data.generation;queue=[];wanted.clear();tileData.clear();kernel.setSeed(data.seed);metadata('ready',raw);if(detailKernel)publishDetails();}
- if(data.type==='view'&&data.generation===generation){wanted=new Map(data.tasks.map(t=>[t.key,t]));const jobs=[];for(const stage of [0,1,2])for(const task of data.tasks){if(stage===0&&task.hasPreview||stage===1&&task.hasBiomes)continue;if(active?.generation===generation&&active.task.key===task.key&&active.stage===stage)continue;jobs.push({task,stage,generation});}queue=jobs;pump();}
+ if(data.type==='seed'){generation=data.generation;queue=[];wanted.clear();tileData.clear();kernel.setSeed(data.seed);metadata('ready',raw);if(detailKernel)publishDetails();else details().catch(()=>{});}
+ if(data.type==='view'&&data.generation===generation){wanted=new Map(data.tasks.map(t=>[t.key,t]));const jobs=[];for(const stage of [0,1])for(const task of data.tasks){if(stage===0&&task.hasPreview||stage===1&&task.hasBiomes)continue;if(active?.generation===generation&&active.task.key===task.key&&active.stage===stage)continue;jobs.push({task,stage,generation});}queue=jobs;pump();}
  if(data.type==='point'&&data.generation===generation){const epoch=generation,k=await details();if(epoch!==generation)return;if(!Number.isInteger(data.x)||!Number.isInteger(data.z)||data.x<minCoordinate||data.x>maxCoordinate||data.z<minCoordinate||data.z>maxCoordinate)throw Error('Coordenadas fuera del límite del generador V1');const col=k.terrainColumn(data.x,data.z),environment=k.environmentAt(data.x,data.z);postMessage({type:'point',generation,request:data.request,x:data.x,z:data.z,result:{...kernel.at(data.x,data.z),height:col.height,environment:detailRaw.environmentNames[String(environment)]||String(environment)}});}
 }catch(e){postMessage({type:'error',generation,message:String(e.message||e)});}};
