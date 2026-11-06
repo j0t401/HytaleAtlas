@@ -219,6 +219,22 @@ function selectedRarity(t) {
   return poiRarityOverrides[t.key] || atlasRarity(t);
 }
 function paintPOI(p) {
+  // Cull by the chunk margin before scanning an ore's height histogram.
+  if (
+    !poiSelected.has(poiKey(p)) &&
+    !poiKey(p).startsWith('container:') &&
+    poiKey(p) !== 'unique:portal'
+  )
+    return;
+  const margin = 32 * zoom + 20;
+  if (
+    (p.x - cx) * zoom + w / 2 < -margin ||
+    (p.x - cx) * zoom + w / 2 > w + margin ||
+    (p.z - cz) * zoom + h / 2 < -margin ||
+    (p.z - cz) * zoom + h / 2 > h + margin
+  )
+    return;
+
   if (p.kind === 'ore' && typeof projectOrePoint === 'function') {
     p = projectOrePoint(p);
     if (!p) return;
@@ -464,7 +480,7 @@ function renderPoiPicker() {
 function queryPOIs() {
   if (!initialized) return;
   if (!poiWorker) {
-    poiWorker = new Worker('poi-worker.js?v=0.11.0');
+    poiWorker = new Worker('poi-worker.js?v=0.11.1');
     poiWorker.onmessage = ({ data: d }) => {
       if (d.type === 'catalog') {
         for (const t of d.types) {
@@ -638,6 +654,7 @@ function rememberWorldPOIs(c) {
 
 const previousPoiPointer = canvas.onpointermove;
 canvas.onpointermove = (e) => {
+  if (e.pointerType === 'touch' && !pointer) return;
   if (pointer) {
     previousPoiPointer(e);
     return;

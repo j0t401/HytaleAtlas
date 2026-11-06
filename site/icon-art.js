@@ -22,7 +22,8 @@ const AtlasIconArt = (() => {
     if (!images.has(file)) {
       const img = new Image();
       img.decoding = 'async';
-      img.src = file;
+      // Attach listeners in render before starting the request.
+      img.datasetFile = file;
       images.set(file, img);
     }
     return images.get(file);
@@ -50,17 +51,23 @@ const AtlasIconArt = (() => {
           g.imageSmoothingEnabled = true;
           g.imageSmoothingQuality = 'high';
           g.drawImage(img, 16 - w / 2, 16 - h / 2, w, h);
+        } else {
+          g.fillStyle = colors[rarity] || colors.Common;
+          g.font = 'bold 15px sans-serif';
+          g.textAlign = 'center';
+          g.fillText(kind === 'ore' ? '◆' : '•', 16, 21);
         }
         if (typeof schedule === 'function') schedule();
       };
-    paint();
-    if (!img.complete) {
+    if (!img.src || !img.complete) {
       img.addEventListener('load', paint, { once: true });
       img.addEventListener('error', paint, { once: true });
     }
+    if (!img.src) img.src = img.datasetFile;
+    paint();
     return true;
   }
-  const ready = fetch('assets/icons/manifest.json?v=0.11.0')
+  const ready = fetch('assets/icons/manifest.json?v=0.11.1')
     .then((r) => {
       if (!r.ok) throw Error('Icon manifest unavailable');
       return r.json();
@@ -69,6 +76,7 @@ const AtlasIconArt = (() => {
       entries = data.entries;
       if (typeof poiSprites !== 'undefined') poiSprites.clear();
       if (typeof renderPoiPicker === 'function') renderPoiPicker();
+      if (typeof updateOreGuide === 'function') updateOreGuide();
       for (const element of document.querySelectorAll('[data-icon]')) {
         const file = entries[element.dataset.icon];
         if (file) {

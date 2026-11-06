@@ -1,5 +1,13 @@
 # Cambios
 
+## 0.11.1
+
+- Marcador al pulsar el mapa o marcar su centro, con coordenadas, altura editable, copia normal o como comando `/tp`, y eliminación.
+- Zoom con dos dedos y desplazamiento continuo al soltar uno; cancelaciones y arrastres no crean marcadores accidentales.
+- Cruceta central y lectura de bioma/coordenadas en dispositivos sin cursor; las zonas subterráneas se consultan de las teselas guardadas.
+- Movimiento visual separado de consultas diferidas a workers, orden de teselas reutilizado, descarte temprano de minerales fuera de pantalla y retirada del dibujo duplicado de resúmenes.
+- Símbolo visible mientras carga un icono PNG y actualización de la guía al completar el manifiesto.
+
 ## 0.11.0
 
 - Depósitos nativos de minerales en una consulta ligera, con un núcleo comprimido de geometría de unos 38 KB.

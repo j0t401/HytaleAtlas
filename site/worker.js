@@ -307,7 +307,7 @@ onmessage = async ({ data }) => {
       queue = jobs;
       pump();
     }
-    if (data.type === 'point' && data.generation === generation) {
+    if ((data.type === 'point' || data.type === 'pin') && data.generation === generation) {
       const epoch = generation,
         k = await details();
       if (epoch !== generation) return;
@@ -323,7 +323,7 @@ onmessage = async ({ data }) => {
       const col = k.terrainColumn(data.x, data.z),
         environment = k.environmentAt(data.x, data.z);
       postMessage({
-        type: 'point',
+        type: data.type,
         generation,
         request: data.request,
         x: data.x,

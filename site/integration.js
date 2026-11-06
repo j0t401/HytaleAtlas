@@ -94,7 +94,7 @@ function requestIntegration() {
     return;
   }
   if (!worldWorker) {
-    worldWorker = new Worker('world-worker.js?v=0.11.0');
+    worldWorker = new Worker('world-worker.js?v=0.11.1');
     worldWorker.onmessage = ({ data: d }) => {
       if (d.type === 'error') {
         $('world-status').textContent = 'Error del motor detallado: ' + d.message;
@@ -119,6 +119,8 @@ function requestIntegration() {
     : 'Detalle disponible en caché';
 }
 function drawIntegration() {
+  // Final summaries are already indexed by rememberWorldPOIs; avoid painting them twice.
+  if (typeof rememberWorldPOIs === 'function') return;
   if (!$('world-objects').checked || typeof paintPOI !== 'function') return;
   const depth = Number($('depth').value);
   const underground = $('stratum').value === 'underground';

@@ -2,7 +2,7 @@
 
 Explorador de semillas de Hytale con mapa oscuro en 2D, biomas de superficie y subsuelo, estructuras, recursos y marcadores fijos de mobs. Se publica como una web estática: los cálculos se ejecutan en el navegador, sin servidor de Hytale ni archivos del juego en el PC del visitante.
 
-**Atlas 0.11.0 · perfil incluido: Hytale 0.8.0-pre.4, WorldGen V1 · experimental.** El número del Atlas es independiente de la versión del juego. Las pre-releases nuevas necesitan otro perfil de datos y validación; el proyecto no lo actualiza automáticamente.
+**Atlas 0.11.1 · perfil incluido: Hytale 0.8.0-pre.4, WorldGen V1 · experimental.** El número del Atlas es independiente de la versión del juego. Las pre-releases nuevas necesitan otro perfil de datos y validación; el proyecto no lo actualiza automáticamente.
 
 ## Empezar
 
@@ -30,6 +30,8 @@ Prettier es una dependencia de desarrollo. El formato de Python usa Black, fijad
 3. Los tipos elegidos permanecen visibles a cualquier zoom. La agrupación opcional de depósitos próximos conserva sus miembros y se puede desactivar para verlos individualmente. **Nombres en el mapa**, dentro de Capas, controla las etiquetas por separado.
 4. Selecciona **Zonas subterráneas** y una altura Y para ver los entornos del subsuelo. Las franjas de Y=0..319 se guardan con cada tesela de superficie; cambiar la capa o altura no genera cuevas completas.
 5. Las anclas de cofres, maderas y mobs aparecen primero mediante sus prefabs. **Verificar con bloques finales** ejecuta el cálculo detallado, que cuesta más. La pestaña Minerales muestra zonas de origen, franjas Y y resultados de la vista. Los resultados comprobados almacenan conteos y posiciones por nivel; filtrar Y no vuelve a generar el mundo. Los minerales del terreno activan ese cálculo porque no dependen solo de estructuras.
+
+Pulsa cualquier punto libre del mapa para colocar un marcador. Usa **Elegir punto del mapa** para señalar incluso encima de un icono, o la bandera para marcar el centro. El detalle permite copiar las coordenadas o `/tp X Y Z`, editar Y y quitar el marcador. En superficie, Y procede del terreno base; en subsuelo usa la altura seleccionada. Abrir un elemento también señala su posición. En pantallas sin cursor aparece una cruceta central y el panel inferior izquierdo consulta ese centro; dos dedos permiten acercar, alejar y desplazar el mapa.
 
 Las rarezas son categorías orientativas y editables del Atlas, no probabilidades de aparición medidas. Goldenwood Log es una categoría de recurso que agrupa los troncos compatibles del juego. El catálogo identifica siete gólems: cinco con reglas de marcador fijo y dos sin ancla fija localizable en este perfil. Un ancla no garantiza que exista un NPC vivo si no se cumplen las condiciones del juego.
 

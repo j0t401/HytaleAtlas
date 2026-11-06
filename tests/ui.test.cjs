@@ -87,7 +87,14 @@ const s = {
   requestAnimationFrame: (f) => frames.push(f),
 };
 const c = vm.createContext(s);
-for (const f of ['engine/strata.js', 'app.js', 'integration.js', 'poi-labels.js', 'points-ui.js'])
+for (const f of [
+  'engine/strata.js',
+  'map-gestures.js',
+  'app.js',
+  'integration.js',
+  'poi-labels.js',
+  'points-ui.js',
+])
   vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), c, { filename: f });
 resize();
 vm.runInContext('initialized=true;queryPOIs()', c);
@@ -198,3 +205,22 @@ const report = {
   visualBrowserInspection: false,
 };
 console.log(report);
+
+let oreProjections = 0;
+s.projectOrePoint = (point) => {
+  oreProjections++;
+  return point;
+};
+vm.runInContext(
+  "paintPOI({key:'ore:Copper',kind:'ore',x:2140000000,z:2140000000,y:50,heightCounts:{50:1}})",
+  c,
+);
+assert.equal(oreProjections, 0, 'Offscreen ores skip their expensive height projection');
+const beforeDragRequests = workers.reduce((n, w) => n + w.messages.length, 0);
+vm.runInContext('for(let i=0;i<100;i++)requestViewSoon()', c);
+assert.equal(
+  workers.reduce((n, w) => n + w.messages.length, 0),
+  beforeDragRequests,
+  'Camera motion renders immediately without posting worker views on every event',
+);
+console.log({ offscreenOreProjectionSkipped: true, cameraEventsDoNotFloodWorkers: true });

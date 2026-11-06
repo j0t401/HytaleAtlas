@@ -10,7 +10,7 @@ let strataCatalog = {},
 let worker,
   workerFailed = false;
 try {
-  worker = fileMode ? { postMessage() {} } : new Worker('worker.js?v=0.11.0');
+  worker = fileMode ? { postMessage() {} } : new Worker('worker.js?v=0.11.1');
 } catch (e) {
   workerFailed = true;
   worker = { postMessage() {} };
@@ -46,6 +46,8 @@ let cx = 0,
   hoverTimer,
   viewTimer,
   viewQueued = false,
+  cameraTimer,
+  tileOrder = null,
   structures = [],
   fixedSpawns = [];
 const clamp = (v) => Math.max(MIN, Math.min(MAX, v)),
@@ -87,7 +89,9 @@ function plan() {
   );
 }
 function requestView() {
+  clearTimeout(cameraTimer);
   if (!initialized) return;
+  if (typeof queueCenterProbe === 'function') queueCenterProbe();
   if (typeof queueIntegration === 'function') queueIntegration();
   visible = plan();
   const needed = visible
@@ -108,12 +112,13 @@ function requestView() {
 }
 function requestViewSoon() {
   schedule();
-  if (viewQueued) return;
-  viewQueued = true;
-  requestAnimationFrame(() => {
+  if (typeof queueCenterProbe === 'function') queueCenterProbe();
+  clearTimeout(cameraTimer);
+  cameraTimer = setTimeout(() => {
     viewQueued = false;
     requestView();
-  });
+  }, 90);
+  viewQueued = true;
 }
 function saveHash() {
   const u = new URLSearchParams({
@@ -148,11 +153,16 @@ function draw() {
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
   // Retain already computed resolutions while the next level arrives.
-  const ordered = [...tiles.values()].sort((a, b) => b.step - a.step);
+  if (!tileOrder) tileOrder = [...tiles.values()].sort((a, b) => b.step - a.step);
+  const complete =
+    visible.length && visible.every((t) => tiles.has(t.key) && !tiles.get(t.key).preview);
+  const currentKeys = complete ? new Set(visible.map((t) => t.key)) : null;
+  const ordered = tileOrder;
   const selected = $('highlight').value,
     underground = $('stratum').value === 'underground',
     depth = Number($('depth').value);
   for (const t of ordered) {
+    if (currentKeys && !currentKeys.has(t.key)) continue;
     const span = t.n * t.step,
       x = (t.x - cx) * zoom + w / 2,
       z = (t.z - cz) * zoom + h / 2,
@@ -234,6 +244,7 @@ function draw() {
     for (const s of structures) drawStructure(s);
   if ($('fixed-mobs').checked && $('stratum').value === 'surface')
     for (const s of fixedSpawns) drawFixedMob(s);
+  if (typeof drawMapPin === 'function') drawMapPin();
   const scale = 2 ** Math.floor(Math.log2(100 / zoom));
   $('scale').textContent = `${scale.toLocaleString('es')} bloques`;
   $('scale').style.width = Math.max(40, scale * zoom) + 'px';
@@ -310,13 +321,16 @@ worker.onmessage = ({ data: d }) => {
     $('status').textContent = `V1 ${d.version} · biomas, estructuras y aparición fija`;
     requestView();
   }
+  if (d.type === 'pin' && typeof receiveMapPin === 'function') receiveMapPin(d);
   if (d.type === 'tile') {
+    tileOrder = null;
     const image = document.createElement('canvas');
     image.width = d.n;
     image.height = d.n;
     image.getContext('2d').putImageData(new ImageData(d.pixels, d.n, d.n), 0, 0);
     tiles.delete(d.key);
     tiles.set(d.key, { ...d, image });
+    if (typeof queueCenterProbe === 'function') queueCenterProbe();
     const budget = Math.max(LIMIT, visible.length),
       protectedKeys = new Set(visible.map((t) => t.key));
     while (tiles.size > budget) {
@@ -355,6 +369,8 @@ function applySeed() {
     $('structure-list').replaceChildren();
     $('mob-list').replaceChildren();
     tiles.clear();
+    tileOrder = null;
+    if (typeof clearMapPin === 'function') clearMapPin();
     visible = [];
     hover++;
     $('status').textContent = 'Preparando semilla…';
@@ -409,22 +425,42 @@ canvas.onwheel = (e) => {
   const r = canvas.getBoundingClientRect();
   zoomAt(2 ** (-e.deltaY / 350), e.clientX - r.left, e.clientY - r.top);
 };
+const mapGestures = new AtlasMapGestures({
+  view: () => {
+    const r = canvas.getBoundingClientRect();
+    return { x: cx, z: cz, zoom, left: r.left, top: r.top, width: w, height: h };
+  },
+  change: (v) => {
+    cx = clamp(v.x);
+    cz = clamp(v.z);
+    zoom = v.zoom;
+    requestViewSoon();
+  },
+  tap: (e) => {
+    if (typeof canvas.onMapTap === 'function') canvas.onMapTap(e);
+  },
+  commit: () => requestView(),
+});
 canvas.onpointerdown = (e) => {
-  pointer = { id: e.pointerId, x: e.clientX, y: e.clientY };
-  canvas.setPointerCapture(e.pointerId);
+  mapGestures.down(e);
+  pointer = mapGestures.points.size ? mapGestures : null;
+  if (pointer) canvas.setPointerCapture(e.pointerId);
+  clearTimeout(hoverTimer);
+  if (typeof setTouchInspection === 'function') setTouchInspection(e.pointerType === 'touch');
 };
-canvas.onpointerup = canvas.onpointercancel = () => {
-  pointer = null;
+const endMapGesture = (e, cancel = false) => {
+  mapGestures.up(e, cancel);
+  pointer = mapGestures.points.size ? mapGestures : null;
 };
+canvas.onpointerup = (e) => endMapGesture(e);
+canvas.onpointercancel = (e) => endMapGesture(e, true);
+canvas.onlostpointercapture = (e) => endMapGesture(e, true);
 canvas.onpointermove = (e) => {
   if (pointer) {
-    cx = clamp(cx - (e.clientX - pointer.x) / zoom);
-    cz = clamp(cz - (e.clientY - pointer.y) / zoom);
-    pointer.x = e.clientX;
-    pointer.y = e.clientY;
-    requestViewSoon();
+    mapGestures.move(e);
     return;
   }
+  if (e.pointerType === 'touch') return;
   const box = canvas.getBoundingClientRect(),
     px = e.clientX - box.left,
     py = e.clientY - box.top;

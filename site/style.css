@@ -1143,3 +1143,70 @@ button.primary:hover {
     bottom: calc(46px + env(safe-area-inset-bottom, 0px));
   }
 }
+
+/* World-coordinate pin and touch inspection use CSS pixels at every device ratio. */
+#map-crosshair {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 3;
+  filter: drop-shadow(0 1px 2px #000);
+}
+#map-crosshair::before,
+#map-crosshair::after {
+  content: '';
+  position: absolute;
+  background: #e7fff7;
+  box-shadow: 0 0 0 1px #112c30;
+}
+#map-crosshair::before {
+  width: 22px;
+  height: 2px;
+  top: 10px;
+  left: 0;
+}
+#map-crosshair::after {
+  height: 22px;
+  width: 2px;
+  left: 10px;
+  top: 0;
+}
+.touch-inspection #map-crosshair {
+  display: block;
+}
+#canvas.placing-pin {
+  cursor: crosshair;
+}
+#pin-mode[aria-pressed='true'] {
+  background: #285447;
+  border-color: #7de4c7;
+}
+.pin-height {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+  margin: 10px 0;
+}
+.pin-height input {
+  width: 95px;
+  min-width: 0;
+  font-size: 16px;
+}
+.copy-fallback {
+  width: 100%;
+  font-size: 16px;
+}
+.point-card > .selection-actions {
+  flex-wrap: wrap;
+}
+.point-card > .selection-actions button {
+  flex: 1 1 45%;
+  min-width: 0;
+}

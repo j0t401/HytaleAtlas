@@ -332,6 +332,7 @@ for (const id of ['ore-y-enabled', 'ore-y-min', 'ore-y-max'])
 const previousDepth = $('depth').oninput;
 $('depth').oninput = (e) => {
   previousDepth(e);
+  queueCenterProbe();
   updateOreGuide();
 };
 function closePoint() {
@@ -342,7 +343,12 @@ function closePoint() {
 $('close-point').onclick = closePoint;
 function openPoint(point, center = false) {
   selectedPoint = point;
-  $('point-copy').textContent = 'Copiar X / Y / Z';
+  $('point-copy').textContent = 'Copiar coordenadas';
+  $('point-command').textContent = 'Copiar /tp';
+  $('point-command').disabled = !Number.isFinite(point.y);
+  $('point-depth').disabled = !Number.isFinite(point.y);
+  mapPin = point;
+  schedule();
   if (mobileLayout.matches) setSidebar(false);
   if (center) {
     cx = clamp(point.x);
@@ -357,23 +363,30 @@ function openPoint(point, center = false) {
       kind: point.kind || 'structures',
       name: point.name || readableStructure(key),
     };
+  const isPin = point.kind === 'coordinate';
   const rarity = selectedRarity(type),
     family = poiFamilyNames[poiFamily(type)] || 'Elemento';
   $('point-name').textContent = type.name;
-  $('point-category').textContent = family + ' · ' + poiRarityNames[rarity];
+  $('point-category').textContent = isPin
+    ? 'Marcador personal'
+    : family + ' · ' + poiRarityNames[rarity];
   const icon = typeof AtlasIconArt !== 'undefined' ? AtlasIconArt.url(key, type.kind) : null;
-  $('point-icon').src = icon || poiSprite(type.kind, key).toDataURL('image/png');
+  $('point-icon').src = isPin ? pinIcon : icon || poiSprite(type.kind, key).toDataURL('image/png');
   $('point-details').style.setProperty(
     '--point-rarity',
     typeof AtlasIconArt !== 'undefined' ? AtlasIconArt.rarityColor(rarity) : '#8195a8',
   );
-  $('point-state').textContent = point.clusterPoints
-    ? 'Grupo de ' + point.clusterCount + ' resultados'
-    : point.confirmed
-      ? 'Comprobado con bloques finales'
-      : point.source === 'ore-deposit'
-        ? 'Depósito previsto · pendiente de verificación'
-        : 'Ancla de prefab · condiciones por verificar';
+  $('point-state').textContent = isPin
+    ? Number.isFinite(point.y)
+      ? point.heightSource
+      : 'Consultando altura del terreno…'
+    : point.clusterPoints
+      ? 'Grupo de ' + point.clusterCount + ' resultados'
+      : point.confirmed
+        ? 'Comprobado con bloques finales'
+        : point.source === 'ore-deposit'
+          ? 'Depósito previsto · pendiente de verificación'
+          : 'Ancla de prefab · condiciones por verificar';
   $('point-state').className = 'point-state' + (point.confirmed ? ' confirmed' : '');
   const information = $('point-information');
   information.replaceChildren();
@@ -382,12 +395,20 @@ function openPoint(point, center = false) {
     const cell = element('div');
     cell.append(
       element('small', null, axis.toUpperCase()),
-      element('strong', null, coordinateText(point[axis])),
+      element('strong', null, Number.isFinite(point[axis]) ? coordinateText(point[axis]) : '…'),
     );
     coordinates.append(cell);
   }
   information.append(coordinates);
-  if (point.clusterPoints) {
+  if (isPin) {
+    information.append(
+      element(
+        'p',
+        'point-note',
+        'Punto señalado en el mapa. La altura de superficie corresponde al terreno base; puedes editar Y antes de copiar el comando.',
+      ),
+    );
+  } else if (point.clusterPoints) {
     information.append(
       element(
         'p',
@@ -493,6 +514,29 @@ function openPoint(point, center = false) {
           '. La altura y orientación corresponden al generador del perfil seleccionado.',
       ),
     );
+  const edit = element('label', 'pin-height', 'Altura Y para copiar');
+  const input = element('input');
+  input.id = 'point-y';
+  input.type = 'number';
+  input.step = '1';
+  input.min = '0';
+  input.max = '319';
+  input.value = Number.isFinite(point.y) ? String(Math.round(point.y)) : '';
+  input.oninput = () => {
+    const value = input.value.trim();
+    const y = Number(value);
+    const valid = value !== '' && Number.isFinite(y) && y >= 0 && y <= 319;
+    if (valid) {
+      selectedPoint = { ...selectedPoint, y };
+      mapPin = selectedPoint;
+      coordinates.children[1].children[1].textContent = coordinateText(y);
+      pinRequest++;
+    }
+    $('point-command').disabled = !valid;
+    $('point-depth').disabled = !valid;
+  };
+  edit.append(input);
+  information.append(edit);
   $('point-details').hidden = false;
   document.body.classList.add('point-open');
 }
@@ -505,47 +549,200 @@ $('point-depth').onclick = () => {
   schedule();
   updateOreGuide();
 };
-$('point-copy').onclick = async () => {
-  if (!selectedPoint) return;
+function copiedPosition(command = false) {
+  if (!selectedPoint) return '';
+  const axes = Number.isFinite(selectedPoint.y) ? ['x', 'y', 'z'] : ['x', 'z'];
+  if (command && axes.length !== 3) return '';
+  return (
+    (command ? '/tp ' : '') + axes.map((axis) => coordinateText(selectedPoint[axis])).join(' ')
+  );
+}
+async function copyPosition(command = false) {
+  const text = copiedPosition(command);
+  if (!text) return;
+  const button = $(command ? 'point-command' : 'point-copy');
   try {
-    await navigator.clipboard.writeText(
-      ['x', 'y', 'z'].map((axis) => coordinateText(selectedPoint[axis])).join(' '),
-    );
-    $('point-copy').textContent = 'Coordenadas copiadas';
+    await navigator.clipboard.writeText(text);
+    button.textContent = command ? 'Comando copiado' : 'Coordenadas copiadas';
   } catch {
-    $('point-copy').textContent = 'Selecciona las coordenadas arriba';
+    const field = element('input', 'copy-fallback');
+    field.value = text;
+    field.readOnly = true;
+    field.setAttribute('aria-label', 'Texto para copiar');
+    $('point-information').append(field);
+    field.focus();
+    field.select();
+    button.textContent = 'Selecciona y copia el texto';
   }
-};
-let tapStart = null;
-canvas.addEventListener('pointerdown', (e) => {
-  tapStart = { x: e.clientX, y: e.clientY };
-  if (mobileLayout.matches && !document.body.classList.contains('panel-collapsed'))
-    setSidebar(false);
-});
-canvas.addEventListener('pointerup', (e) => {
-  if (!tapStart || Math.hypot(e.clientX - tapStart.x, e.clientY - tapStart.y) > 6) {
-    tapStart = null;
+}
+$('point-copy').onclick = () => copyPosition();
+$('point-command').onclick = () => copyPosition(true);
+let mapPin = null,
+  pinRequest = 0,
+  pinPlacement = false,
+  centerTimer;
+const pinIcon =
+  'data:image/svg+xml,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 48"><path d="M20 46C15 37 4 28 4 18a16 16 0 0 1 32 0c0 10-11 19-16 28Z" fill="#7de4c7" stroke="#10212f" stroke-width="3"/><circle cx="20" cy="18" r="6" fill="#10212f"/></svg>',
+  );
+function clearMapPin() {
+  mapPin = null;
+  pinRequest++;
+  closePoint();
+  schedule();
+}
+$('pin-remove').onclick = clearMapPin;
+function placeMapPin(x, z) {
+  const underground = $('stratum').value === 'underground';
+  const point = {
+    key: 'coordinate:pin',
+    kind: 'coordinate',
+    name: 'Punto señalado',
+    x,
+    z,
+    y: underground ? Number($('depth').value) : null,
+    heightSource: underground ? 'Altura de la capa seleccionada' : 'Altura del terreno base',
+  };
+  const request = ++pinRequest;
+  openPoint(point);
+  if (!underground && initialized)
+    worker.postMessage({ type: 'pin', generation: epoch, request, x, z });
+  pinPlacement = false;
+  $('pin-mode').setAttribute('aria-pressed', 'false');
+  canvas.classList.remove('placing-pin');
+}
+function receiveMapPin(d) {
+  if (
+    d.request !== pinRequest ||
+    !mapPin ||
+    mapPin.kind !== 'coordinate' ||
+    mapPin.x !== d.x ||
+    mapPin.z !== d.z
+  )
     return;
-  }
-  tapStart = null;
+  const point = { ...mapPin, y: d.result.height, biome: d.result.biome };
+  mapPin = point;
+  if (selectedPoint?.kind === 'coordinate') openPoint(point);
+  schedule();
+}
+function drawMapPin() {
+  if (!mapPin) return;
+  const x = (mapPin.x - cx) * zoom + w / 2,
+    y = (mapPin.z - cz) * zoom + h / 2;
+  if (x < -20 || x > w + 20 || y < -20 || y > h + 40) return;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.strokeStyle = '#10212f';
+  ctx.lineWidth = 4;
+  ctx.fillStyle = '#7de4c7';
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(-10, -19);
+  ctx.arc(0, -23, 11, Math.PI, 0);
+  ctx.lineTo(0, 0);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#10212f';
+  ctx.beginPath();
+  ctx.arc(0, -23, 4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+$('place-pin').onclick = () => placeMapPin(world(w / 2, h / 2).x, world(w / 2, h / 2).z);
+$('pin-mode').onclick = () => {
+  pinPlacement = !pinPlacement;
+  $('pin-mode').setAttribute('aria-pressed', String(pinPlacement));
+  canvas.classList.toggle('placing-pin', pinPlacement);
+};
+canvas.onMapTap = (e) => {
   const box = canvas.getBoundingClientRect(),
     x = e.clientX - box.left,
-    z = e.clientY - box.top,
-    hit = poiHitTargets
-      .filter((p) => (p.x - x) ** 2 + (p.z - z) ** 2 <= 225)
-      .sort((a, b) => (a.x - x) ** 2 + (a.z - z) ** 2 - ((b.x - x) ** 2 + (b.z - z) ** 2))[0];
+    z = e.clientY - box.top;
+  if (mapPin && !pinPlacement) {
+    const mx = (mapPin.x - cx) * zoom + w / 2,
+      mz = (mapPin.z - cz) * zoom + h / 2 - 21;
+    if ((mx - x) ** 2 + (mz - z) ** 2 <= 225) {
+      openPoint(mapPin);
+      return;
+    }
+  }
+  let hit = null,
+    distance = 225;
+  if (!pinPlacement)
+    for (const target of poiHitTargets) {
+      const d = (target.x - x) ** 2 + (target.z - z) ** 2;
+      if (d <= distance) {
+        distance = d;
+        hit = target;
+      }
+    }
   if (hit) openPoint(hit.p);
-});
+  else {
+    const p = world(x, z);
+    placeMapPin(p.x, p.z);
+  }
+};
 canvas.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && poiHitTargets.length) {
+  if (e.key === 'Enter') {
     e.preventDefault();
-    const hit = [...poiHitTargets].sort(
-      (a, b) => (a.x - w / 2) ** 2 + (a.z - h / 2) ** 2 - ((b.x - w / 2) ** 2 + (b.z - h / 2) ** 2),
-    )[0];
-    openPoint(hit.p);
+    const p = world(w / 2, h / 2);
+    placeMapPin(p.x, p.z);
     $('close-point').focus();
   }
 });
+const cursorless = matchMedia('(hover: none) and (pointer: coarse)');
+let touchInspection = cursorless.matches;
+function setTouchInspection(touch) {
+  touchInspection = touch || cursorless.matches;
+  document.body.classList.toggle('touch-inspection', touchInspection);
+  $('inspect-label').textContent = touchInspection ? 'CENTRO DEL MAPA' : 'BAJO EL CURSOR';
+  if (touchInspection) queueCenterProbe();
+}
+function queueCenterProbe() {
+  if (!touchInspection) return;
+  clearTimeout(centerTimer);
+  clearTimeout(hoverTimer);
+  hover++;
+  const p = world(w / 2, h / 2),
+    request = hover;
+  $('position').textContent = `X: ${p.x.toLocaleString('es')} · Z: ${p.z.toLocaleString('es')}`;
+  if ($('stratum').value === 'underground') {
+    const depth = Number($('depth').value);
+    let best = null;
+    for (const t of tiles.values())
+      if (
+        t.strataOffsets &&
+        p.x >= t.x &&
+        p.z >= t.z &&
+        p.x < t.x + t.n * t.step &&
+        p.z < t.z + t.n * t.step &&
+        (!best || t.step < best.step)
+      )
+        best = t;
+    const index = best
+      ? Math.floor((p.z - best.z) / best.step) * best.n + Math.floor((p.x - best.x) / best.step)
+      : null;
+    const env = best
+      ? strataCatalog[V1Strata.at(best.strataOffsets, best.strataValues, index, depth)]
+      : null;
+    $('biome').textContent = env
+      ? pretty(env.name.replace(/^Env_/, '').replace(/^Zone\d_/, ''))
+      : 'Cargando zona subterránea…';
+    $('position').textContent += ` · Y: ${depth}`;
+    return;
+  }
+  centerTimer = setTimeout(() => {
+    if (initialized) worker.postMessage({ type: 'point', generation: epoch, request, ...p });
+  }, 150);
+}
+const previousStratumChange = $('stratum').onchange;
+$('stratum').onchange = (e) => {
+  previousStratumChange(e);
+  queueCenterProbe();
+};
+cursorless.addEventListener('change', () => setTouchInspection(cursorless.matches));
+setTouchInspection(cursorless.matches);
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     closePoint();

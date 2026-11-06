@@ -50,9 +50,22 @@ const s = {
   Number,
   Boolean,
   performance,
-  document: { getElementById: get, createElement: element, body, addEventListener() {} },
+  document: {
+    getElementById: get,
+    createElement: () => {
+      const node = element();
+      Object.defineProperty(node, 'id', {
+        set(value) {
+          elements.set(value, node);
+        },
+      });
+      return node;
+    },
+    body,
+    addEventListener() {},
+  },
   matchMedia: () => ({ matches: false, addEventListener() {} }),
-  canvas: element(),
+  canvas: Object.assign(element(), { classList: { remove() {}, toggle() {} } }),
   requestAnimationFrame: (f) => f(),
   schedule: () => draws++,
   requestView: () => generationRequests++,
@@ -60,6 +73,8 @@ const s = {
   setTimeout,
   clearTimeout,
   navigator: {},
+  hover: 0,
+  hoverTimer: null,
   poiTypes: new Map(),
   poiPoints: new Map(),
   poiSelected: new Set(),
@@ -75,6 +90,7 @@ const s = {
   selectedRarity: () => 'Rare',
   poiKey: (p) => p.key,
   clamp: (x) => x,
+  pretty: (value) => value.replaceAll('_', ' '),
 };
 const c = vm.createContext(s),
   site = path.resolve(__dirname, '../site');
@@ -160,4 +176,53 @@ console.log({
   heightFilteringDoesNotRegenerate: true,
   optionalGroupingRetainsAllPoints: true,
   errors: 0,
+});
+
+// A surface pin waits for its own height reply and rejects stale responses.
+s.initialized = true;
+s.epoch = 1;
+s.worker = { postMessage: (m) => (s.lastPinRequest = m) };
+s.poiSprite = () => ({ toDataURL: () => '' });
+s.world = (x, z) => ({ x: Math.floor(x), z: Math.floor(z) });
+vm.runInContext('placeMapPin(12,-34)', c);
+assert.equal(vm.runInContext('copiedPosition()', c), '12 -34');
+assert.equal(vm.runInContext('copiedPosition(true)', c), '');
+s.reply = {
+  request: s.lastPinRequest.request,
+  x: 12,
+  z: -34,
+  result: { height: 72, biome: 'Desert' },
+};
+vm.runInContext('receiveMapPin(reply)', c);
+assert.equal(vm.runInContext('copiedPosition()', c), '12 72 -34');
+assert.equal(vm.runInContext('copiedPosition(true)', c), '/tp 12 72 -34');
+vm.runInContext('placeMapPin(90,100);receiveMapPin(reply)', c);
+assert.equal(
+  vm.runInContext('copiedPosition()', c),
+  '90 100',
+  'Late height reply must not move the new marker',
+);
+get('stratum').value = 'underground';
+get('depth').value = '45';
+vm.runInContext('placeMapPin(1,2)', c);
+assert.equal(vm.runInContext('copiedPosition(true)', c), '/tp 1 45 2');
+get('point-y').value = '80';
+get('point-y').oninput();
+assert.equal(vm.runInContext('copiedPosition(true)', c), '/tp 1 80 2');
+s.tiles = new Map([
+  ['sample', { x: 0, z: 0, n: 1024, step: 1, strataOffsets: [0], strataValues: [1] }],
+]);
+s.strataCatalog = { 1: { name: 'Env_Zone4_Jungle' } };
+s.V1Strata = { at: () => 1 };
+vm.runInContext('setTouchInspection(true)', c);
+assert.equal(get('biome').textContent, 'Jungle');
+assert.equal(get('inspect-label').textContent, 'CENTRO DEL MAPA');
+vm.runInContext('clearMapPin()', c);
+assert.equal(vm.runInContext('mapPin', c), null);
+console.log({
+  surfacePinHeightReply: true,
+  stalePinReplyIgnored: true,
+  coordinatesAndCommandCopy: true,
+  editableHeight: true,
+  touchCenterInspection: true,
 });

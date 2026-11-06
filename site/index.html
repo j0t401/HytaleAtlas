@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0d151e" />
     <title>Hytale Atlas · Explora tu semilla</title>
-    <link rel="stylesheet" href="style.css?v=0.11.0" />
+    <link rel="stylesheet" href="style.css?v=0.11.1" />
   </head>
   <body>
     <header class="app-header">
@@ -268,7 +268,7 @@
           </section>
         </div>
         <div class="panel-footer">
-          <span class="status-dot"></span> Atlas 0.11.0
+          <span class="status-dot"></span> Atlas 0.11.1
           <span class="muted">· Perfil V1 experimental</span>
         </div>
       </aside>
@@ -276,11 +276,25 @@
         <canvas
           id="canvas"
           tabindex="0"
-          aria-label="Arrastra para explorar, usa la rueda para acercar o las flechas para desplazarte"
+          aria-label="Pulsa para marcar coordenadas, arrastra para explorar y usa la rueda o dos dedos para acercar"
         ></canvas>
+        <div id="map-crosshair" aria-hidden="true"><span></span></div>
         <div class="map-top"><span id="status" role="status">Preparando tu mundo…</span></div>
         <div class="map-tools" aria-label="Controles del mapa">
-          <button id="plus" title="Acercar" aria-label="Acercar">+</button
+          <button
+            id="place-pin"
+            title="Colocar marcador en el centro"
+            aria-label="Colocar marcador en el centro"
+          >
+            ⚑</button
+          ><button
+            id="pin-mode"
+            title="Elegir punto del mapa"
+            aria-label="Elegir punto del mapa"
+            aria-pressed="false"
+          >
+            ⌖</button
+          ><button id="plus" title="Acercar" aria-label="Acercar">+</button
           ><button id="minus" title="Alejar" aria-label="Alejar">−</button
           ><button id="open-coords" title="Ir a coordenadas" aria-label="Ir a coordenadas">⌖</button
           ><button id="origin" title="Volver al origen" aria-label="Volver a X 0, Z 0">⌂</button>
@@ -324,25 +338,28 @@
           <div id="point-state" class="point-state"></div>
           <div id="point-information"></div>
           <div class="selection-actions">
-            <button id="point-depth" type="button">Ver esta altura</button
+            <button id="point-command" type="button" class="subtle">Copiar /tp</button
+            ><button id="pin-remove" type="button" class="subtle">Quitar marcador</button
+            ><button id="point-depth" type="button">Ver esta altura</button
             ><button id="point-copy" type="button" class="subtle">Copiar X / Y / Z</button>
           </div>
         </section>
         <div id="inspect">
-          <span class="eyebrow">BAJO EL CURSOR</span><strong id="biome">Explora el mapa</strong
-          ><span id="position">X: 0 · Z: 0</span>
+          <span id="inspect-label" class="eyebrow">BAJO EL CURSOR</span
+          ><strong id="biome">Explora el mapa</strong><span id="position">X: 0 · Z: 0</span>
         </div>
         <div class="map-bottom">
           <span id="scale"></span><span id="progress">Preparando mapa</span>
         </div>
       </section>
     </main>
-    <script src="engine/strata.js?v=0.11.0" defer></script>
-    <script src="app.js?v=0.11.0" defer></script>
-    <script src="integration.js?v=0.11.0" defer></script>
-    <script src="poi-labels.js?v=0.11.0" defer></script>
-    <script src="icon-art.js?v=0.11.0" defer></script>
-    <script src="points-ui.js?v=0.11.0" defer></script>
-    <script src="ui.js?v=0.11.0" defer></script>
+    <script src="engine/strata.js?v=0.11.1" defer></script>
+    <script src="map-gestures.js?v=0.11.1" defer></script>
+    <script src="app.js?v=0.11.1" defer></script>
+    <script src="integration.js?v=0.11.1" defer></script>
+    <script src="poi-labels.js?v=0.11.1" defer></script>
+    <script src="icon-art.js?v=0.11.1" defer></script>
+    <script src="points-ui.js?v=0.11.1" defer></script>
+    <script src="ui.js?v=0.11.1" defer></script>
   </body>
 </html>
