@@ -1,4 +1,4 @@
-# Hytale Atlas 0.7.0 experimental
+# Hytale Atlas 0.7.1 experimental
 
 Reemplaza site/, vercel.json y package.json del repositorio con los de este paquete. Vercel conserva outputDirectory: site. No se ha hecho push ni deploy. Para uso local abre Iniciar Atlas.cmd.
 
@@ -8,6 +8,6 @@ Selecciona Subsuelo y una altura Y entre0y319 para dibujar los entornos finales 
 
 Rendimiento: los ríos ya no se calculan ni se dibujan en el mapa de superficie. Se mantiene el agua interna necesaria para reproducir los bloques del mundo detallado. El alejamiento mínimo es0.08px/bloque; siguen permitidos saltos a coordenadas lejanas. Se activa interpolación visual de alta calidad y el detalle equilibrado por defecto. El suavizado mejora la presentación, pero no añade información ni precisión a las muestras. Hay previews, cachés acotadas y cancelación al cambiar la vista.
 
-Precisión pendiente: cinco de seis chunks completos de referencia coinciden tras terreno, cuevas, estructuras y agua. En el sexto quedan nueve diferencias entre bloques/prioridades; aún no se ha resuelto su causa. Esta versión permite probar la integración, NO es una reproducción completa certificada de todas las estructuras, condiciones de mobs ni versiones de Hytale. Perfil Default V1 0.8.0-pre.4. Los iconos se dibujan con símbolos propios, no con texturas oficiales.
+Corrección0.7.1: se eliminaron las nueve diferencias conocidas. Los datos de configuración, prefabs y referencias nativas se capturaron en un mismo arranque; las propiedades de bloques se leen por índice numérico resuelto. Se compararon seis chunks tras terreno, cuevas, estructuras y agua:31.457.280campos, cero diferencias. Se incluye el chunk que fallaba. VERIFICACION-motor.json contiene el resultado y CONJUNTO-DATOS.json identifica la extracción. El worker rechaza configuración, prefabs y reglas con identificadores de extracción distintos. Esto no demuestra exactitud para todas las semillas y coordenadas: la versión sigue siendo experimental. Los iconos siguen agrupando recursos, los contenedores usan nombres de bloque y las anclas no garantizan un mob vivo.
 
 Prueba de integración: un chunk devolvió327680valores de entorno,4grupos de recursos y27colocaciones de prefab. Sin errores del worker en esa prueba. Se comprobó la sintaxis JavaScript. No hubo inspección visual con control del PC. El motor de detalle descarga datos adicionales cuando se activa, y el primer cálculo puede tardar.

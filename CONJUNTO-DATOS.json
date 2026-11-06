@@ -1,0 +1,5 @@
+{
+  "datasetId": "c49f3f51d3d85e57cbe4555a6294b79bfd49bde4c145bde9b324efa3b46a9b3a",
+  "version": "0.8.0-pre.4",
+  "purpose": "Configuration, prefab buffers and native references captured in the same server process; block properties read through numeric getAsset(index)."
+}

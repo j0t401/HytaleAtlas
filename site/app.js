@@ -2,7 +2,7 @@
 const $=id=>document.getElementById(id),canvas=$('canvas'),ctx=canvas.getContext('2d');
 const fileMode=location.protocol==='file:';
 let worker,workerFailed=false;
-try{worker=fileMode?{postMessage(){}}:new Worker('worker.js?v=0.7.0');}catch(e){workerFailed=true;worker={postMessage(){}};$('status').textContent='No se pudo iniciar el motor: '+e.message;}
+try{worker=fileMode?{postMessage(){}}:new Worker('worker.js?v=0.7.1');}catch(e){workerFailed=true;worker={postMessage(){}};$('status').textContent='No se pudo iniciar el motor: '+e.message;}
 if(fileMode){const notice=document.createElement('div');notice.className='startup-notice';notice.innerHTML='<strong>Abre el Atlas con su lanzador</strong><p>Este archivo se abrió directamente desde una carpeta. Para cargar el motor, abre <b>Iniciar Atlas.cmd</b> y mantén su ventana abierta.</p><a href="http://127.0.0.1:8766/">Abrir la dirección local del Atlas →</a>'; $('map').appendChild(notice);$('status').textContent='Hace falta abrir la dirección HTTP local';$('progress').textContent='Abre Iniciar Atlas.cmd';}
 let MIN=-2147482784,MAX=2147482783;const N=64,LIMIT=180;
 let cx=0,cz=0,zoom=.18,w=0,h=0,epoch=0,initialized=false,seed='12345',tiles=new Map(),catalog=new Map(),visible=[],drawQueued=false,pointer=null,hover=0,hoverTimer,viewTimer,viewQueued=false,structures=[],fixedSpawns=[];
