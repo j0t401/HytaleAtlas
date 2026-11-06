@@ -2,10 +2,10 @@
 const $=id=>document.getElementById(id),canvas=$('canvas'),ctx=canvas.getContext('2d');
 const fileMode=location.protocol==='file:';
 let worker,workerFailed=false;
-try{worker=fileMode?{postMessage(){}}:new Worker('worker.js?v=0.4.1');}catch(e){workerFailed=true;worker={postMessage(){}};$('status').textContent='No se pudo iniciar el motor: '+e.message;}
+try{worker=fileMode?{postMessage(){}}:new Worker('worker.js?v=0.5.0');}catch(e){workerFailed=true;worker={postMessage(){}};$('status').textContent='No se pudo iniciar el motor: '+e.message;}
 if(fileMode){const notice=document.createElement('div');notice.className='startup-notice';notice.innerHTML='<strong>Abre el Atlas con su lanzador</strong><p>Este archivo se abrió directamente desde una carpeta. Para cargar el motor, abre <b>Iniciar Atlas.cmd</b> y mantén su ventana abierta.</p><a href="http://127.0.0.1:8766/">Abrir la dirección local del Atlas →</a>'; $('map').appendChild(notice);$('status').textContent='Hace falta abrir la dirección HTTP local';$('progress').textContent='Abre Iniciar Atlas.cmd';}
-const MIN=-2147483648,MAX=2147483647,N=64,LIMIT=180;
-let cx=0,cz=0,zoom=.18,w=0,h=0,epoch=0,initialized=false,seed='12345',tiles=new Map(),catalog=new Map(),visible=[],drawQueued=false,pointer=null,hover=0,hoverTimer,viewTimer;
+let MIN=-2147482784,MAX=2147482783;const N=64,LIMIT=180;
+let cx=0,cz=0,zoom=.18,w=0,h=0,epoch=0,initialized=false,seed='12345',tiles=new Map(),catalog=new Map(),visible=[],drawQueued=false,pointer=null,hover=0,hoverTimer,viewTimer,structures=[],fixedSpawns=[];
 const clamp=v=>Math.max(MIN,Math.min(MAX,v)),pretty=s=>s.replaceAll('_',' ');
 const url=new URLSearchParams(location.hash.slice(1));
 if(url.has('seed'))$('seed').value=url.get('seed');
@@ -19,6 +19,11 @@ function plan(){const step=2**Math.max(0,Math.ceil(Math.log2(1/(zoom*.7)))),span
 function requestView(){if(!initialized)return;visible=plan();const needed=visible.filter(t=>!tiles.has(t.key));worker.postMessage({type:'view',generation:epoch,tasks:needed});$('progress').textContent=needed.length?`${needed.length} teselas pendientes · detalle ${visible[0]?.step||1} bloques`:'Vista calculada';schedule();clearTimeout(viewTimer);viewTimer=setTimeout(saveHash,200);}
 function saveHash(){const u=new URLSearchParams({seed,version:'0.8.0-pre.4',x:Math.round(cx),z:Math.round(cz),zoom:zoom.toPrecision(7)});history.replaceState(null,'','#'+u);}
 function schedule(){if(!drawQueued){drawQueued=true;requestAnimationFrame(draw);}}
+function drawStructure(s){const x=(s.x-cx)*zoom+w/2,y=(s.z-cz)*zoom+h/2;if(x< -20||x>w+20||y< -20||y>h+20)return;ctx.save();ctx.translate(x,y);ctx.lineWidth=2;ctx.strokeStyle='#10202b';ctx.fillStyle='#f0d298';ctx.shadowColor='#0009';ctx.shadowBlur=5;
+ if(s.spawn){ctx.beginPath();ctx.moveTo(-4,12);ctx.lineTo(-4,-15);ctx.strokeStyle='#e4f4f0';ctx.stroke();ctx.fillStyle='#77e3b9';ctx.beginPath();ctx.moveTo(-3,-15);ctx.lineTo(13,-10);ctx.lineTo(-3,-4);ctx.closePath();ctx.fill();ctx.strokeStyle='#10202b';ctx.stroke();}
+ else{ctx.beginPath();ctx.moveTo(-15,-6);ctx.lineTo(0,-17);ctx.lineTo(15,-6);ctx.closePath();ctx.fill();ctx.stroke();for(const px of [-11,-3,5]){ctx.fillRect(px,-5,6,16);ctx.strokeRect(px,-5,6,16);}ctx.fillRect(-16,11,32,5);ctx.strokeRect(-16,11,32,5);}
+ ctx.shadowBlur=0;ctx.font='bold 11px Segoe UI';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#0d1721';ctx.strokeText(s.name,0,30);ctx.fillStyle='#fff1d0';ctx.fillText(s.name,0,30);ctx.restore();}
+function drawFixedMob(s){const x=(s.x-cx)*zoom+w/2,y=(s.z-cz)*zoom+h/2;if(x< -20||x>w+20||y< -20||y>h+40)return;ctx.save();ctx.translate(x,y-22);ctx.lineWidth=2;ctx.strokeStyle='#11202b';ctx.shadowColor='#000a';ctx.shadowBlur=5;ctx.fillStyle='#8e9e87';for(const r of [[-8,-9,16,9],[-10,1,20,13],[-16,2,6,12],[10,2,6,12],[-8,14,6,5],[2,14,6,5]]){ctx.fillRect(...r);ctx.strokeRect(...r);}ctx.shadowBlur=0;ctx.fillStyle='#2d4943';ctx.fillRect(-5,-6,3,2);ctx.fillRect(2,-6,3,2);ctx.fillStyle='#92f4c0';ctx.beginPath();ctx.moveTo(0,2);ctx.lineTo(5,7);ctx.lineTo(0,12);ctx.lineTo(-5,7);ctx.closePath();ctx.fill();ctx.fillStyle='#c2e7cd';ctx.beginPath();ctx.moveTo(-3,19);ctx.lineTo(3,19);ctx.lineTo(0,22);ctx.closePath();ctx.fill();ctx.restore();}
 function draw(){drawQueued=false;ctx.fillStyle='#101922';ctx.fillRect(0,0,w,h);ctx.imageSmoothingEnabled=false;
  // Retain already computed resolutions while the next level arrives.
  const ordered=[...tiles.values()].sort((a,b)=>b.step-a.step);
@@ -28,20 +33,24 @@ function draw(){drawQueued=false;ctx.fillStyle='#101922';ctx.fillRect(0,0,w,h);c
   if(selected!==''){if(t.maskId!==selected){const pixels=new Uint8ClampedArray(t.pixels);for(let i=0;i<t.ids.length;i++){if(t.ids[i]!==Number(selected)){pixels[i*4]=Math.round(pixels[i*4]*.16);pixels[i*4+1]=Math.round(pixels[i*4+1]*.16);pixels[i*4+2]=Math.round(pixels[i*4+2]*.16);}}t.mask=document.createElement('canvas');t.mask.width=t.mask.height=t.n;t.mask.getContext('2d').putImageData(new ImageData(pixels,t.n,t.n),0,0);t.maskId=selected;}image=t.mask;}
   ctx.drawImage(image,x,z,size+.2,size+.2);}
  if($('grid').checked){const spacing=2**Math.ceil(Math.log2(100/zoom));ctx.strokeStyle='#d9e8ef33';ctx.lineWidth=1;ctx.beginPath();for(let x=Math.ceil((cx-w/2/zoom)/spacing)*spacing;x<cx+w/2/zoom;x+=spacing){const px=(x-cx)*zoom+w/2;ctx.moveTo(px,0);ctx.lineTo(px,h);}for(let z=Math.ceil((cz-h/2/zoom)/spacing)*spacing;z<cz+h/2/zoom;z+=spacing){const py=(z-cz)*zoom+h/2;ctx.moveTo(0,py);ctx.lineTo(w,py);}ctx.stroke();}
+ if($('structures').checked)for(const s of structures)drawStructure(s);
+ if($('fixed-mobs').checked)for(const s of fixedSpawns)drawFixedMob(s);
  const scale=2**Math.floor(Math.log2(100/zoom));$('scale').textContent=`${scale.toLocaleString('es')} bloques`;$('scale').style.width=Math.max(40,scale*zoom)+'px';
 }
 worker.onmessage=({data:d})=>{if(d.type==='error'){$('status').textContent='Error: '+d.message;return;}if(d.generation!==epoch)return;
- if(d.type==='ready'){initialized=true;catalog=new Map(d.biomes.map(b=>[b.id,b]));const previous=$('highlight').value;$('highlight').replaceChildren(new Option('Todos los biomas',''),...d.biomes.sort((a,b)=>a.name.localeCompare(b.name)).map(b=>new Option(pretty(b.name),b.id)));$('highlight').value=previous;$('status').textContent=`V1 ${d.version} · biomas de superficie`;requestView();}
+ if(d.type==='ready'){initialized=true;MIN=d.minCoordinate;MAX=d.maxCoordinate;cx=clamp(cx);cz=clamp(cz);structures=d.structures||[];fixedSpawns=d.fixedSpawns||[];for(const id of ['x','z']){$(id).min=MIN;$(id).max=MAX;}$('structure-list').replaceChildren(...structures.map(s=>{const button=document.createElement('button');button.className='structure-link';button.textContent=`${s.spawn?'⚑':'▰'} ${s.name} · X ${s.x}, Z ${s.z}`;button.title=`Ancla de colocación: X ${s.x}, Y ${s.y}, Z ${s.z}`;button.onclick=()=>{cx=s.x;cz=s.z;zoom=Math.max(zoom,.6);$('x').value=s.x;$('z').value=s.z;requestView();};return button;}));$('mob-list').replaceChildren(...fixedSpawns.map(s=>{const button=document.createElement('button');button.className='structure-link';button.textContent='◈ Gólem del templo · Ir al punto fijo';button.title=`X ${s.x.toFixed(2)}, Z ${s.z.toFixed(2)}. Y del ancla ${s.y.toFixed(2)}; se ajusta al suelo.`;button.onclick=()=>{cx=s.x;cz=s.z;zoom=Math.max(zoom,4);$('x').value=Math.round(s.x);$('z').value=Math.round(s.z);requestView();};return button;}));catalog=new Map(d.biomes.map(b=>[b.id,b]));const previous=$('highlight').value;$('highlight').replaceChildren(new Option('Todos los biomas',''),...d.biomes.sort((a,b)=>a.name.localeCompare(b.name)).map(b=>new Option(pretty(b.name),b.id)));$('highlight').value=previous;$('status').textContent=`V1 ${d.version} · biomas, estructuras y aparición fija`;requestView();}
  if(d.type==='tile'){const image=document.createElement('canvas');image.width=d.n;image.height=d.n;image.getContext('2d').putImageData(new ImageData(d.pixels,d.n,d.n),0,0);tiles.delete(d.key);tiles.set(d.key,{...d,image});const budget=Math.max(LIMIT,visible.length),protectedKeys=new Set(visible.map(t=>t.key));while(tiles.size>budget){const key=[...tiles.keys()].find(k=>!protectedKeys.has(k));if(!key)break;tiles.delete(key);}const missing=visible.filter(t=>!tiles.has(t.key)).length;$('progress').textContent=missing?`${missing} teselas pendientes`:'Vista calculada';schedule();}
- if(d.type==='point'&&d.request===hover){$('biome').textContent=pretty(d.result.biome);$('position').textContent=`X: ${d.x.toLocaleString('es')} · Z: ${d.z.toLocaleString('es')} · ${pretty(d.result.zone)}`;}
+ if(d.type==='point'&&d.request===hover){$('biome').textContent=pretty(d.result.biome);$('position').textContent=`X: ${d.x.toLocaleString('es')} · Z: ${d.z.toLocaleString('es')} · Terreno base Y: ${d.result.height} · ${pretty(d.result.environment)}`;}
 };
 worker.onerror=e=>{$('status').textContent='No se pudo iniciar el motor: '+e.message;};
-function applySeed(){if(fileMode||workerFailed)return;try{const raw=$('seed').value.trim();if(!/^[+-]?\d{1,19}$/.test(raw))throw Error('Introduce una semilla numérica de 64 bits.');const v=BigInt(raw);if(v<-(1n<<63n)||v>=(1n<<63n))throw Error('La semilla supera el rango de 64 bits.');seed=v.toString();$('seed').value=seed;epoch++;initialized=false;tiles.clear();visible=[];hover++;$('status').textContent='Preparando semilla…';$('biome').textContent='Mueve el cursor sobre el mapa';worker.postMessage({type:'seed',generation:epoch,seed});schedule();saveHash();}catch(e){$('status').textContent=e.message;}}
+function applySeed(){if(fileMode||workerFailed)return;try{const raw=$('seed').value.trim();if(!/^[+-]?\d{1,19}$/.test(raw))throw Error('Introduce una semilla numérica de 64 bits.');const v=BigInt(raw);if(v<-(1n<<63n)||v>=(1n<<63n))throw Error('La semilla supera el rango de 64 bits.');seed=v.toString();$('seed').value=seed;epoch++;initialized=false;structures=[];fixedSpawns=[];$('structure-list').replaceChildren();$('mob-list').replaceChildren();tiles.clear();visible=[];hover++;$('status').textContent='Preparando semilla…';$('biome').textContent='Mueve el cursor sobre el mapa';worker.postMessage({type:'seed',generation:epoch,seed});schedule();saveHash();}catch(e){$('status').textContent=e.message;}}
 $('seed-form').onsubmit=e=>{e.preventDefault();applySeed();};
 $('random').onclick=()=>{const a=crypto.getRandomValues(new Uint32Array(2));$('seed').value=BigInt.asIntN(64,(BigInt(a[0])<<32n)|BigInt(a[1])).toString();applySeed();};
 $('coords').onsubmit=e=>{e.preventDefault();const x=Number($('x').value),z=Number($('z').value);if(!Number.isInteger(x)||!Number.isInteger(z)||x<MIN||x>MAX||z<MIN||z>MAX)return;cx=x;cz=z;requestView();};
 $('origin').onclick=()=>{cx=cz=0;$('x').value=$('z').value='0';requestView();};
 $('grid').onchange=schedule;
+$('structures').onchange=schedule;
+$('fixed-mobs').onchange=schedule;
 $('highlight').onchange=schedule;
 function zoomAt(factor,px=w/2,py=h/2){const before={x:cx+(px-w/2)/zoom,z:cz+(py-h/2)/zoom};zoom=Math.max(2**-24,Math.min(32,zoom*factor));cx=clamp(before.x-(px-w/2)/zoom);cz=clamp(before.z-(py-h/2)/zoom);requestView();}
 $('plus').onclick=()=>zoomAt(2);$('minus').onclick=()=>zoomAt(.5);
@@ -49,6 +58,9 @@ canvas.onwheel=e=>{e.preventDefault();const r=canvas.getBoundingClientRect();zoo
 canvas.onpointerdown=e=>{pointer={id:e.pointerId,x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId);};
 canvas.onpointerup=canvas.onpointercancel=()=>{pointer=null;};
 canvas.onpointermove=e=>{if(pointer){cx=clamp(cx-(e.clientX-pointer.x)/zoom);cz=clamp(cz-(e.clientY-pointer.y)/zoom);pointer.x=e.clientX;pointer.y=e.clientY;requestView();return;}
+ const box=canvas.getBoundingClientRect(),px=e.clientX-box.left,py=e.clientY-box.top;
+ const mob=$('fixed-mobs').checked?fixedSpawns.find(s=>Math.abs((s.x-cx)*zoom+w/2-px)<=18&&Math.abs((s.z-cz)*zoom+h/2-22-py)<=20):null;
+ if(mob){hover++;clearTimeout(hoverTimer);$('biome').textContent='Gólem de cristal de tierra · punto fijo';$('position').textContent=`X: ${mob.x.toFixed(2)} · Z: ${mob.z.toFixed(2)} · Y del ancla: ${mob.y.toFixed(2)} · ajuste vertical hasta ${mob.verticalSearch} bloques`;return;}
  const rect=canvas.getBoundingClientRect(),p=world(e.clientX-rect.left,e.clientY-rect.top);$('position').textContent=`X: ${p.x.toLocaleString('es')} · Z: ${p.z.toLocaleString('es')}`;hover++;const request=hover;clearTimeout(hoverTimer);hoverTimer=setTimeout(()=>{if(initialized)worker.postMessage({type:'point',generation:epoch,request,...p});},65);
 };
 canvas.onkeydown=e=>{const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(d){e.preventDefault();cx=clamp(cx+d[0]*150/zoom);cz=clamp(cz+d[1]*150/zoom);requestView();}};
