@@ -1,13 +1,25 @@
-# Hytale Atlas 0.7.1 experimental
+# Hytale Atlas 0.8.0 experimental
 
-Reemplaza site/, vercel.json y package.json del repositorio con los de este paquete. Vercel conserva outputDirectory: site. No se ha hecho push ni deploy. Para uso local abre Iniciar Atlas.cmd.
+Para actualizar GitHub/Vercel reemplaza site/, package.json y vercel.json con los de este paquete. El directorio de salida sigue siendo site; no requiere compilación. Para uso local abre Iniciar Atlas.cmd. No se ha hecho push ni despliegue.
 
-El motor detallado ahora está conectado: estructuras repetidas, agrupaciones de minerales y maderas, cofres reconocidos por su tipo de bloque y anclas de marcadores con un único mob elegible y sin desplazamiento horizontal aleatorio. Los iconos agrupan recursos por chunk; no representan cada bloque individual. Las condiciones del juego pueden impedir la aparición de un mob: un ancla no garantiza un mob vivo.
+## Subsuelo sin acercarse
 
-Selecciona Subsuelo y una altura Y entre0y319 para dibujar los entornos finales calculados por el motor. Cambiar altura o filtros reutiliza los datos cargados. Acerca a4x para activar la generación detallada; está disponible en cualquier coordenada y no está limitada a una región central. El cálculo es progresivo por chunks visibles, no está todo el dominio precalculado. Los chunks fuera de caché deberán calcularse de nuevo.
+Cada tesela calcula conjuntamente la superficie y las franjas de entornos subterráneos entre Y=0 y Y=319, a cualquier zoom. Selecciona Capa del mundo → Zonas subterráneas y ajusta la altura. Mostrar u ocultar la capa y cambiar Y solo vuelve a dibujar los datos guardados: no genera cuevas ni bloques completos. Los colores y la leyenda representan las zonas del subsuelo definidas por las capas del generador, no la geometría de túneles ni los entornos añadidos por decoración de cuevas.
 
-Rendimiento: los ríos ya no se calculan ni se dibujan en el mapa de superficie. Se mantiene el agua interna necesaria para reproducir los bloques del mundo detallado. El alejamiento mínimo es0.08px/bloque; siguen permitidos saltos a coordenadas lejanas. Se activa interpolación visual de alta calidad y el detalle equilibrado por defecto. El suavizado mejora la presentación, pero no añade información ni precisión a las muestras. Hay previews, cachés acotadas y cancelación al cambiar la vista.
+El mapa se calcula por teselas conforme se explora, también en coordenadas lejanas. No se precalcula todo el dominio finito en una sola operación. La caché en memoria y en IndexedDB conserva superficie y subsuelo conjuntamente. El navegador puede borrar o desalojar su almacenamiento; la persistencia es de mejor esfuerzo.
 
-Corrección0.7.1: se eliminaron las nueve diferencias conocidas. Los datos de configuración, prefabs y referencias nativas se capturaron en un mismo arranque; las propiedades de bloques se leen por índice numérico resuelto. Se compararon seis chunks tras terreno, cuevas, estructuras y agua:31.457.280campos, cero diferencias. Se incluye el chunk que fallaba. VERIFICACION-motor.json contiene el resultado y CONJUNTO-DATOS.json identifica la extracción. El worker rechaza configuración, prefabs y reglas con identificadores de extracción distintos. Esto no demuestra exactitud para todas las semillas y coordenadas: la versión sigue siendo experimental. Los iconos siguen agrupando recursos, los contenedores usan nombres de bloque y las anclas no garantizan un mob vivo.
+## Iconos, nombres y rendimiento
 
-Prueba de integración: un chunk devolvió327680valores de entorno,4grupos de recursos y27colocaciones de prefab. Sin errores del worker en esa prueba. Se comprobó la sintaxis JavaScript. No hubo inspección visual con control del PC. El motor de detalle descarga datos adicionales cuando se activa, y el primer cálculo puede tardar.
+Selector de iconos individuales con búsqueda. Los nombres de recursos y mobs se obtienen de sus nombres visibles del juego; las categorías de estructuras están en español. Al alejarse desaparecen etiquetas y después iconos secundarios, hasta dejar templos. Acercarse reutiliza los puntos conservados. La consulta regional ligera de estructuras ordinarias está separada del cálculo de bloques finales y no tiene un requisito de zoom. Las estructuras generadas por cuevas requieren todavía el motor detallado: no se garantiza que todos los templos estén disponibles mediante la consulta ligera.
+
+Activa Calcular bloques finales y anclas de mobs para recursos y colocaciones detalladas. Ese cálculo es progresivo y más costoso. Los iconos de minerales y maderas agrupan bloques por chunk; los contenedores se reconocen por nombres de bloque. Solo se consideran marcadores elegibles de un único mob sin desplazamiento horizontal aleatorio; el estado y las condiciones del juego pueden impedir su aparición. Un ancla no garantiza un mob vivo.
+
+La versión separa las consultas de terreno, estructuras regionales y bloques completos, y guarda resultados en caché. Los ríos permanecen desactivados. Hay suavizado visual, previsualizaciones y un límite de alejamiento de 0,08 píxeles por bloque. El suavizado no añade precisión a las muestras. La arquitectura pública de OrbisSeeds inspiró la separación de consultas: véase ANALISIS-Orbis.md.
+
+## Comprobaciones
+
+Subsuelo: 64 columnas nativas, 20.480 valores de entorno, cero diferencias; todas las alturas guardadas. Se probó restaurar una tesela sin recalcularla y cambiar capa/altura sin enviar generación al motor de cuevas. Estas pruebas usan Node y un doble de IndexedDB; no son un benchmark de navegador.
+
+Motor detallado: seis chunks, cuatro fases, 31.457.280 campos comparados, cero diferencias; incluye la referencia que antes tenía nueve diferencias. Consulta ligera: seis referencias de anclas sin diferencias. Los informes VERIFICACION-*.json contienen el alcance. Esto no certifica todas las semillas y coordenadas. No hubo inspección visual del despliegue en esta entrega.
+
+Perfil incluido: Hytale 0.8.0-pre.4, WorldGen V1; no se actualiza automáticamente con nuevas pre-releases. El navegador usa los datos incluidos en el sitio y no necesita archivos del juego en el PC del visitante.

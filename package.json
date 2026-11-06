@@ -1,1 +1,6 @@
-{"name": "hytale-atlas", "version": "0.7.1", "private": true, "description": "Mapa est\u00c3\u00a1tico de semillas de Hytale con vista progresiva y agua de r\u00c3\u00ados sobre terreno base"}
+{
+  "name": "hytale-atlas",
+  "version": "0.8.0",
+  "private": true,
+  "description": "Mapa de semillas de Hytale con capas subterráneas y caché de teselas"
+}
