@@ -174,6 +174,15 @@ assert.equal(
   beforeLayer,
   'Layer and height must use stored strata',
 );
+assert.equal(
+  vm.runInContext("structureType('Server/Prefabs/Npc/Kweebec/Autumn/Camps/Kweebec_Camp_001')", c),
+  'structure:kweebec-camp',
+);
+assert.equal(
+  vm.runInContext("structureType('Server/Prefabs/Dungeon/Outlander_Temple/Entrance')", c),
+  'structure:outlander-temple',
+);
+assert.equal(vm.runInContext("poiFamily({kind:'mob',key:'mob:Hedera'})", c), 'iconic');
 const report = {
   undergroundToggleUsesStoredData: true,
   noCaveWorkerForUnderground: true,

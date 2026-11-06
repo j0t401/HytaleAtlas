@@ -191,9 +191,9 @@ function installV1Terrain(Kernel) {
     }
   };
   const seed = P.setSeed;
-  P.setSeed = function (value) {
+  P.setSeed = function (value, seedState) {
     this.terrainCache?.clear();
-    return seed.call(this, value);
+    return seed.call(this, value, seedState);
   };
 }
 if (typeof module !== 'undefined') module.exports = installV1Terrain;

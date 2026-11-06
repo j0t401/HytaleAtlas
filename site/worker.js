@@ -52,6 +52,7 @@ const ready = Promise.all([
 ]).then(([raw, wasm, strataRaw]) => {
   kernel = new V1Kernel(raw, wasm.instance.exports);
   strata = new V1Strata(kernel, strataRaw);
+  raw.datasetId ??= strata.datasetId;
   minCoordinate = raw.minChunkCoord * 32;
   maxCoordinate = (raw.maxChunkCoord + 1) * 32 - 1;
   for (const b of raw.biomes) {
@@ -86,6 +87,7 @@ function metadata(type, raw, extra = {}) {
     minCoordinate,
     maxCoordinate,
     environments: strata.catalog,
+    seedState: { datasetId: strata.datasetId, seed32: kernel.seed, unique: kernel.unique },
     ...extra,
   });
 }

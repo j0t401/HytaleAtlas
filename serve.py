@@ -1,4 +1,5 @@
 """Serve Atlas locally without game files or a build step."""
+
 import argparse
 from functools import partial
 import hashlib
@@ -45,8 +46,11 @@ def existing_atlas(port):
     try:
         with urllib.request.urlopen(f"http://127.0.0.1:{port}/atlas-health", timeout=1) as response:
             record = json.loads(response.read())
-        return (record.get("app") == "hytale-atlas" and record.get("build") == BUILD
-                and record.get("root") == ROOT_ID)
+        return (
+            record.get("app") == "hytale-atlas"
+            and record.get("build") == BUILD
+            and record.get("root") == ROOT_ID
+        )
     except (OSError, ValueError):
         return False
 

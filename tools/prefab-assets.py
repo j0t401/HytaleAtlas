@@ -1,4 +1,5 @@
 """Losslessly pack/unpack the Atlas numerical prefab format (stdlib only)."""
+
 import argparse
 import hashlib
 import json
@@ -20,8 +21,8 @@ def read_prefab(directory, manifest, record):
         if payload[:4] != MAGIC:
             raise ValueError("Invalid ATPF header")
         length = struct.unpack_from("<I", payload, 4)[0]
-        metadata = json.loads(zlib.decompress(payload[8:8 + length]))
-        blocks = zlib.decompress(payload[8 + length:])
+        metadata = json.loads(zlib.decompress(payload[8 : 8 + length]))
+        blocks = zlib.decompress(payload[8 + length :])
     else:
         raise ValueError("Unsupported manifest format")
     if len(blocks) != metadata["blockCount"] * RECORD_BYTES:
@@ -40,7 +41,9 @@ def convert(source, destination, unpack=False):
     result["recordBytes"] = RECORD_BYTES
     result["compression"] = "zlib" if unpack else "zlib-segments"
     if not unpack:
-        result["container"] = "ATPF + u32le compressed metadata length + zlib UTF-8 JSON + zlib 44-byte block records"
+        result["container"] = (
+            "ATPF + u32le compressed metadata length + zlib UTF-8 JSON + zlib 44-byte block records"
+        )
     else:
         result.pop("container", None)
     destination.mkdir(parents=True, exist_ok=True)
@@ -49,12 +52,18 @@ def convert(source, destination, unpack=False):
         metadata, blocks = read_prefab(source, manifest, record)
         encoded = json.dumps(metadata, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
         encoded = zlib.compress(encoded, 9)
-        compressed_blocks = ((source / (record["data"] + ".binz")).read_bytes() if manifest["format"] == 2 else zlib.compress(blocks, 9))
+        compressed_blocks = (
+            (source / (record["data"] + ".binz")).read_bytes()
+            if manifest["format"] == 2
+            else zlib.compress(blocks, 9)
+        )
         packed = MAGIC + struct.pack("<I", len(encoded)) + encoded + compressed_blocks
         key = hashlib.sha256(packed).hexdigest()[:24]
         target = {**record, "data": key}
         if unpack:
-            (destination / (key + ".json")).write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            (destination / (key + ".json")).write_text(
+                json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+            )
             (destination / (key + ".binz")).write_bytes(zlib.compress(blocks, 6))
         else:
             (destination / (key + ".apf")).write_bytes(packed)
@@ -65,11 +74,21 @@ def convert(source, destination, unpack=False):
             raise ValueError("Round-trip mismatch: " + path)
         suffixes = (".json", ".binz") if manifest["format"] == 2 else (".apf",)
         original_bytes += sum((source / (record["data"] + ext)).stat().st_size for ext in suffixes)
-        output_bytes += sum((destination / (key + ext)).stat().st_size for ext in ((".json", ".binz") if unpack else (".apf",)))
-    (destination / "manifest.json").write_text(json.dumps(result, separators=(",", ":")), encoding="utf-8")
+        output_bytes += sum(
+            (destination / (key + ext)).stat().st_size
+            for ext in ((".json", ".binz") if unpack else (".apf",))
+        )
+    (destination / "manifest.json").write_text(
+        json.dumps(result, separators=(",", ":")), encoding="utf-8"
+    )
     if (source / "geometry.json").exists():
         shutil.copy2(source / "geometry.json", destination / "geometry.json")
-    return {"prefabs": len(result["prefabs"]), "inputBytes": original_bytes, "outputBytes": output_bytes, "roundTripErrors": 0}
+    return {
+        "prefabs": len(result["prefabs"]),
+        "inputBytes": original_bytes,
+        "outputBytes": output_bytes,
+        "roundTripErrors": 0,
+    }
 
 
 def main():

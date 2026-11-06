@@ -76,3 +76,15 @@ console.log({
   prefabFiles: Object.keys(manifest.prefabs).length,
   errors: 0,
 });
+
+const iconManifest = JSON.parse(
+  fs.readFileSync(path.join(site, 'assets/icons/manifest.json'), 'utf8'),
+);
+for (const file of new Set(Object.values(iconManifest.entries)))
+  assert(fs.existsSync(path.join(site, file)), 'Missing local icon ' + file);
+assert(fs.existsSync(path.join(site, 'engine/ore-kernel.json.gz')));
+assert(fs.existsSync(path.join(site, 'data/ore-sources.json')));
+console.log({
+  localIcons: new Set(Object.values(iconManifest.entries)).size,
+  oreGeometryAvailable: true,
+});

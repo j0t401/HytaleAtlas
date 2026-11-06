@@ -2,203 +2,334 @@
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Hytale Atlas · V1</title>
-    <link rel="stylesheet" href="style.css?v=0.10.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0d151e" />
+    <title>Hytale Atlas · Explora tu semilla</title>
+    <link rel="stylesheet" href="style.css?v=0.11.0" />
   </head>
   <body>
-    <header>
-      <a class="brand" href="#"
-        >◈ <span>HYTALE <b>ATLAS</b></span></a
-      ><span class="badge">MOTOR V1 · EXPERIMENTAL</span
-      ><span class="local">Cálculo en el navegador</span>
+    <header class="app-header">
+      <a class="brand" href="#" aria-label="Hytale Atlas"
+        ><span class="brand-mark">◈</span><span>HYTALE <b>ATLAS</b></span></a
+      >
+      <form id="seed-form" class="seed-toolbar">
+        <label class="sr-only" for="seed">Semilla del mundo</label>
+        <input
+          id="seed"
+          value="12345"
+          spellcheck="false"
+          required
+          placeholder="Semilla del mundo"
+          autocomplete="off"
+        />
+        <label class="sr-only" for="version">Versión del generador</label>
+        <select id="version" title="Perfil de generación">
+          <option>0.8.0-pre.4 · V1</option>
+        </select>
+        <button
+          type="button"
+          id="random"
+          class="icon-button"
+          title="Semilla aleatoria"
+          aria-label="Semilla aleatoria"
+        >
+          ⤨
+        </button>
+        <button class="primary" type="submit">Explorar</button>
+      </form>
+      <div class="header-actions">
+        <button id="toggle-panel" aria-controls="controls-panel" aria-expanded="true">
+          ☷ <span>Filtros</span>
+        </button>
+        <button id="share" title="Copiar enlace de la vista">Compartir</button>
+      </div>
     </header>
-    <main>
-      <aside>
-        <div class="eyebrow">EXPLORA TU SEMILLA</div>
-        <h1>Un mundo por descubrir.</h1>
-        <p class="intro">
-          Explora regiones lejanas arrastrando el mapa. Sin abrir Hytale ni cargar archivos del
-          juego.
-        </p>
-        <form id="seed-form">
-          <label for="seed">Semilla del mundo</label>
-          <div class="seed-row">
-            <input id="seed" value="12345" spellcheck="false" required /><button
-              type="button"
-              id="random"
-              title="Semilla aleatoria"
+    <main class="atlas-workspace">
+      <aside id="controls-panel" class="controls-panel" aria-label="Opciones del mapa">
+        <div class="panel-heading">
+          <div>
+            <span class="eyebrow">EXPLORA A TU MANERA</span>
+            <h1>Tu mundo, a la vista.</h1>
+          </div>
+          <button id="close-panel" class="icon-button" aria-label="Cerrar opciones">×</button>
+        </div>
+        <nav class="panel-tabs" role="tablist" aria-label="Opciones">
+          <button
+            id="tab-catalog"
+            role="tab"
+            aria-selected="true"
+            aria-controls="panel-catalog"
+            data-panel="catalog"
+            data-icon="family:structures"
+          >
+            Elementos
+          </button>
+          <button
+            id="tab-layers"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-layers"
+            data-panel="layers"
+            data-icon="layer:underground"
+          >
+            Capas
+          </button>
+          <button
+            id="tab-ores"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-ores"
+            data-panel="ores"
+            data-icon="family:ore"
+          >
+            Minerales
+          </button>
+        </nav>
+        <div class="panel-body">
+          <section id="panel-catalog" role="tabpanel" aria-labelledby="tab-catalog">
+            <label for="poi-search">Encuentra un elemento</label
+            ><input
+              id="poi-search"
+              type="search"
+              placeholder="Torio, Kweebec, Outlander…"
+              autocomplete="off"
+            />
+            <div class="filter-row">
+              <div>
+                <label for="poi-category">Categoría</label
+                ><select id="poi-category">
+                  <option value="">Todas</option>
+                  <option value="structures">Estructuras</option>
+                  <option value="kweebec">Kweebec</option>
+                  <option value="outlander">Outlanders</option>
+                  <option value="golems">Gólems</option>
+                  <option value="iconic">Mobs destacados</option>
+                  <option value="mob">Otros mobs fijos</option>
+                  <option value="wood">Maderas</option>
+                  <option value="ore">Minerales</option>
+                  <option value="chest">Cofres</option>
+                </select>
+              </div>
+              <div>
+                <label for="poi-rarity">Rareza</label
+                ><select id="poi-rarity">
+                  <option value="">Todas</option>
+                  <option value="Common">Común</option>
+                  <option value="Uncommon">Poco común</option>
+                  <option value="Rare">Rara</option>
+                  <option value="Epic">Épica</option>
+                  <option value="Legendary">Legendaria</option>
+                  <option value="Unclassified">Sin clasificar</option>
+                </select>
+              </div>
+            </div>
+            <div class="selection-actions">
+              <button id="poi-select-results" type="button">Mostrar resultados</button
+              ><button id="poi-hide-all" type="button" class="subtle">Ocultar todo</button>
+            </div>
+
+            <small id="poi-count" class="catalog-count">Cargando catálogo…</small>
+            <div id="poi-picker" class="poi-picker"></div>
+            <p id="poi-status" class="note" role="status">Preparando elementos…</p>
+            <details class="help">
+              <summary>Rarezas y puntos del mapa</summary>
+              <p>
+                Las rarezas del Atlas sirven para organizar los filtros y se pueden cambiar. No
+                representan una probabilidad medida. Los iconos seleccionados se muestran a
+                cualquier zoom.
+              </p>
+              <p>
+                Un depósito previsto o ancla de prefab indica la colocación del generador. La
+                verificación de bloques finales comprueba el resultado completo. Los mobs también
+                necesitan cumplir las condiciones del juego.
+              </p>
+            </details>
+          </section>
+          <section id="panel-layers" role="tabpanel" aria-labelledby="tab-layers" hidden>
+            <div class="section-intro">
+              <span class="eyebrow">LEE EL TERRENO</span>
+              <h2>Superficie y subsuelo</h2>
+              <p>Las capas ya calculadas se muestran sin volver a generar el mapa.</p>
+            </div>
+            <label for="stratum">Capa del mundo</label
+            ><select id="stratum">
+              <option value="surface">Superficie</option>
+              <option value="underground">Zonas subterráneas</option>
+            </select>
+            <div class="range-heading">
+              <label for="depth">Altura del subsuelo</label
+              ><span class="value-chip">Y <span id="depth-value">40</span></span>
+            </div>
+            <input id="depth" type="range" min="0" max="319" value="40" />
+            <div class="range-labels"><span>0 · profundo</span><span>319 · alto</span></div>
+            <div id="strata-legend" class="strata-legend"></div>
+            <label for="highlight">Resaltar un bioma</label
+            ><select id="highlight">
+              <option value="">Todos los biomas</option>
+            </select>
+            <label for="quality">Detalle visual</label
+            ><select id="quality">
+              <option value="3">Rápido</option>
+              <option value="2" selected>Equilibrado</option>
+              <option value="0.7">Máximo detalle</option>
+            </select>
+            <label class="switch-row"
+              ><input id="poi-labels" type="checkbox" /> Nombres en el mapa</label
             >
-              ⤨
+            <label class="switch-row"
+              ><input id="poi-cluster" type="checkbox" checked /> Agrupar depósitos solapados</label
+            >
+            <label class="switch-row" data-icon="layer:grid"
+              ><input id="grid" type="checkbox" /> Cuadrícula de coordenadas</label
+            >
+            <details class="subsection">
+              <summary>Selección rápida</summary>
+              <label class="switch-row"
+                ><input id="structures" type="checkbox" checked /> Templos de portal y spawn</label
+              >
+              <label class="switch-row"
+                ><input id="fixed-mobs" type="checkbox" /> Mobs con ancla fija</label
+              >
+              <label class="switch-row"
+                ><input id="show-structures" type="checkbox" checked /> Todas las estructuras</label
+              >
+              <label class="switch-row"
+                ><input id="show-ore" type="checkbox" /> Todos los minerales</label
+              >
+              <label class="switch-row"
+                ><input id="show-wood" type="checkbox" /> Todas las maderas</label
+              >
+              <label class="switch-row"
+                ><input id="show-chest" type="checkbox" /> Cofres y contenedores</label
+              >
+              <label class="switch-row"
+                ><input id="show-mob" type="checkbox" /> Todos los mobs fijos</label
+              >
+            </details>
+            <details class="subsection">
+              <summary>Puntos de referencia</summary>
+              <div id="structure-list"></div>
+              <div id="mob-list"></div>
+            </details>
+            <details class="subsection">
+              <summary>Precisión y verificación</summary>
+              <label class="switch-row"
+                ><input id="world-objects" type="checkbox" /> Verificar bloques finales</label
+              >
+              <p id="world-status" class="note" role="status">
+                Los depósitos previstos aparecen primero; la comprobación final es más lenta.
+              </p>
+              <p class="note">
+                El subsuelo muestra zonas por altura, no cada túnel. Los ríos de superficie están
+                desactivados. Perfil experimental: las referencias de prueba no certifican todas las
+                semillas.
+              </p>
+            </details>
+            <a id="download" class="text-button" href="#">Guardar vista PNG ↗</a>
+          </section>
+          <section id="panel-ores" role="tabpanel" aria-labelledby="tab-ores" hidden>
+            <div class="section-intro">
+              <span class="eyebrow">EXPLORA BAJO TIERRA</span>
+              <h2>Guía de minerales</h2>
+              <p>Zonas del perfil, alturas calculadas y estado de cada depósito.</p>
+            </div>
+            <label for="ore-guide-select">Mineral</label
+            ><select id="ore-guide-select">
+              <option value="">Cargando minerales…</option>
+            </select>
+            <div id="ore-guide" class="ore-guide">
+              <p class="note">Selecciona un mineral para consultar sus fuentes.</p>
+            </div>
+            <button id="ore-show" class="primary full-width" type="button">
+              Mostrar este mineral
+            </button>
+            <label class="switch-row"
+              ><input id="ore-y-enabled" type="checkbox" /> Limitar por altura Y</label
+            >
+            <div class="filter-row">
+              <div>
+                <label for="ore-y-min">Desde Y</label
+                ><input id="ore-y-min" type="number" min="0" max="319" value="0" />
+              </div>
+              <div>
+                <label for="ore-y-max">Hasta Y</label
+                ><input id="ore-y-max" type="number" min="0" max="319" value="319" />
+              </div>
+            </div>
+            <p class="note">
+              Filtrar la altura usa lo guardado. Los resultados comprobados tienen conteos y
+              posiciones por nivel; los previstos muestran el intervalo de su geometría.
+            </p>
+            <div class="result-heading">
+              <h3>Depósitos de esta vista</h3>
+              <span id="ore-result-count" class="value-chip">0</span>
+            </div>
+            <div id="ore-results" class="ore-results"></div>
+          </section>
+        </div>
+        <div class="panel-footer">
+          <span class="status-dot"></span> Atlas 0.11.0
+          <span class="muted">· Perfil V1 experimental</span>
+        </div>
+      </aside>
+      <section id="map" aria-label="Mapa del mundo">
+        <canvas
+          id="canvas"
+          tabindex="0"
+          aria-label="Arrastra para explorar, usa la rueda para acercar o las flechas para desplazarte"
+        ></canvas>
+        <div class="map-top"><span id="status" role="status">Preparando tu mundo…</span></div>
+        <div class="map-tools" aria-label="Controles del mapa">
+          <button id="plus" title="Acercar" aria-label="Acercar">+</button
+          ><button id="minus" title="Alejar" aria-label="Alejar">−</button
+          ><button id="open-coords" title="Ir a coordenadas" aria-label="Ir a coordenadas">⌖</button
+          ><button id="origin" title="Volver al origen" aria-label="Volver a X 0, Z 0">⌂</button>
+        </div>
+        <div id="coords-popover" class="coords-popover" hidden>
+          <div class="popover-heading">
+            <strong>Ir a coordenadas</strong
+            ><button id="close-coords" class="icon-button" aria-label="Cerrar coordenadas">
+              ×
             </button>
           </div>
-          <label for="version">Versión del generador</label
-          ><select id="version">
-            <option>0.8.0-pre.4 · WorldGen V1</option></select
-          ><button class="primary" type="submit">Explorar semilla <span>→</span></button>
-        </form>
-        <div class="section">
-          <div class="eyebrow">CAPAS DEL MAPA</div>
-          <label class="layer"
-            ><input type="checkbox" checked disabled /> Biomas de superficie
-            <span class="live">ACTIVO</span></label
-          ><label for="highlight">Resaltar un bioma · instantáneo</label
-          ><select id="highlight">
-            <option value="">Todos los biomas</option></select
-          ><label for="quality">Detalle del mapa</label
-          ><select id="quality">
-            <option value="3">Rápido · recomendado</option>
-            <option value="2" selected>Equilibrado</option>
-            <option value="0.7">Máximo detalle</option></select
-          ><label class="layer"
-            ><input id="structures" type="checkbox" checked /> Templos de portal y spawn</label
-          >
-          <div id="structure-list"></div>
-          <label class="layer"
-            ><input id="fixed-mobs" type="checkbox" checked /> Apariciones fijas de mobs</label
-          >
-          <div id="mob-list"></div>
-          <label class="layer"><input id="grid" type="checkbox" /> Cuadrícula de coordenadas</label>
-          <p class="note">
-            Se incluye el ancla fija X/Z del gólem del templo. Su altura de aparición se ajusta al
-            suelo. El motor detallado se activa en el panel inferior.
-          </p>
-        </div>
-        <div class="section">
-          <label for="poi-search">Elementos del mapa · selecciona sus iconos</label
-          ><input id="poi-search" placeholder="Buscar templo, cobre, roble, mob…" /><label
-            for="poi-category"
-            >Categoría</label
-          ><select id="poi-category">
-            <option value="">Todas las categorías</option>
-            <option value="structures">Estructuras</option>
-            <option value="golems">Gólems</option>
-            <option value="mob">Otros mobs fijos</option>
-            <option value="wood">Maderas</option>
-            <option value="ore">Minerales</option>
-            <option value="chest">Cofres y contenedores</option></select
-          ><label for="poi-rarity">Rareza del Atlas</label
-          ><select id="poi-rarity">
-            <option value="">Todas las rarezas</option>
-            <option value="Common">Común</option>
-            <option value="Uncommon">Poco común</option>
-            <option value="Rare">Rara</option>
-            <option value="Epic">Épica</option>
-            <option value="Legendary">Legendaria</option>
-            <option value="Unclassified">Sin clasificar</option>
-          </select>
-          <p class="note">
-            Clasificación orientativa y editable para organizar el catálogo; no mide la probabilidad
-            de aparición. Cada elemento permite cambiar su categoría de rareza.
-          </p>
-          <div class="poi-actions">
-            <button id="poi-select-results" type="button">Mostrar resultados</button
-            ><button id="poi-hide-all" type="button">Ocultar todo</button>
-          </div>
-          <label class="layer"
-            ><input id="poi-labels" type="checkbox" /> Mostrar nombres en el mapa</label
-          ><small id="poi-count">Cargando catálogo…</small>
-          <div id="poi-picker"></div>
-          <p id="poi-status" class="note">Elementos seleccionados visibles en cualquier zoom.</p>
-          <label for="stratum">Capa del mundo</label
-          ><select id="stratum">
-            <option value="surface">Superficie</option>
-            <option value="underground">Zonas subterráneas · altura elegida</option></select
-          ><label for="depth">Altura Y: <span id="depth-value">40</span></label>
-          <p class="note">
-            Las zonas subterráneas se calculan con la superficie, a cualquier zoom. Cambiar altura o
-            visibilidad reutiliza las franjas guardadas; no genera cuevas.
-          </p>
-          <div id="strata-legend"></div>
-          <input id="depth" type="range" min="0" max="319" value="40" /><label class="layer"
-            ><input id="world-objects" type="checkbox" /> Verificar con bloques finales (más
-            lento)</label
-          ><label class="layer"
-            ><input id="show-structures" type="checkbox" checked /> Todas las estructuras</label
-          ><label class="layer"><input id="show-ore" type="checkbox" checked /> Minerales</label
-          ><label class="layer"><input id="show-wood" type="checkbox" checked /> Maderas</label
-          ><label class="layer"
-            ><input id="show-chest" type="checkbox" checked /> Cofres y contenedores</label
-          ><label class="layer"
-            ><input id="show-mob" type="checkbox" checked /> Anclas de mobs fijos</label
-          >
-          <p id="world-status" class="note">
-            Cofres, maderas y mobs consultan primero las anclas de sus prefabs. La verificación
-            completa comprueba los bloques finales y es más lenta. Los minerales del terreno activan
-            ese cálculo porque no dependen solo de estructuras.
-          </p>
-          <p class="note">
-            Motor experimental: seis chunks completos contrastados sin diferencias. Los iconos
-            agrupan bloques del mismo recurso por chunk. Las anclas de mobs requieren además las
-            condiciones de aparición del juego.
-          </p>
-        </div>
-        <div class="section">
-          <label>Ir a coordenadas</label>
           <form id="coords">
-            <input
+            <label class="sr-only" for="x">Coordenada X</label
+            ><input
               id="x"
               aria-label="Coordenada X"
               placeholder="X"
               type="number"
               value="0"
-              min="-2147483648"
-              max="2147483647"
               required
-            /><input
+            /><label class="sr-only" for="z">Coordenada Z</label
+            ><input
               id="z"
               aria-label="Coordenada Z"
               placeholder="Z"
               type="number"
               value="0"
-              min="-2147483648"
-              max="2147483647"
               required
-            /><button title="Ir">→</button>
+            /><button class="primary" type="submit">Ir</button>
           </form>
-          <button id="origin" class="text-button">Volver a X: 0, Z: 0</button>
         </div>
-        <details>
-          <summary>Alcance y precisión</summary>
-          <p>
-            El subsuelo muestra las zonas geográficas definidas por altura. La geometría de las
-            cuevas queda fuera de esta capa. Los ríos están desactivados para reducir el coste de
-            carga.
-          </p>
-          <p>
-            No hay un cuadrado de escaneo central. Cada vista solicita nuevos cálculos; al alejarte
-            se toman muestras más espaciadas.
-          </p>
-          <p>
-            Límite del generador V1 instalado: X/Z de −2.147.482.784 a 2.147.482.783. La exactitud
-            del port en los extremos aún no está verificada.
-          </p>
-          <p>
-            Alturas y entornos de superficie comprobados en 900 puntos de cinco semillas, hasta 30
-            millones de bloques. La altura es la del terreno base, antes de estructuras y cuevas.
-            Las estructuras únicas muestran su ancla de colocación, no la posición del jugador.
-          </p>
-          <p>Se conserva la semilla de 64 bits; este generador utiliza sus 32 bits inferiores.</p>
-        </details>
-        <a id="download" href="#" class="text-button">Guardar vista PNG ↗</a
-        ><small>Prototipo independiente. Sin afiliación con Hypixel Studios.</small>
-      </aside>
-      <section id="map" aria-label="Mapa de biomas">
-        <canvas
-          id="canvas"
-          tabindex="0"
-          aria-label="Arrastra para explorar; usa la rueda para acercar"
-        ></canvas>
-        <div class="map-top">
-          <span id="status">Cargando mapa rápido…</span><button id="share">Copiar enlace</button>
-        </div>
-        <div class="zoom">
-          <button id="plus" aria-label="Acercar">+</button
-          ><button id="minus" aria-label="Alejar">−</button>
-        </div>
+        <section id="point-details" class="point-card" aria-label="Detalle del punto" hidden>
+          <div class="point-card-heading">
+            <img id="point-icon" width="40" height="40" alt="" />
+            <div>
+              <span id="point-category" class="eyebrow"></span>
+              <h2 id="point-name">Elemento</h2>
+            </div>
+            <button id="close-point" class="icon-button" aria-label="Cerrar detalle">×</button>
+          </div>
+          <div id="point-state" class="point-state"></div>
+          <div id="point-information"></div>
+          <div class="selection-actions">
+            <button id="point-depth" type="button">Ver esta altura</button
+            ><button id="point-copy" type="button" class="subtle">Copiar X / Y / Z</button>
+          </div>
+        </section>
         <div id="inspect">
-          <span class="eyebrow">BAJO EL CURSOR</span
-          ><strong id="biome">Mueve el cursor sobre el mapa</strong
+          <span class="eyebrow">BAJO EL CURSOR</span><strong id="biome">Explora el mapa</strong
           ><span id="position">X: 0 · Z: 0</span>
         </div>
         <div class="map-bottom">
@@ -206,10 +337,12 @@
         </div>
       </section>
     </main>
-    <script src="engine/strata.js?v=0.10.0" defer></script>
-    <script src="app.js?v=0.10.0" defer></script>
-    <script src="integration.js?v=0.10.0" defer></script>
-    <script src="poi-labels.js?v=0.10.0" defer></script>
-    <script src="points-ui.js?v=0.10.0" defer></script>
+    <script src="engine/strata.js?v=0.11.0" defer></script>
+    <script src="app.js?v=0.11.0" defer></script>
+    <script src="integration.js?v=0.11.0" defer></script>
+    <script src="poi-labels.js?v=0.11.0" defer></script>
+    <script src="icon-art.js?v=0.11.0" defer></script>
+    <script src="points-ui.js?v=0.11.0" defer></script>
+    <script src="ui.js?v=0.11.0" defer></script>
   </body>
 </html>

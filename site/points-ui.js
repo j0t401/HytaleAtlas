@@ -47,10 +47,15 @@ function poiColor(key) {
   return `hsl(${(h >>> 0) % 360} 66% 63%)`;
 }
 function poiSprite(kind, key) {
-  const id = kind + '/' + key;
+  const rarity = selectedRarity(poiTypes.get(key) || { key, kind });
+  const id = kind + '/' + key + '/' + rarity;
   if (poiSprites.has(id)) return poiSprites.get(id);
   const c = document.createElement('canvas');
   c.width = c.height = 64;
+  if (typeof AtlasIconArt !== 'undefined' && AtlasIconArt.render(c, kind, key, rarity)) {
+    poiSprites.set(id, c);
+    return c;
+  }
   const g = c.getContext('2d');
   g.scale(2, 2);
   g.fillStyle = '#10212fee';
@@ -193,6 +198,13 @@ function poiSprite(kind, key) {
     for (const x of [8, 15, 22]) g.fillRect(x, 14, 3, 11);
     g.fillRect(5, 26, 23, 3);
   }
+  if (typeof AtlasIconArt !== 'undefined') {
+    g.strokeStyle = AtlasIconArt.rarityColor(rarity);
+    g.lineWidth = 1.5;
+    g.beginPath();
+    g.arc(16, 16, 15, 0, Math.PI * 2);
+    g.stroke();
+  }
   poiSprites.set(id, c);
   return c;
 }
@@ -207,10 +219,15 @@ function selectedRarity(t) {
   return poiRarityOverrides[t.key] || atlasRarity(t);
 }
 function paintPOI(p) {
+  if (p.kind === 'ore' && typeof projectOrePoint === 'function') {
+    p = projectOrePoint(p);
+    if (!p) return;
+  }
   let key = poiKey(p);
   if (key === 'unique:portal') key = 'structure:portal';
   if (key.startsWith('container:')) key = 'container:all';
   if (!poiSelected.has(key)) return;
+  if (p.kind === 'ore' && typeof orePointVisible === 'function' && !orePointVisible(p)) return;
   const t = poiTypes.get(key),
     kind = p.kind || t?.kind || 'structures',
     x = (p.x - cx) * zoom + w / 2,
@@ -221,6 +238,15 @@ function paintPOI(p) {
   paintedPointIds.add(id);
   poiHitTargets.push({ key, p, x, z });
   ctx.drawImage(poiSprite(kind, key), x - 12, z - 12, 24, 24);
+  if (p.clusterCount > 1) {
+    const text =
+      p.clusterCount > 999 ? (p.clusterCount / 1000).toFixed(1) + 'k' : String(p.clusterCount);
+    ctx.font = 'bold 9px Segoe UI';
+    ctx.fillStyle = '#10212f';
+    ctx.fillRect(x + 2, z - 18, Math.max(15, text.length * 6 + 5), 13);
+    ctx.fillStyle = '#e8f5ff';
+    ctx.fillText(text, x + 5, z - 8);
+  }
   if ($('poi-labels').checked) {
     const label = t?.name || p.name || 'Elemento';
     ctx.font = '11px Segoe UI';
@@ -254,7 +280,11 @@ function drawSelectedPOIs() {
   }
   const underground = $('stratum').value === 'underground';
   const depth = Number($('depth').value);
-  for (const point of poiRenderOrder.points) {
+  const displayPoints =
+    typeof prepareMapPoints === 'function'
+      ? prepareMapPoints(poiRenderOrder.points)
+      : poiRenderOrder.points;
+  for (const point of displayPoints) {
     if (
       underground &&
       (point.minY !== undefined
@@ -290,6 +320,7 @@ function togglePoiTypes(types, on) {
     }
   syncPoiGroups();
   renderPoiPicker();
+  if (typeof updateOreGuide === 'function') updateOreGuide();
   schedule();
   queueIntegration();
 }
@@ -322,9 +353,15 @@ function createPoiChoice(t) {
     t.available === false
       ? 'Sin marcador fijo en WorldGen V1 de este perfil'
       : t.description || t.name;
-  const icon = document.createElement('canvas');
+  const file = typeof AtlasIconArt !== 'undefined' ? AtlasIconArt.url(t.key, t.kind) : null;
+  const icon = document.createElement(file ? 'img' : 'canvas');
   icon.width = icon.height = 32;
-  icon.getContext('2d').drawImage(poiSprite(t.kind, t.key), 0, 0, 32, 32);
+  if (file) {
+    icon.src = file;
+    icon.alt = '';
+    icon.loading = 'lazy';
+    icon.className = 'item-art rarity-' + selectedRarity(t);
+  } else icon.getContext('2d').drawImage(poiSprite(t.kind, t.key), 0, 0, 32, 32);
   const label = document.createElement('span');
   label.textContent = t.name + (t.available === false ? ' · sin ancla fija' : '');
   button.append(icon, label);
@@ -356,6 +393,16 @@ function poiGroup(id, title, types, forcedOpen, build) {
   const summary = document.createElement('summary');
   const selected = types.filter((t) => poiSelected.has(t.key)).length;
   summary.textContent = title + ' · ' + selected + '/' + types.length;
+  if (id.startsWith('family/') && typeof AtlasIconArt !== 'undefined') {
+    const file = AtlasIconArt.url('family:' + id.slice(7));
+    if (file) {
+      const img = document.createElement('img');
+      img.src = file;
+      img.alt = '';
+      img.width = img.height = 24;
+      summary.prepend(img);
+    }
+  }
   group.append(summary);
   let built = false;
   const populate = () => {
@@ -417,7 +464,7 @@ function renderPoiPicker() {
 function queryPOIs() {
   if (!initialized) return;
   if (!poiWorker) {
-    poiWorker = new Worker('poi-worker.js?v=0.10.0');
+    poiWorker = new Worker('poi-worker.js?v=0.11.0');
     poiWorker.onmessage = ({ data: d }) => {
       if (d.type === 'catalog') {
         for (const t of d.types) {
@@ -427,18 +474,29 @@ function queryPOIs() {
         poiCatalogReady = true;
         syncPoiGroups();
         renderPoiPicker();
+        if (typeof populateOreGuide === 'function') populateOreGuide();
         queryPOIs();
         return;
       }
       if (d.type === 'error') {
         $('poi-status').textContent = d.message;
+        $('status').textContent = 'Consulta incompleta: ' + d.message;
         return;
       }
       if (d.generation !== epoch) return;
-      for (const p of d.points)
+      for (const p of d.points) {
+        if (
+          p.source === 'ore-deposit' &&
+          worldChunks.has(seed + '/' + Math.floor(p.x / 32) + '/' + Math.floor(p.z / 32))
+        )
+          continue;
         poiPoints.set(seed + '/' + p.key + '/' + p.x + '/' + p.y + '/' + p.z, p);
+      }
       poiDataRevision++;
       prunePOIs();
+      if (typeof updateOreGuide === 'function') updateOreGuide();
+      if (d.points.some((p) => p.kind === 'ore') && $('world-objects').checked)
+        oldQueueIntegration();
       $('poi-status').textContent =
         `${poiPoints.size} anclas en caché · las de prefab se verifican con bloques finales`;
       schedule();
@@ -469,6 +527,7 @@ function queryPOIs() {
   );
   poiWorker.postMessage({
     seed,
+    seedState: climateSeedState,
     generation: epoch,
     revision: ++poiRevision,
     types,
@@ -516,6 +575,7 @@ $('poi-hide-all').onclick = () => {
   $('world-objects').checked = false;
   syncPoiGroups();
   renderPoiPicker();
+  if (typeof updateOreGuide === 'function') updateOreGuide();
   schedule();
   queueIntegration();
 };
@@ -540,6 +600,14 @@ for (const [id, kind] of [
   };
 
 function rememberWorldPOIs(c) {
+  for (const [id, p] of poiPoints)
+    if (
+      id.startsWith(seed + '/') &&
+      p.source === 'ore-deposit' &&
+      Math.floor(p.x / 32) === c.chunkX &&
+      Math.floor(p.z / 32) === c.chunkZ
+    )
+      poiPoints.delete(id);
   for (const g of c.groups) {
     const p = {
       ...g,
@@ -562,19 +630,10 @@ function rememberWorldPOIs(c) {
       source: 'final-blocks',
     });
   }
-  for (const s of c.structures) {
-    if (s.name === 'Spawn') continue;
-    if (!s.path || !/Monuments|Dungeon|Temple|Mineshaft/.test(s.path)) continue;
-    const key = s.name === 'Temple' ? 'structure:portal' : structureType(s.path);
-    poiPoints.set(seed + '/' + key + '/' + s.x + '/' + s.y + '/' + s.z, {
-      ...s,
-      key,
-      kind: 'structures',
-      name: readableStructure(key),
-    });
-  }
+  // Structural overview markers come from the regional pass, not individual dungeon rooms.
   poiDataRevision++;
   prunePOIs();
+  if (typeof updateOreGuide === 'function') updateOreGuide();
 }
 
 const previousPoiPointer = canvas.onpointermove;

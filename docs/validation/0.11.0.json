@@ -1,0 +1,77 @@
+{
+  "atlasVersion": "0.11.0",
+  "date": "2026-11-06",
+  "nativeProfile": "0.8.0-pre.4 / WorldGen V1",
+  "scope": "Local Node/Python tests and live browser viewport checks; not a Vercel performance benchmark or physical-device test.",
+  "quickSuites": 12,
+  "javascriptSyntaxFiles": 50,
+  "pythonBlackFiles": 5,
+  "nativeWorldChunks": 6,
+  "nativeWorldPhaseHashes": 24,
+  "nativeFieldsRepresented": 31457280,
+  "nativeWorldErrors": 0,
+  "nativeThoriumGeometryPointsInTestRegion": 447,
+  "thoriumGeometryRequiresVoxelGeneration": false,
+  "oreHeightFilterUsesActualBlockCoordinates": true,
+  "oreHeightFilterRegeneratesWorld": false,
+  "sharedValidatedSeedState": true,
+  "regionalParentCacheReused": true,
+  "localIconFiles": 115,
+  "iconMappedKeys": 127,
+  "iconBytes": 942393,
+  "oreGeometryGzipBytes": 38579,
+  "httpFilesChecked": 8,
+  "browserConsoleWarningsOrErrors": 0,
+  "browserConfirmedThoriumExample": {
+    "seed": 12345,
+    "x": 185,
+    "y": 50,
+    "z": 5186
+  },
+  "responsiveViewports": [
+    {
+      "width": 320,
+      "height": 740,
+      "documentWidth": 320,
+      "headerOverlaps": 0,
+      "headerControlsInside": true,
+      "panelOverflow": false
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "documentWidth": 390,
+      "headerOverlaps": 0,
+      "headerControlsInside": true,
+      "panelOverflow": false
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "documentWidth": 768,
+      "headerOverlaps": 0,
+      "headerControlsInside": true,
+      "panelOverflow": false
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "documentWidth": 1024,
+      "headerOverlaps": 0,
+      "headerControlsInside": true,
+      "panelOverflow": false
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "documentWidth": 1920,
+      "headerOverlaps": 0,
+      "headerControlsInside": true,
+      "panelOverflow": false
+    }
+  ],
+  "errors": 0,
+  "browserTabClosed": true,
+  "httpServerClosed": true,
+  "gitDiffWhitespaceErrors": 0
+}

@@ -16,24 +16,6 @@ function requestIntegration() {
     if (worldWorker) worldWorker.postMessage({ seed, generation: epoch, chunks: [] });
     return;
   }
-  if (!worldWorker) {
-    worldWorker = new Worker('world-worker.js?v=0.10.0');
-    worldWorker.onmessage = ({ data: d }) => {
-      if (d.type === 'error') {
-        $('world-status').textContent = 'Error del motor detallado: ' + d.message;
-        return;
-      }
-      if (d.generation !== epoch) return;
-      worldChunks.set(seed + '/' + d.chunkX + '/' + d.chunkZ, d);
-      detailedDone.add(d.chunkX + '/' + d.chunkZ);
-      if (typeof rememberWorldPOIs === 'function') rememberWorldPOIs(d);
-      if (detailedPending > 0 && --detailedPending === 0) queueIntegration();
-      while (worldChunks.size > 192) worldChunks.delete(worldChunks.keys().next().value);
-      $('world-status').textContent = `${worldChunks.size} chunks en caché · cálculo progresivo`;
-      schedule();
-    };
-    worldWorker.onerror = (e) => ($('world-status').textContent = e.message);
-  }
   const minX = Math.floor((cx - w / 2 / zoom) / 32),
     maxX = Math.floor((cx + w / 2 / zoom) / 32),
     minZ = Math.floor((cz - h / 2 / zoom) / 32),
@@ -48,7 +30,24 @@ function requestIntegration() {
     centerX = Math.floor(cx / 32),
     centerZ = Math.floor(cz / 32),
     maxRadius = Math.max(centerX - minX, maxX - centerX, centerZ - minZ, maxZ - centerZ);
+  const selectedOres =
+    typeof poiSelected === 'undefined' ? [] : [...poiSelected].filter((k) => k.startsWith('ore:'));
+  const oreOnly =
+    selectedOres.length &&
+    selectedOres.every((key) => {
+      const g = poiTypes.get(key)?.oreGuide;
+      return g && (g.depositZones.length || g.prefabZones.length);
+    }) &&
+    !['wood', 'chest', 'mob'].some((kind) =>
+      [...poiSelected].some((key) => poiTypes.get(key)?.kind === kind),
+    );
+  const oreChunks = new Set();
+  if (oreOnly)
+    for (const [id, p] of poiPoints)
+      if (id.startsWith(seed + '/') && selectedOres.includes(p.key))
+        oreChunks.add(Math.floor(p.x / 32) + '/' + Math.floor(p.z / 32));
   const add = (x, z) => {
+    if (oreOnly && !oreChunks.has(x + '/' + z)) return;
     if (
       batch.length >= 64 ||
       x < minX ||
@@ -61,22 +60,60 @@ function requestIntegration() {
       return;
     batch.push([x, z]);
   };
-  for (let r = 0; r <= maxRadius && batch.length < 64; r++) {
-    if (r === 0) {
-      add(centerX, centerZ);
-      continue;
+  if (oreOnly) {
+    for (const key of [...oreChunks].sort((a, b) => {
+      const [ax, az] = a.split('/').map(Number),
+        [bx, bz] = b.split('/').map(Number);
+      return (ax - centerX) ** 2 + (az - centerZ) ** 2 - (bx - centerX) ** 2 - (bz - centerZ) ** 2;
+    })) {
+      const [x, z] = key.split('/').map(Number);
+      add(x, z);
     }
-    for (let d = -r; d <= r && batch.length < 64; d++) {
-      add(centerX + d, centerZ - r);
-      add(centerX + d, centerZ + r);
-    }
-    for (let d = -r + 1; d < r && batch.length < 64; d++) {
-      add(centerX - r, centerZ + d);
-      add(centerX + r, centerZ + d);
+  } else {
+    for (let r = 0; r <= maxRadius && batch.length < 64; r++) {
+      if (r === 0) {
+        add(centerX, centerZ);
+        continue;
+      }
+      for (let d = -r; d <= r && batch.length < 64; d++) {
+        add(centerX + d, centerZ - r);
+        add(centerX + d, centerZ + r);
+      }
+      for (let d = -r + 1; d < r && batch.length < 64; d++) {
+        add(centerX - r, centerZ + d);
+        add(centerX + r, centerZ + d);
+      }
     }
   }
+  if (!batch.length) {
+    detailedPending = 0;
+    if (worldWorker) worldWorker.postMessage({ seed, generation: epoch, chunks: [] });
+    $('world-status').textContent = oreOnly
+      ? 'Esperando depósitos seleccionados o datos ya verificados'
+      : 'Detalle disponible en caché';
+    return;
+  }
+  if (!worldWorker) {
+    worldWorker = new Worker('world-worker.js?v=0.11.0');
+    worldWorker.onmessage = ({ data: d }) => {
+      if (d.type === 'error') {
+        $('world-status').textContent = 'Error del motor detallado: ' + d.message;
+        $('status').textContent = 'No se pudo verificar: ' + d.message;
+        return;
+      }
+      if (d.generation !== epoch) return;
+      worldChunks.set(seed + '/' + d.chunkX + '/' + d.chunkZ, d);
+      detailedDone.add(d.chunkX + '/' + d.chunkZ);
+      if (typeof rememberWorldPOIs === 'function') rememberWorldPOIs(d);
+      if (detailedPending > 0 && --detailedPending === 0) queueIntegration();
+      while (worldChunks.size > 192) worldChunks.delete(worldChunks.keys().next().value);
+      $('world-status').textContent = `${worldChunks.size} chunks en caché · cálculo progresivo`;
+      schedule();
+    };
+    worldWorker.onerror = (e) => ($('world-status').textContent = e.message);
+  }
   detailedPending = batch.length;
-  worldWorker.postMessage({ seed, generation: epoch, chunks: batch });
+  worldWorker.postMessage({ seed, seedState: climateSeedState, generation: epoch, chunks: batch });
   $('world-status').textContent = batch.length
     ? `Verificando ${batch.length} chunks · ${Math.max(0, total - detailedDone.size)} pendientes de esta vista`
     : 'Detalle disponible en caché';
@@ -94,13 +131,6 @@ function drawIntegration() {
     const x = (chunk.chunkX * 32 - cx) * zoom + w / 2;
     const z = (chunk.chunkZ * 32 - cz) * zoom + h / 2;
     if (x > w || z > h || x + 32 * zoom < 0 || z + 32 * zoom < 0) continue;
-    if ($('show-structures').checked) {
-      for (const structure of chunk.structures) {
-        if (structure.name === 'Temple' || structure.name === 'Spawn') continue;
-        if (/Monuments|Dungeon|Temple|Klops|Mineshaft|Treasure|Scarak/.test(structure.path))
-          paint({ ...structure, kind: 'structures' });
-      }
-    }
     for (const group of chunk.groups) {
       const kind = group.kind === 'wood' ? 'wood' : group.kind === 'ore' ? 'ore' : 'chest';
       if (!$('show-' + kind).checked || (underground && (depth < group.minY || depth > group.maxY)))

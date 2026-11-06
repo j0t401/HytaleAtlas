@@ -20,7 +20,7 @@ El servidor sirve archivos estáticos y no calcula mapas. Los workers leen perfi
 
 ## Interfaz
 
-`index.html` carga scripts clásicos con `defer`. `app.js` define la cámara, Canvas, semilla, teselas y planificación; `integration.js` conecta las verificaciones; `poi-labels.js` define nombres, familias y rarezas; `points-ui.js` añade selección, iconos y consultas. Mantén ese orden si cambias la estructura. Los workers usan `importScripts` y los módulos del motor exponen clases globales, además de exportaciones CommonJS para las pruebas de Node.
+`index.html` carga scripts clásicos con `defer`. `app.js` define la cámara, Canvas, semilla, teselas y planificación; `integration.js` conecta las verificaciones; `poi-labels.js` define nombres, familias y rarezas; `icon-art.js` gestiona PNG locales y marcos; `points-ui.js` añade selección, iconos y consultas; `ui.js` organiza pestañas, panel móvil, detalle de puntos y proyección por alturas. Mantén ese orden si cambias la estructura. Los workers usan `importScripts` y los módulos del motor exponen clases globales, además de exportaciones CommonJS para las pruebas de Node.
 
 Las categorías se construyen con `details/summary`. `poiGroup` conserva qué grupos se han abierto durante la sesión y crea sus hijos al expandirlos. La búsqueda o un filtro explícito abre los resultados. Plegar una categoría no oculta los puntos seleccionados del mapa.
 
@@ -56,3 +56,15 @@ El orden es terreno → cuevas y decoraciones → prefabs superficiales y único
 | Prefabs            | Identificador ligado al contenido, con límite de memoria en bytes.                        |
 
 El navegador puede borrar IndexedDB por su política de almacenamiento. Cambiar un filtro reutiliza lo disponible, pero un lugar/tipo nuevo o una caché desalojada puede requerir cálculo. Cambia los prefijos de versión si modificas la semántica de los datos guardados. Los perfiles detallados rechazan extracciones con `datasetId` incompatibles.
+
+## Minerales y alturas
+
+`tools/build-ore-profile.cjs` extrae las fuentes de relleno mineral del perfil nativo y crea `data/ore-sources.json` y `engine/ore-kernel.json.gz`. Esta proyección conserva los generadores y condiciones de los siete tipos de depósito identificados, sin salas ni buffers de bloques. `ore-deposits.js` emite primero puntos de geometría previstos. Son diferentes de los bloques finales confirmados: las máscaras, otras fases y el terreno pueden alterar el resultado.
+
+La ruta completa resume conteos y una posición de bloque por altura para cada mineral/chunk. `projectOrePoint` filtra esos datos y escoge coordenadas reales de la altura solicitada. Los huecos entre niveles ocupados no se presentan como bloques existentes. El desglose de alturas se puede desplegar en el detalle del punto.
+
+El worker del mapa comparte las posiciones climáticas que ya calculó. `setSeed` solo acepta ese estado si coinciden semilla de 32 bits, `datasetId`, zonas, radios y colores; si no, vuelve a la búsqueda normal. No se sustituyen los cálculos por una aproximación.
+
+Las regiones pequeñas pueden heredar puntos y tipos ya completados de su región padre para evitar repetir las estructuras al activar un mineral. Las estructuras de cuevas se agrupan por complejo/tipo. Las decoraciones se calculan solo cuando pueden aportar los tipos solicitados, y se conservan para selecciones posteriores.
+
+La agrupación visual de minerales usa celdas alineadas al mundo, conserva todos sus miembros y puede desactivarse a cualquier zoom. Los filtros de altura y esta agrupación solo procesan datos guardados; no programan generación nueva.

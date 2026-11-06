@@ -5,11 +5,12 @@ const $ = (id) => document.getElementById(id),
   canvas = $('canvas'),
   ctx = canvas.getContext('2d');
 const fileMode = location.protocol === 'file:';
-let strataCatalog = {};
+let strataCatalog = {},
+  climateSeedState = null;
 let worker,
   workerFailed = false;
 try {
-  worker = fileMode ? { postMessage() {} } : new Worker('worker.js?v=0.10.0');
+  worker = fileMode ? { postMessage() {} } : new Worker('worker.js?v=0.11.0');
 } catch (e) {
   workerFailed = true;
   worker = { postMessage() {} };
@@ -101,6 +102,7 @@ function requestView() {
     ? `${needed.length} teselas pendientes · detalle ${visible[0]?.step || 1} bloques`
     : 'Vista calculada';
   schedule();
+  if (typeof updateOreGuide === 'function') updateOreGuide();
   clearTimeout(viewTimer);
   viewTimer = setTimeout(saveHash, 200);
 }
@@ -244,6 +246,7 @@ worker.onmessage = ({ data: d }) => {
   if (d.generation !== epoch) return;
   if (d.type === 'ready' || d.type === 'details') {
     if (d.environments) strataCatalog = d.environments;
+    if (d.seedState) climateSeedState = d.seedState;
     initialized = true;
     MIN = d.minCoordinate;
     MAX = d.maxCoordinate;
@@ -346,6 +349,7 @@ function applySeed() {
     $('seed').value = seed;
     epoch++;
     initialized = false;
+    climateSeedState = null;
     structures = [];
     fixedSpawns = [];
     $('structure-list').replaceChildren();

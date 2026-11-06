@@ -59,3 +59,14 @@ Si modificas un prefab o reglas de marcadores/recursos, regenera el índice y ej
 El repositorio contiene el perfil numérico utilizable y herramientas para transformar sus datos. No incluye un extractor completo de nuevas instalaciones ni una actualización automática de versiones. Una actualización requiere una captura coherente de configuración, IDs resueltos, límites, buffers y referencias nativas; después hay que generar las proyecciones ligeras y validar las fases. No basta con cambiar el texto de la versión en la interfaz.
 
 Mantén un mismo `datasetId` dentro de una extracción. Consulta [THIRD_PARTY](../THIRD_PARTY.md) para distinguir el código original de los datos derivados.
+
+## Perfil de minerales e iconos
+
+```sh
+npm run build:ore-profile
+python tools/import-icons.py /ruta/a/la/carpeta/de/iconos
+```
+
+El perfil de minerales se deriva de los datos numéricos incluidos: identifica depósitos de relleno y fuentes de prefab, y genera una proyección mínima de geometría. Los intervalos Y se obtienen de cada depósito calculado, no de tablas de Minecraft. Los resultados finales conservan `heightCounts` y `levelPositions` para filtrar capas sin volver a calcular bloques.
+
+Los PNG se deduplican con SHA-256 y se publican con nombres derivados de su contenido. `assets/icons/manifest.json` relaciona esos archivos con tipos y familias; la interfaz añade tamaños y bordes uniformes. Solo se cargan los recursos que necesita la vista. Consulta `THIRD_PARTY.md` para su procedencia y exclusión de la licencia MIT del código.

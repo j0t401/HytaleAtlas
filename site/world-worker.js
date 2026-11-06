@@ -119,12 +119,21 @@ function summarize(chunk) {
         y: Math.floor(i / 1024),
         z: chunk.chunkZ * 32 + (Math.floor(i / 32) % 32),
         count: 0,
+        ...(r.kind === 'ore' ? { heightCounts: {}, levelPositions: {} } : {}),
         minY: 319,
         maxY: 0,
       };
       groups.set(r.key, g);
     }
     g.count++;
+    if (g.heightCounts) {
+      const y = Math.floor(i / 1024);
+      g.heightCounts[y] = (g.heightCounts[y] || 0) + 1;
+      g.levelPositions[y] ??= [
+        chunk.chunkX * 32 + (i % 32),
+        chunk.chunkZ * 32 + (Math.floor(i / 32) % 32),
+      ];
+    }
     g.minY = Math.min(g.minY, Math.floor(i / 1024));
     g.maxY = Math.max(g.maxY, Math.floor(i / 1024));
   }
@@ -165,13 +174,13 @@ async function pump() {
       const view = latest;
       latest = null;
       if (seed !== view.seed) {
-        engine.k.setSeed(view.seed);
+        engine.k.setSeed(view.seed, view.seedState);
         seed = view.seed;
         cache.clear();
       }
       for (const [x, z] of view.chunks) {
         if (latest) break;
-        const key = 'summary-v2/' + engine.k.raw.datasetId + '/' + seed + '/' + x + '/' + z;
+        const key = 'summary-v3/' + engine.k.raw.datasetId + '/' + seed + '/' + x + '/' + z;
         let result = cache.get(key) || (await cachedChunk(key));
         if (!result) {
           result = summarize(await engine.world.generate(x, z));

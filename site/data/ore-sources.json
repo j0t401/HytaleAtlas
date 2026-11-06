@@ -1,0 +1,2384 @@
+{
+  "datasetId": "c49f3f51d3d85e57cbe4555a6294b79bfd49bde4c145bde9b324efa3b46a9b3a",
+  "sources": [
+    {
+      "zone": "Oceans",
+      "typeIndex": 1,
+      "name": "Copper",
+      "maximumSize": 2,
+      "nodeOres": {
+        "ChildCaveType#3": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#7": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#11": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Oceans",
+      "typeIndex": 2,
+      "name": "Iron",
+      "maximumSize": 5,
+      "nodeOres": {
+        "ChildCaveType#13": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#15": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone1_Shallow_Ocean",
+      "typeIndex": 0,
+      "name": "Copper",
+      "maximumSize": 2,
+      "nodeOres": {
+        "ChildCaveType#19": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#23": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#27": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone1_Shallow_Ocean",
+      "typeIndex": 1,
+      "name": "Iron",
+      "maximumSize": 5,
+      "nodeOres": {
+        "ChildCaveType#29": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#31": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone1_Shallow_Ocean",
+      "typeIndex": 2,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#34": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#36": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#38": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone1_Shallow_Ocean",
+      "typeIndex": 3,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#40": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone1_Shore",
+      "typeIndex": 0,
+      "name": "Copper",
+      "maximumSize": 2,
+      "nodeOres": {
+        "ChildCaveType#44": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#48": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#52": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone1_Shore",
+      "typeIndex": 1,
+      "name": "Iron",
+      "maximumSize": 5,
+      "nodeOres": {
+        "ChildCaveType#54": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#56": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone1_Shore",
+      "typeIndex": 2,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#59": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#61": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#63": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone1_Shore",
+      "typeIndex": 3,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#65": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone1_Spawn",
+      "typeIndex": 3,
+      "name": "Copper",
+      "maximumSize": 2,
+      "nodeOres": {
+        "ChildCaveType#69": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#73": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#77": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone1_Spawn",
+      "typeIndex": 4,
+      "name": "Iron",
+      "maximumSize": 5,
+      "nodeOres": {
+        "ChildCaveType#79": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#81": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone1_Spawn",
+      "typeIndex": 5,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#84": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#86": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#88": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone1_Spawn",
+      "typeIndex": 6,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#90": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone1_Temple",
+      "typeIndex": 3,
+      "name": "Copper",
+      "maximumSize": 2,
+      "nodeOres": {
+        "ChildCaveType#94": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#98": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#102": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone1_Temple",
+      "typeIndex": 4,
+      "name": "Iron",
+      "maximumSize": 5,
+      "nodeOres": {
+        "ChildCaveType#104": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#106": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone1_Temple",
+      "typeIndex": 5,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#109": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#111": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#113": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone1_Temple",
+      "typeIndex": 6,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#115": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone1_Tier1",
+      "typeIndex": 10,
+      "name": "Copper",
+      "maximumSize": 2,
+      "nodeOres": {
+        "ChildCaveType#119": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#123": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#127": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone1_Tier1",
+      "typeIndex": 11,
+      "name": "Iron",
+      "maximumSize": 5,
+      "nodeOres": {
+        "ChildCaveType#129": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#131": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone1_Tier1",
+      "typeIndex": 12,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#134": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#136": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#138": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone1_Tier1",
+      "typeIndex": 13,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#140": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone1_Tier2",
+      "typeIndex": 10,
+      "name": "Copper",
+      "maximumSize": 2,
+      "nodeOres": {
+        "ChildCaveType#145": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#149": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#153": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone1_Tier2",
+      "typeIndex": 11,
+      "name": "Iron",
+      "maximumSize": 5,
+      "nodeOres": {
+        "ChildCaveType#155": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#157": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone1_Tier2",
+      "typeIndex": 12,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#160": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#162": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#164": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone1_Tier2",
+      "typeIndex": 13,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#166": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone1_Tier3",
+      "typeIndex": 10,
+      "name": "Copper",
+      "maximumSize": 2,
+      "nodeOres": {
+        "ChildCaveType#171": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#175": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#179": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone1_Tier3",
+      "typeIndex": 11,
+      "name": "Iron",
+      "maximumSize": 5,
+      "nodeOres": {
+        "ChildCaveType#181": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#183": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone1_Tier3",
+      "typeIndex": 12,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#186": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#188": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#190": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone1_Tier3",
+      "typeIndex": 13,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#192": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone2_Shallow_Ocean",
+      "typeIndex": 0,
+      "name": "Copper",
+      "maximumSize": 6,
+      "nodeOres": {
+        "ChildCaveType#197": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#201": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#205": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone2_Shallow_Ocean",
+      "typeIndex": 1,
+      "name": "Iron",
+      "maximumSize": 6,
+      "nodeOres": {
+        "ChildCaveType#207": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#209": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone2_Shallow_Ocean",
+      "typeIndex": 2,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#210": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone2_Shallow_Ocean",
+      "typeIndex": 3,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#213": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#215": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#217": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone2_Shallow_Ocean",
+      "typeIndex": 4,
+      "name": "Thorium",
+      "maximumSize": 8,
+      "nodeOres": {
+        "ChildCaveType#221": [
+          "ore:Thorium"
+        ],
+        "ChildCaveType#222": [
+          "ore:Thorium"
+        ]
+      },
+      "keys": [
+        "ore:Thorium"
+      ]
+    },
+    {
+      "zone": "Zone2_Shore",
+      "typeIndex": 0,
+      "name": "Copper",
+      "maximumSize": 6,
+      "nodeOres": {
+        "ChildCaveType#226": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#230": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#234": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone2_Shore",
+      "typeIndex": 1,
+      "name": "Iron",
+      "maximumSize": 6,
+      "nodeOres": {
+        "ChildCaveType#236": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#238": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone2_Shore",
+      "typeIndex": 2,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#239": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone2_Shore",
+      "typeIndex": 3,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#242": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#244": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#246": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone2_Shore",
+      "typeIndex": 4,
+      "name": "Thorium",
+      "maximumSize": 8,
+      "nodeOres": {
+        "ChildCaveType#250": [
+          "ore:Thorium"
+        ],
+        "ChildCaveType#251": [
+          "ore:Thorium"
+        ]
+      },
+      "keys": [
+        "ore:Thorium"
+      ]
+    },
+    {
+      "zone": "Zone2_Tier1",
+      "typeIndex": 10,
+      "name": "Copper",
+      "maximumSize": 6,
+      "nodeOres": {
+        "ChildCaveType#255": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#259": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#263": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone2_Tier1",
+      "typeIndex": 11,
+      "name": "Iron",
+      "maximumSize": 6,
+      "nodeOres": {
+        "ChildCaveType#265": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#267": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone2_Tier1",
+      "typeIndex": 12,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#268": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone2_Tier1",
+      "typeIndex": 13,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#271": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#273": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#275": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone2_Tier1",
+      "typeIndex": 14,
+      "name": "Thorium",
+      "maximumSize": 8,
+      "nodeOres": {
+        "ChildCaveType#279": [
+          "ore:Thorium"
+        ],
+        "ChildCaveType#280": [
+          "ore:Thorium"
+        ]
+      },
+      "keys": [
+        "ore:Thorium"
+      ]
+    },
+    {
+      "zone": "Zone2_Tier2",
+      "typeIndex": 10,
+      "name": "Copper",
+      "maximumSize": 6,
+      "nodeOres": {
+        "ChildCaveType#285": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#289": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#293": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone2_Tier2",
+      "typeIndex": 11,
+      "name": "Iron",
+      "maximumSize": 6,
+      "nodeOres": {
+        "ChildCaveType#295": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#297": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone2_Tier2",
+      "typeIndex": 12,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#298": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone2_Tier2",
+      "typeIndex": 13,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#301": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#303": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#305": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone2_Tier2",
+      "typeIndex": 14,
+      "name": "Thorium",
+      "maximumSize": 8,
+      "nodeOres": {
+        "ChildCaveType#309": [
+          "ore:Thorium"
+        ],
+        "ChildCaveType#310": [
+          "ore:Thorium"
+        ]
+      },
+      "keys": [
+        "ore:Thorium"
+      ]
+    },
+    {
+      "zone": "Zone2_Tier3",
+      "typeIndex": 10,
+      "name": "Copper",
+      "maximumSize": 6,
+      "nodeOres": {
+        "ChildCaveType#315": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#319": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#323": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone2_Tier3",
+      "typeIndex": 11,
+      "name": "Iron",
+      "maximumSize": 6,
+      "nodeOres": {
+        "ChildCaveType#325": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#327": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone2_Tier3",
+      "typeIndex": 12,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#328": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone2_Tier3",
+      "typeIndex": 13,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#331": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#333": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#335": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone2_Tier3",
+      "typeIndex": 14,
+      "name": "Thorium",
+      "maximumSize": 8,
+      "nodeOres": {
+        "ChildCaveType#339": [
+          "ore:Thorium"
+        ],
+        "ChildCaveType#340": [
+          "ore:Thorium"
+        ]
+      },
+      "keys": [
+        "ore:Thorium"
+      ]
+    },
+    {
+      "zone": "Zone3_Shallow_Ocean_Tier1",
+      "typeIndex": 0,
+      "name": "Copper",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#345": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#349": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#353": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone3_Shallow_Ocean_Tier1",
+      "typeIndex": 1,
+      "name": "Iron",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#355": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#357": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone3_Shallow_Ocean_Tier1",
+      "typeIndex": 2,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#358": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone3_Shallow_Ocean_Tier1",
+      "typeIndex": 3,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#361": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#363": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#365": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone3_Shallow_Ocean_Tier1",
+      "typeIndex": 4,
+      "name": "Cobalt",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#368": [
+          "ore:Cobalt"
+        ],
+        "ChildCaveType#370": [
+          "ore:Cobalt"
+        ]
+      },
+      "keys": [
+        "ore:Cobalt"
+      ]
+    },
+    {
+      "zone": "Zone3_Shallow_Ocean_Tier2",
+      "typeIndex": 0,
+      "name": "Copper",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#374": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#378": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#382": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone3_Shallow_Ocean_Tier2",
+      "typeIndex": 1,
+      "name": "Iron",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#384": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#386": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone3_Shallow_Ocean_Tier2",
+      "typeIndex": 2,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#387": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone3_Shallow_Ocean_Tier2",
+      "typeIndex": 3,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#390": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#392": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#394": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone3_Shallow_Ocean_Tier2",
+      "typeIndex": 4,
+      "name": "Cobalt",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#397": [
+          "ore:Cobalt"
+        ],
+        "ChildCaveType#399": [
+          "ore:Cobalt"
+        ]
+      },
+      "keys": [
+        "ore:Cobalt"
+      ]
+    },
+    {
+      "zone": "Zone3_Shallow_Ocean_Tier3",
+      "typeIndex": 0,
+      "name": "Copper",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#403": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#407": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#411": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone3_Shallow_Ocean_Tier3",
+      "typeIndex": 1,
+      "name": "Iron",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#413": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#415": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone3_Shallow_Ocean_Tier3",
+      "typeIndex": 2,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#416": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone3_Shallow_Ocean_Tier3",
+      "typeIndex": 3,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#419": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#421": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#423": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone3_Shallow_Ocean_Tier3",
+      "typeIndex": 4,
+      "name": "Cobalt",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#426": [
+          "ore:Cobalt"
+        ],
+        "ChildCaveType#428": [
+          "ore:Cobalt"
+        ]
+      },
+      "keys": [
+        "ore:Cobalt"
+      ]
+    },
+    {
+      "zone": "Zone3_Shore_Tier1",
+      "typeIndex": 0,
+      "name": "Copper",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#432": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#436": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#440": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone3_Shore_Tier1",
+      "typeIndex": 1,
+      "name": "Iron",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#442": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#444": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone3_Shore_Tier1",
+      "typeIndex": 2,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#445": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone3_Shore_Tier1",
+      "typeIndex": 3,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#448": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#450": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#452": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone3_Shore_Tier1",
+      "typeIndex": 4,
+      "name": "Cobalt",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#455": [
+          "ore:Cobalt"
+        ],
+        "ChildCaveType#457": [
+          "ore:Cobalt"
+        ]
+      },
+      "keys": [
+        "ore:Cobalt"
+      ]
+    },
+    {
+      "zone": "Zone3_Shore_Tier2",
+      "typeIndex": 0,
+      "name": "Copper",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#461": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#465": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#469": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone3_Shore_Tier2",
+      "typeIndex": 1,
+      "name": "Iron",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#471": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#473": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone3_Shore_Tier2",
+      "typeIndex": 2,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#474": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone3_Shore_Tier2",
+      "typeIndex": 3,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#477": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#479": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#481": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone3_Shore_Tier2",
+      "typeIndex": 4,
+      "name": "Cobalt",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#484": [
+          "ore:Cobalt"
+        ],
+        "ChildCaveType#486": [
+          "ore:Cobalt"
+        ]
+      },
+      "keys": [
+        "ore:Cobalt"
+      ]
+    },
+    {
+      "zone": "Zone3_Shore_Tier3",
+      "typeIndex": 0,
+      "name": "Copper",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#490": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#494": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#498": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone3_Shore_Tier3",
+      "typeIndex": 1,
+      "name": "Iron",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#500": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#502": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone3_Shore_Tier3",
+      "typeIndex": 2,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#503": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone3_Shore_Tier3",
+      "typeIndex": 3,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#506": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#508": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#510": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone3_Shore_Tier3",
+      "typeIndex": 4,
+      "name": "Cobalt",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#513": [
+          "ore:Cobalt"
+        ],
+        "ChildCaveType#515": [
+          "ore:Cobalt"
+        ]
+      },
+      "keys": [
+        "ore:Cobalt"
+      ]
+    },
+    {
+      "zone": "Zone3_Tier1",
+      "typeIndex": 7,
+      "name": "Copper",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#519": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#523": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#527": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone3_Tier1",
+      "typeIndex": 8,
+      "name": "Iron",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#529": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#531": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone3_Tier1",
+      "typeIndex": 9,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#532": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone3_Tier1",
+      "typeIndex": 10,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#535": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#537": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#539": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone3_Tier1",
+      "typeIndex": 11,
+      "name": "Cobalt",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#542": [
+          "ore:Cobalt"
+        ],
+        "ChildCaveType#544": [
+          "ore:Cobalt"
+        ]
+      },
+      "keys": [
+        "ore:Cobalt"
+      ]
+    },
+    {
+      "zone": "Zone3_Tier2",
+      "typeIndex": 7,
+      "name": "Copper",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#549": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#553": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#557": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone3_Tier2",
+      "typeIndex": 8,
+      "name": "Iron",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#559": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#561": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone3_Tier2",
+      "typeIndex": 9,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#562": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone3_Tier2",
+      "typeIndex": 10,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#565": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#567": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#569": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone3_Tier2",
+      "typeIndex": 11,
+      "name": "Cobalt",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#572": [
+          "ore:Cobalt"
+        ],
+        "ChildCaveType#574": [
+          "ore:Cobalt"
+        ]
+      },
+      "keys": [
+        "ore:Cobalt"
+      ]
+    },
+    {
+      "zone": "Zone3_Tier3",
+      "typeIndex": 8,
+      "name": "Copper",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#579": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#583": [
+          "ore:Copper"
+        ],
+        "ChildCaveType#587": [
+          "ore:Copper"
+        ]
+      },
+      "keys": [
+        "ore:Copper"
+      ]
+    },
+    {
+      "zone": "Zone3_Tier3",
+      "typeIndex": 9,
+      "name": "Iron",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#589": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#591": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone3_Tier3",
+      "typeIndex": 10,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#592": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone3_Tier3",
+      "typeIndex": 11,
+      "name": "Gold",
+      "maximumSize": 33,
+      "nodeOres": {
+        "ChildCaveType#595": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#597": [
+          "ore:Gold"
+        ],
+        "ChildCaveType#599": [
+          "ore:Gold"
+        ]
+      },
+      "keys": [
+        "ore:Gold"
+      ]
+    },
+    {
+      "zone": "Zone3_Tier3",
+      "typeIndex": 12,
+      "name": "Cobalt",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#602": [
+          "ore:Cobalt"
+        ],
+        "ChildCaveType#604": [
+          "ore:Cobalt"
+        ]
+      },
+      "keys": [
+        "ore:Cobalt"
+      ]
+    },
+    {
+      "zone": "Zone4_Shallow_Ocean_Tier4",
+      "typeIndex": 0,
+      "name": "Iron",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#607": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#609": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone4_Shallow_Ocean_Tier4",
+      "typeIndex": 1,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#610": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone4_Shallow_Ocean_Tier4",
+      "typeIndex": 2,
+      "name": "Adamantite",
+      "maximumSize": 13,
+      "nodeOres": {
+        "ChildCaveType#612": [
+          "ore:Adamantite"
+        ],
+        "ChildCaveType#614": [
+          "ore:Adamantite"
+        ]
+      },
+      "keys": [
+        "ore:Adamantite"
+      ]
+    },
+    {
+      "zone": "Zone4_Shallow_Ocean_Tier5",
+      "typeIndex": 0,
+      "name": "Iron",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#616": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#618": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone4_Shallow_Ocean_Tier5",
+      "typeIndex": 1,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#619": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone4_Shallow_Ocean_Tier5",
+      "typeIndex": 2,
+      "name": "Adamantite",
+      "maximumSize": 13,
+      "nodeOres": {
+        "ChildCaveType#621": [
+          "ore:Adamantite"
+        ],
+        "ChildCaveType#623": [
+          "ore:Adamantite"
+        ]
+      },
+      "keys": [
+        "ore:Adamantite"
+      ]
+    },
+    {
+      "zone": "Zone4_Shore_Tier4",
+      "typeIndex": 0,
+      "name": "Iron",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#625": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#627": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone4_Shore_Tier4",
+      "typeIndex": 1,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#628": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone4_Shore_Tier4",
+      "typeIndex": 2,
+      "name": "Adamantite",
+      "maximumSize": 13,
+      "nodeOres": {
+        "ChildCaveType#630": [
+          "ore:Adamantite"
+        ],
+        "ChildCaveType#632": [
+          "ore:Adamantite"
+        ]
+      },
+      "keys": [
+        "ore:Adamantite"
+      ]
+    },
+    {
+      "zone": "Zone4_Shore_Tier5",
+      "typeIndex": 0,
+      "name": "Iron",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#634": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#636": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone4_Shore_Tier5",
+      "typeIndex": 1,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#637": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone4_Shore_Tier5",
+      "typeIndex": 2,
+      "name": "Adamantite",
+      "maximumSize": 13,
+      "nodeOres": {
+        "ChildCaveType#639": [
+          "ore:Adamantite"
+        ],
+        "ChildCaveType#641": [
+          "ore:Adamantite"
+        ]
+      },
+      "keys": [
+        "ore:Adamantite"
+      ]
+    },
+    {
+      "zone": "Zone4_Tier4",
+      "typeIndex": 8,
+      "name": "Iron",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#643": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#645": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone4_Tier4",
+      "typeIndex": 9,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#646": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone4_Tier4",
+      "typeIndex": 10,
+      "name": "Adamantite",
+      "maximumSize": 13,
+      "nodeOres": {
+        "ChildCaveType#648": [
+          "ore:Adamantite"
+        ],
+        "ChildCaveType#650": [
+          "ore:Adamantite"
+        ]
+      },
+      "keys": [
+        "ore:Adamantite"
+      ]
+    },
+    {
+      "zone": "Zone4_Tier5",
+      "typeIndex": 5,
+      "name": "Iron",
+      "maximumSize": 10,
+      "nodeOres": {
+        "ChildCaveType#652": [
+          "ore:Iron"
+        ],
+        "ChildCaveType#654": [
+          "ore:Iron"
+        ]
+      },
+      "keys": [
+        "ore:Iron"
+      ]
+    },
+    {
+      "zone": "Zone4_Tier5",
+      "typeIndex": 6,
+      "name": "Silver",
+      "maximumSize": 80,
+      "nodeOres": {
+        "ChildCaveType#655": [
+          "ore:Silver"
+        ]
+      },
+      "keys": [
+        "ore:Silver"
+      ]
+    },
+    {
+      "zone": "Zone4_Tier5",
+      "typeIndex": 7,
+      "name": "Adamantite",
+      "maximumSize": 13,
+      "nodeOres": {
+        "ChildCaveType#657": [
+          "ore:Adamantite"
+        ],
+        "ChildCaveType#659": [
+          "ore:Adamantite"
+        ]
+      },
+      "keys": [
+        "ore:Adamantite"
+      ]
+    }
+  ],
+  "ores": [
+    {
+      "key": "ore:Silver",
+      "name": "Silver Ore",
+      "zones": [
+        "Zone1_Shallow_Ocean",
+        "Zone1_Shore",
+        "Zone1_Spawn",
+        "Zone1_Temple",
+        "Zone1_Tier1",
+        "Zone1_Tier2",
+        "Zone1_Tier3",
+        "Zone2_Shallow_Ocean",
+        "Zone2_Shore",
+        "Zone2_Tier1",
+        "Zone2_Tier2",
+        "Zone2_Tier3",
+        "Zone3_Shallow_Ocean_Tier1",
+        "Zone3_Shallow_Ocean_Tier2",
+        "Zone3_Shallow_Ocean_Tier3",
+        "Zone3_Shore_Tier1",
+        "Zone3_Shore_Tier2",
+        "Zone3_Shore_Tier3",
+        "Zone3_Tier1",
+        "Zone3_Tier2",
+        "Zone3_Tier3",
+        "Zone4_Shallow_Ocean_Tier4",
+        "Zone4_Shallow_Ocean_Tier5",
+        "Zone4_Shore_Tier4",
+        "Zone4_Shore_Tier5",
+        "Zone4_Tier4",
+        "Zone4_Tier5"
+      ],
+      "depositZones": [
+        "Zone1_Shallow_Ocean",
+        "Zone1_Shore",
+        "Zone1_Spawn",
+        "Zone1_Temple",
+        "Zone1_Tier1",
+        "Zone1_Tier2",
+        "Zone1_Tier3",
+        "Zone2_Shallow_Ocean",
+        "Zone2_Shore",
+        "Zone2_Tier1",
+        "Zone2_Tier2",
+        "Zone2_Tier3",
+        "Zone3_Shallow_Ocean_Tier1",
+        "Zone3_Shallow_Ocean_Tier2",
+        "Zone3_Shallow_Ocean_Tier3",
+        "Zone3_Shore_Tier1",
+        "Zone3_Shore_Tier2",
+        "Zone3_Shore_Tier3",
+        "Zone3_Tier1",
+        "Zone3_Tier2",
+        "Zone3_Tier3",
+        "Zone4_Shallow_Ocean_Tier4",
+        "Zone4_Shallow_Ocean_Tier5",
+        "Zone4_Shore_Tier4",
+        "Zone4_Shore_Tier5",
+        "Zone4_Tier4",
+        "Zone4_Tier5"
+      ],
+      "prefabZones": []
+    },
+    {
+      "key": "ore:Gold",
+      "name": "Gold Ore",
+      "zones": [
+        "Zone1_Shallow_Ocean",
+        "Zone1_Shore",
+        "Zone1_Spawn",
+        "Zone1_Temple",
+        "Zone1_Tier1",
+        "Zone1_Tier2",
+        "Zone1_Tier3",
+        "Zone2_Shallow_Ocean",
+        "Zone2_Shore",
+        "Zone2_Tier1",
+        "Zone2_Tier2",
+        "Zone2_Tier3",
+        "Zone3_Shallow_Ocean_Tier1",
+        "Zone3_Shallow_Ocean_Tier2",
+        "Zone3_Shallow_Ocean_Tier3",
+        "Zone3_Shore_Tier1",
+        "Zone3_Shore_Tier2",
+        "Zone3_Shore_Tier3",
+        "Zone3_Tier1",
+        "Zone3_Tier2",
+        "Zone3_Tier3"
+      ],
+      "depositZones": [
+        "Zone1_Shallow_Ocean",
+        "Zone1_Shore",
+        "Zone1_Spawn",
+        "Zone1_Temple",
+        "Zone1_Tier1",
+        "Zone1_Tier2",
+        "Zone1_Tier3",
+        "Zone2_Shallow_Ocean",
+        "Zone2_Shore",
+        "Zone2_Tier1",
+        "Zone2_Tier2",
+        "Zone2_Tier3",
+        "Zone3_Shallow_Ocean_Tier1",
+        "Zone3_Shallow_Ocean_Tier2",
+        "Zone3_Shallow_Ocean_Tier3",
+        "Zone3_Shore_Tier1",
+        "Zone3_Shore_Tier2",
+        "Zone3_Shore_Tier3",
+        "Zone3_Tier1",
+        "Zone3_Tier2",
+        "Zone3_Tier3"
+      ],
+      "prefabZones": []
+    },
+    {
+      "key": "ore:Thorium",
+      "name": "Thorium Ore",
+      "zones": [
+        "Zone2_Shallow_Ocean",
+        "Zone2_Shore",
+        "Zone2_Tier1",
+        "Zone2_Tier2",
+        "Zone2_Tier3"
+      ],
+      "depositZones": [
+        "Zone2_Shallow_Ocean",
+        "Zone2_Shore",
+        "Zone2_Tier1",
+        "Zone2_Tier2",
+        "Zone2_Tier3"
+      ],
+      "prefabZones": []
+    },
+    {
+      "key": "ore:Adamantite",
+      "name": "Adamantite Ore",
+      "zones": [
+        "Zone4_Shallow_Ocean_Tier4",
+        "Zone4_Shallow_Ocean_Tier5",
+        "Zone4_Shore_Tier4",
+        "Zone4_Shore_Tier5",
+        "Zone4_Tier4",
+        "Zone4_Tier5"
+      ],
+      "depositZones": [
+        "Zone4_Shallow_Ocean_Tier4",
+        "Zone4_Shallow_Ocean_Tier5",
+        "Zone4_Shore_Tier4",
+        "Zone4_Shore_Tier5",
+        "Zone4_Tier4",
+        "Zone4_Tier5"
+      ],
+      "prefabZones": [
+        "Zone4_Tier4",
+        "Zone4_Tier5"
+      ]
+    },
+    {
+      "key": "ore:Iron",
+      "name": "Iron Ore",
+      "zones": [
+        "Oceans",
+        "Zone1_Shallow_Ocean",
+        "Zone1_Shore",
+        "Zone1_Spawn",
+        "Zone1_Temple",
+        "Zone1_Tier1",
+        "Zone1_Tier2",
+        "Zone1_Tier3",
+        "Zone2_Shallow_Ocean",
+        "Zone2_Shore",
+        "Zone2_Tier1",
+        "Zone2_Tier2",
+        "Zone2_Tier3",
+        "Zone3_Shallow_Ocean_Tier1",
+        "Zone3_Shallow_Ocean_Tier2",
+        "Zone3_Shallow_Ocean_Tier3",
+        "Zone3_Shore_Tier1",
+        "Zone3_Shore_Tier2",
+        "Zone3_Shore_Tier3",
+        "Zone3_Tier1",
+        "Zone3_Tier2",
+        "Zone3_Tier3",
+        "Zone4_Shallow_Ocean_Tier4",
+        "Zone4_Shallow_Ocean_Tier5",
+        "Zone4_Shore_Tier4",
+        "Zone4_Shore_Tier5",
+        "Zone4_Tier4",
+        "Zone4_Tier5"
+      ],
+      "depositZones": [
+        "Oceans",
+        "Zone1_Shallow_Ocean",
+        "Zone1_Shore",
+        "Zone1_Spawn",
+        "Zone1_Temple",
+        "Zone1_Tier1",
+        "Zone1_Tier2",
+        "Zone1_Tier3",
+        "Zone2_Shallow_Ocean",
+        "Zone2_Shore",
+        "Zone2_Tier1",
+        "Zone2_Tier2",
+        "Zone2_Tier3",
+        "Zone3_Shallow_Ocean_Tier1",
+        "Zone3_Shallow_Ocean_Tier2",
+        "Zone3_Shallow_Ocean_Tier3",
+        "Zone3_Shore_Tier1",
+        "Zone3_Shore_Tier2",
+        "Zone3_Shore_Tier3",
+        "Zone3_Tier1",
+        "Zone3_Tier2",
+        "Zone3_Tier3",
+        "Zone4_Shallow_Ocean_Tier4",
+        "Zone4_Shallow_Ocean_Tier5",
+        "Zone4_Shore_Tier4",
+        "Zone4_Shore_Tier5",
+        "Zone4_Tier4",
+        "Zone4_Tier5"
+      ],
+      "prefabZones": [
+        "Zone4_Tier5"
+      ]
+    },
+    {
+      "key": "ore:Copper",
+      "name": "Copper Ore",
+      "zones": [
+        "Oceans",
+        "Zone1_Shallow_Ocean",
+        "Zone1_Shore",
+        "Zone1_Spawn",
+        "Zone1_Temple",
+        "Zone1_Tier1",
+        "Zone1_Tier2",
+        "Zone1_Tier3",
+        "Zone2_Shallow_Ocean",
+        "Zone2_Shore",
+        "Zone2_Tier1",
+        "Zone2_Tier2",
+        "Zone2_Tier3",
+        "Zone3_Shallow_Ocean_Tier1",
+        "Zone3_Shallow_Ocean_Tier2",
+        "Zone3_Shallow_Ocean_Tier3",
+        "Zone3_Shore_Tier1",
+        "Zone3_Shore_Tier2",
+        "Zone3_Shore_Tier3",
+        "Zone3_Tier1",
+        "Zone3_Tier2",
+        "Zone3_Tier3",
+        "Zone4_Tier5"
+      ],
+      "depositZones": [
+        "Oceans",
+        "Zone1_Shallow_Ocean",
+        "Zone1_Shore",
+        "Zone1_Spawn",
+        "Zone1_Temple",
+        "Zone1_Tier1",
+        "Zone1_Tier2",
+        "Zone1_Tier3",
+        "Zone2_Shallow_Ocean",
+        "Zone2_Shore",
+        "Zone2_Tier1",
+        "Zone2_Tier2",
+        "Zone2_Tier3",
+        "Zone3_Shallow_Ocean_Tier1",
+        "Zone3_Shallow_Ocean_Tier2",
+        "Zone3_Shallow_Ocean_Tier3",
+        "Zone3_Shore_Tier1",
+        "Zone3_Shore_Tier2",
+        "Zone3_Shore_Tier3",
+        "Zone3_Tier1",
+        "Zone3_Tier2",
+        "Zone3_Tier3"
+      ],
+      "prefabZones": [
+        "Zone3_Tier2",
+        "Zone3_Tier3",
+        "Zone4_Tier5"
+      ]
+    },
+    {
+      "key": "ore:Mithril",
+      "name": "Mithril Ore",
+      "zones": [],
+      "depositZones": [],
+      "prefabZones": []
+    },
+    {
+      "key": "ore:Cobalt",
+      "name": "Cobalt Ore",
+      "zones": [
+        "Zone3_Shallow_Ocean_Tier1",
+        "Zone3_Shallow_Ocean_Tier2",
+        "Zone3_Shallow_Ocean_Tier3",
+        "Zone3_Shore_Tier1",
+        "Zone3_Shore_Tier2",
+        "Zone3_Shore_Tier3",
+        "Zone3_Tier1",
+        "Zone3_Tier2",
+        "Zone3_Tier3",
+        "Zone4_Tier4",
+        "Zone4_Tier5"
+      ],
+      "depositZones": [
+        "Zone3_Shallow_Ocean_Tier1",
+        "Zone3_Shallow_Ocean_Tier2",
+        "Zone3_Shallow_Ocean_Tier3",
+        "Zone3_Shore_Tier1",
+        "Zone3_Shore_Tier2",
+        "Zone3_Shore_Tier3",
+        "Zone3_Tier1",
+        "Zone3_Tier2",
+        "Zone3_Tier3"
+      ],
+      "prefabZones": [
+        "Zone4_Tier4",
+        "Zone4_Tier5"
+      ]
+    }
+  ],
+  "meaning": "Native filling geometry gives provisional deposit anchors, not confirmed final blocks. Height ranges are computed per deposit, not copied from Minecraft.",
+  "revision": "62273f5cbefd62542d5888a0711d466a3b679dc34b984ad26845b5a418100f4e"
+}

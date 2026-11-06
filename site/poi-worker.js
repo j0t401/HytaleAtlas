@@ -16,6 +16,7 @@ importScripts(
   'engine/surface-prefabs.js',
   'engine/poi-contents.js',
   'engine/caves.js',
+  'engine/ore-deposits.js',
   'engine/cave-populate.js',
   'engine/trig.js',
 );
@@ -27,9 +28,13 @@ let datasetId,
   contents,
   currentSeed,
   cavePromise,
-  columnPromise;
+  columnPromise,
+  oreProfile,
+  oreDeposits,
+  orePromise;
 const regions = new Map(),
-  caveGraphs = new Map();
+  caveGraphs = new Map(),
+  prefabKeys = new Set();
 async function read(path) {
   const r = await fetch(path);
   if (!r.ok) throw Error('HTTP ' + r.status + ' ' + path);
@@ -47,13 +52,18 @@ const ready = Promise.all([
   read('engine/hash64.wasm'),
   read('data/display-names.json'),
   read('data/poi-contents.json.gz'),
-]).then(([raw, geo, rules, wasm, labels, index]) => {
+  read('data/ore-sources.json'),
+]).then(([raw, geo, rules, wasm, labels, index, oreSources]) => {
   if (raw.datasetId !== rules.datasetId || index.datasetId !== raw.datasetId)
     throw Error('Datos de distinta extracción');
   k = new V1Kernel(raw, new WebAssembly.Instance(new WebAssembly.Module(wasm)).exports);
   surface = new V1SurfacePrefabs(k, geo);
   contents = new V1POIContents(k, index);
+  for (const prefab of Object.values(index.prefabs))
+    for (const key of prefab.keys) prefabKeys.add(key);
   datasetId = raw.datasetId;
+  if (oreSources.datasetId !== datasetId) throw Error('Perfil de minerales incompatible');
+  oreProfile = oreSources;
   const types = new Map([
     ['unique:spawn', { key: 'unique:spawn', kind: 'structures', name: 'Punto de aparición' }],
     [
@@ -99,19 +109,40 @@ const ready = Promise.all([
     if (types.has(key)) Object.assign(types.get(key), m);
     else if (m.kind) types.set(key, { key, ...m });
   }
+  for (const ore of oreProfile.ores) if (types.has(ore.key)) types.get(ore.key).oreGuide = ore;
+  for (const type of types.values())
+    if (type.kind === 'mob') {
+      const role = type.key.slice(4),
+        matches = rules.catalog.markerRules.filter((rule) => {
+          const choices = rule.choices.filter((c) => c.relativeWeight > 0 && c.mob);
+          return (
+            !rule.manualTrigger &&
+            rule.maxHorizontalSpawnOffset === 0 &&
+            choices.length &&
+            !choices.some((c) => c.flock) &&
+            choices.every((c) => c.mob === role)
+          );
+        });
+      if (matches.length)
+        type.spawn = {
+          verticalSearch: Math.max(...matches.map((r) => r.maxVerticalSpawnOffset)),
+          maxDrop: Math.max(...matches.map((r) => r.maxDropHeight)),
+          ruleCount: matches.length,
+        };
+    }
   postMessage({ type: 'catalog', types: [...types.values()] });
 });
 ready.catch((e) => postMessage({ type: 'error', message: e.message }));
 function isStructure(path) {
-  return /Monuments|Dungeon|Temple|Mineshaft/.test(path);
+  return hasRegionalStructure(path);
 }
 function wantedPath(path, selected) {
   return (
     (isStructure(path) && selected.has(structureType(path))) || contents.matches(path, selected)
   );
 }
-function addPlacement(points, path, origin, selected) {
-  if (isStructure(path) && selected.has(structureType(path)))
+function addPlacement(points, path, origin, selected, includeStructure = true) {
+  if (includeStructure && isStructure(path) && selected.has(structureType(path)))
     points.push({
       x: origin.x,
       y: origin.y,
@@ -170,20 +201,42 @@ async function caveEngine() {
         return column ? column[ceiling ? 1 : 0] : -1;
       };
       c.poiPopulate = pop;
+
       return c;
     });
   return cavePromise;
 }
+async function oreEngine() {
+  if (!orePromise)
+    orePromise = Promise.all([read('engine/ore-kernel.json.gz'), read('engine/trig.bin')]).then(
+      ([raw, trig]) => {
+        if (raw.datasetId !== datasetId) throw Error('Datos de minerales de distinta extracción');
+        const caves = new V1Caves(k, raw, { prefabs: {} }, createV1Trig(trig));
+        oreDeposits = new V1OreDeposits(k, caves, oreProfile);
+        return oreDeposits;
+      },
+    );
+  return orePromise;
+}
 async function queryRegion(task, selected, partial) {
-  const size = task.size || 512,
-    points = [],
-    result = surface.collect(0, 0, {
-      minX: task.x,
-      minZ: task.z,
-      maxX: task.x + size - 1,
-      maxZ: task.z + size - 1,
-      entryAllowed: (e) => e.prefabs.weighted.some(([p]) => wantedPath(p.path, selected)),
-    });
+  const size = task.size || 512;
+  const points = [];
+  if ([...selected].some((key) => key.startsWith('ore:'))) {
+    await oreEngine();
+    points.push(...oreDeposits.query(task, selected));
+    partial?.(points);
+    if ([...selected].every((key) => key.startsWith('ore:') && !prefabKeys.has(key)))
+      return [
+        ...new Map(points.map((p) => [p.key + '/' + p.x + '/' + p.y + '/' + p.z, p])).values(),
+      ];
+  }
+  const result = surface.collect(0, 0, {
+    minX: task.x,
+    minZ: task.z,
+    maxX: task.x + size - 1,
+    maxZ: task.z + size - 1,
+    entryAllowed: (e) => e.prefabs.weighted.some(([p]) => wantedPath(p.path, selected)),
+  });
   for (const c of result.candidates)
     if (!c.invalidated && wantedPath(c.path, selected))
       addPlacement(points, c.path, { ...c, fitHeightmap: c.pattern.fitHeightmap }, selected);
@@ -217,26 +270,49 @@ async function queryRegion(task, selected, partial) {
         let nodes = caveGraphs.get(graphKey);
         if (!nodes) {
           nodes = caves.generate(type, x, z);
-          for (const node of nodes) await caves.poiPopulate.decorations(type, node);
+
           caveGraphs.set(graphKey, nodes);
           while (caveGraphs.size > 1024) caveGraphs.delete(caveGraphs.keys().next().value);
         }
-        for (const n of nodes)
-          if (n.shape.kind === 'Prefab' && wantedPath(n.shape.prefabPath, selected))
-            addPlacement(
-              points,
-              n.shape.prefabPath,
-              {
-                x: Math.floor(n.shape.o[0]),
-                y: Math.floor(n.shape.o[1]),
-                z: Math.floor(n.shape.o[2]),
-                rotation: n.shape.rotation,
-              },
-              selected,
-            );
-        for (const n of nodes)
-          for (const p of n.prefabs || [])
-            if (wantedPath(p.path, selected)) addPlacement(points, p.path, p, selected);
+        for (const node of nodes) {
+          if (
+            !node.poiDecorated &&
+            (node.type.prefabContainer?.entries || []).some((e) =>
+              e.prefabs.weighted.some(([p]) => wantedPath(p.path, selected)),
+            )
+          ) {
+            await caves.poiPopulate.decorations(type, node);
+            node.poiDecorated = true;
+          }
+          node.prefabs ??= [];
+        }
+        const graphStructures = new Set();
+        for (const node of nodes) {
+          if (node.shape.kind !== 'Prefab' || !wantedPath(node.shape.prefabPath, selected))
+            continue;
+          const path = node.shape.prefabPath,
+            key = structureType(path);
+          addPlacement(
+            points,
+            path,
+            {
+              x: Math.floor(node.shape.o[0]),
+              y: Math.floor(node.shape.o[1]),
+              z: Math.floor(node.shape.o[2]),
+              rotation: node.shape.rotation,
+            },
+            selected,
+            !graphStructures.has(key),
+          );
+          graphStructures.add(key);
+        }
+        for (const node of nodes)
+          for (const prefab of node.prefabs || [])
+            if (wantedPath(prefab.path, selected)) {
+              const key = structureType(prefab.path);
+              addPlacement(points, prefab.path, prefab, selected, !graphStructures.has(key));
+              graphStructures.add(key);
+            }
       }
     }
   const unique = new Map();
@@ -274,6 +350,18 @@ async function diskWrite(key, value) {
     db.transaction('regions', 'readwrite').objectStore('regions').put(value, key);
   } catch {}
 }
+function regionalCacheKey(seed, task) {
+  return [
+    'contents-v5',
+    oreProfile.revision,
+    contents.data.revision || 'legacy',
+    datasetId,
+    seed,
+    task.size || 512,
+    task.x,
+    task.z,
+  ].join('/');
+}
 async function pump() {
   if (running) return;
   running = true;
@@ -283,7 +371,7 @@ async function pump() {
       const view = pending;
       pending = null;
       if (currentSeed !== view.seed) {
-        k.setSeed(view.seed);
+        k.setSeed(view.seed, view.seedState);
         currentSeed = view.seed;
         regions.clear();
         caveGraphs.clear();
@@ -291,20 +379,37 @@ async function pump() {
       const selected = new Set(view.types);
       for (const task of view.regions) {
         if (pending) break;
-        const key =
-          'contents-v2/' +
-          (contents.data.revision || 'legacy') +
-          '/' +
-          datasetId +
-          '/' +
-          currentSeed +
-          '/' +
-          (task.size || 512) +
-          '/' +
-          task.x +
-          '/' +
-          task.z;
+        const key = regionalCacheKey(currentSeed, task);
         let cached = regions.get(key) || (await diskRead(key));
+        if (
+          (task.size || 512) < 512 &&
+          (!cached || [...selected].some((type) => !cached.types.includes(type)))
+        ) {
+          const parentTask = {
+            x: Math.floor(task.x / 512) * 512,
+            z: Math.floor(task.z / 512) * 512,
+            size: 512,
+          };
+          const parentKey = regionalCacheKey(currentSeed, parentTask),
+            parent = regions.get(parentKey) || (await diskRead(parentKey));
+          if (parent) {
+            const merged = new Map(
+              (cached?.points || []).map((p) => [p.key + '/' + p.x + '/' + p.y + '/' + p.z, p]),
+            );
+            for (const p of parent.points)
+              if (
+                p.x >= task.x &&
+                p.x < task.x + (task.size || 512) &&
+                p.z >= task.z &&
+                p.z < task.z + (task.size || 512)
+              )
+                merged.set(p.key + '/' + p.x + '/' + p.y + '/' + p.z, p);
+            cached = {
+              types: [...new Set([...(cached?.types || []), ...parent.types])],
+              points: [...merged.values()],
+            };
+          }
+        }
         const wanted = new Set([...selected].filter((t) => !cached?.types.includes(t)));
         if (!cached || wanted.size) {
           const points = await queryRegion(task, wanted, (points) =>

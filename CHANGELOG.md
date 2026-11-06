@@ -1,5 +1,14 @@
 # Cambios
 
+## 0.11.0
+
+- Depósitos nativos de minerales en una consulta ligera, con un núcleo comprimido de geometría de unos 38 KB.
+- Verificación dirigida a minerales seleccionados; conteos y posiciones reales por altura en los resultados comprobados.
+- Reutilización validada del estado climático entre workers y de regiones padre al añadir filtros.
+- Estructuras Kweebec, Outlander y mobs destacados separados; agrupación de piezas de un complejo y de depósitos próximos (opcional).
+- Barra superior para semilla, pestañas de elementos/capas/minerales, panel inferior móvil y detalle de punto con coordenadas y capas.
+- PNG suministrados integrados con caché y marcos de rareza uniformes, sin modificar sus píxeles.
+
 ## 0.10.0
 
 - Categorías y rarezas plegadas de inicio, con creación diferida de controles e iconos.

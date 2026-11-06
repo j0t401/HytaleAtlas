@@ -538,11 +538,41 @@ class V1Kernel {
         return type.color.land;
     }
   }
-  setSeed(value) {
+  setSeed(value, seedState) {
     this.seed = Number(BigInt.asIntN(32, BigInt(value)));
     this.unique = [];
     this.biomeCache.clear();
     const entries = this.climate.uniqueGenerator.entries;
+    // The map worker can share its exact climate search; never accept a different seed/profile.
+    if (
+      seedState &&
+      typeof seedState.datasetId === 'string' &&
+      seedState.datasetId &&
+      seedState.datasetId === this.raw.datasetId &&
+      seedState.seed32 === this.seed &&
+      Array.isArray(seedState.unique) &&
+      seedState.unique.length === entries.length
+    ) {
+      const positions = new Map(seedState.unique.map((p) => [p.zone, p]));
+      if (
+        positions.size === entries.length &&
+        entries.every((entry) => {
+          const p = positions.get(entry.zone);
+          return (
+            p &&
+            Number.isFinite(p.x) &&
+            Number.isFinite(p.y) &&
+            Number.isFinite(p.score) &&
+            p.radius === entry.radius &&
+            p.color === entry.color
+          );
+        })
+      ) {
+        this.unique = seedState.unique.map((p) => ({ ...p }));
+        return this.unique;
+      }
+    }
+
     for (let pass = 0; pass < 10 && this.unique.length < entries.length; pass++)
       for (const entry of entries) {
         if (this.unique.some((u) => u.zone === entry.zone)) continue;

@@ -85,6 +85,20 @@ async function wait(fn) {
     data: { seed: '42', generation: 1, revision: 2, types, regions: [{ x: 0, z: -512 }] },
   });
   await wait(() => messages.some((m) => m.type === 'region' && m.revision === 2 && !m.partial));
+  s.onmessage({
+    data: {
+      seed: '42',
+      generation: 1,
+      revision: 3,
+      types,
+      regions: [{ x: 128, z: -128, size: 128 }],
+    },
+  });
+  await wait(() => messages.some((m) => m.type === 'region' && m.revision === 3 && !m.partial));
+  const child = messages.find((m) => m.type === 'region' && m.revision === 3 && !m.partial);
+  assert(
+    child.points.some((p) => p.key === 'mob:Golem_Crystal_Earth' && p.x === 146.38583374023438),
+  );
   const report = {
     firstSurfaceAnchorsMs: firstMs,
     allRegionAnchorsMs: lastMs,
@@ -95,6 +109,7 @@ async function wait(fn) {
     nativeGolemBeforeCavePass: true,
     noVoxelBuffersDownloaded: true,
     cacheReused: true,
+    smallRegionReusesParent: true,
     errors: 0,
   };
   console.log(report);

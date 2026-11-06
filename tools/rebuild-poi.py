@@ -1,4 +1,5 @@
 """Rebuild lightweight prefab indexes from the numerical profile shipped with Atlas."""
+
 import argparse
 import gzip
 import hashlib
@@ -33,28 +34,42 @@ def rebuild(site, catalog):
     dataset = world["datasetId"]
     if any(value.get("datasetId") != dataset for value in (rules, caves, manifest)):
         raise ValueError("Do not combine different numerical extractions")
-    spec = importlib.util.spec_from_file_location("prefab_assets", Path(__file__).with_name("prefab-assets.py"))
+    spec = importlib.util.spec_from_file_location(
+        "prefab_assets", Path(__file__).with_name("prefab-assets.py")
+    )
     assets = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(assets)
     resources = rules["catalog"]["resources"]
     eligible = {}
     for rule in rules["catalog"]["markerRules"]:
         choices = [c for c in rule["choices"] if c.get("mob") and c["relativeWeight"] > 0]
-        if (not rule["manualTrigger"] and rule["maxHorizontalSpawnOffset"] == 0 and choices
-                and not any(c.get("flock") for c in choices)
-                and len({c["mob"] for c in choices}) == 1):
+        if (
+            not rule["manualTrigger"]
+            and rule["maxHorizontalSpawnOffset"] == 0
+            and choices
+            and not any(c.get("flock") for c in choices)
+            and len({c["mob"] for c in choices}) == 1
+        ):
             eligible[rule["id"]] = "mob:" + choices[0]["mob"]
-    shape_paths = {p["path"] for n in caves["nodes"]
-                   if n.get("type") == "PrefabCaveNodeShape$PrefabCaveNodeShapeGenerator"
-                   for p in n["prefabs"]}
+    shape_paths = {
+        p["path"]
+        for n in caves["nodes"]
+        if n.get("type") == "PrefabCaveNodeShape$PrefabCaveNodeShapeGenerator"
+        for p in n["prefabs"]
+    }
     prefabs, heights = {}, {}
     for path, record in manifest["prefabs"].items():
         metadata, blocks = assets.read_prefab(data / "native-prefabs", manifest, record)
         points, grouped = [], {}
         for marker in metadata["markers"]:
             if marker["marker"] in eligible:
-                points.append({"key": eligible[marker["marker"]], "kind": "mob",
-                               **{axis: marker[axis] for axis in ("x", "y", "z")}})
+                points.append(
+                    {
+                        "key": eligible[marker["marker"]],
+                        "kind": "mob",
+                        **{axis: marker[axis] for axis in ("x", "y", "z")},
+                    }
+                )
         for block in struct.iter_unpack("<5if5i", blocks):
             x, y, z, block_id, mask, chance = block[:6]
             if mask & 4 and chance < 1:
@@ -76,13 +91,24 @@ def rebuild(site, catalog):
         children = []
         for child in metadata["children"]:
             if len(child.get("choices", [])) == 1 and not child["inheritHeightCondition"]:
-                children.append({**{k: child[k] for k in ("x", "y", "z", "rotation", "fitHeightmap")},
-                                 "path": canonical(child["choices"][0]["path"])})
+                children.append(
+                    {
+                        **{k: child[k] for k in ("x", "y", "z", "rotation", "fitHeightmap")},
+                        "path": canonical(child["choices"][0]["path"]),
+                    }
+                )
         prefabs[path] = {"points": points, "children": children}
         if path in shape_paths:
-            heights[path] = [[x, z, struct.unpack_from("<i", blocks, start * 44 + 4)[0],
-                             struct.unpack_from("<i", blocks, (start + count - 1) * 44 + 4)[0]]
-                            for x, z, start, count in metadata["columns"] if count]
+            heights[path] = [
+                [
+                    x,
+                    z,
+                    struct.unpack_from("<i", blocks, start * 44 + 4)[0],
+                    struct.unpack_from("<i", blocks, (start + count - 1) * 44 + 4)[0],
+                ]
+                for x, z, start, count in metadata["columns"]
+                if count
+            ]
 
     def keys(path, seen=None):
         seen = set() if seen is None else seen
@@ -97,13 +123,22 @@ def rebuild(site, catalog):
 
     for path, prefab in prefabs.items():
         prefab["keys"] = sorted(keys(path))
-    result = {"datasetId": dataset, "prefabs": {p: v for p, v in prefabs.items() if v["keys"]},
-              "types": catalog,
-              "semantics": "Guaranteed buffer entries and fixed single-role markers; final terrain masks and replacements are separate. Only deterministic single-choice children without inherited height conditions are expanded."}
-    result["revision"] = hashlib.sha256(json.dumps(result, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    result = {
+        "datasetId": dataset,
+        "prefabs": {p: v for p, v in prefabs.items() if v["keys"]},
+        "types": catalog,
+        "semantics": "Guaranteed buffer entries and fixed single-role markers; final terrain masks and replacements are separate. Only deterministic single-choice children without inherited height conditions are expanded.",
+    }
+    result["revision"] = hashlib.sha256(
+        json.dumps(result, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
     write_gzip(data / "poi-contents.json.gz", result)
     write_gzip(data / "poi-columns.json.gz", heights)
-    return {"prefabs": len(result["prefabs"]), "columnPrefabs": len(heights), "revision": result["revision"]}
+    return {
+        "prefabs": len(result["prefabs"]),
+        "columnPrefabs": len(heights),
+        "revision": result["revision"],
+    }
 
 
 def main():
@@ -115,7 +150,9 @@ def main():
     old = load_json(args.site / "data/poi-contents.json.gz")
     if args.export_catalog:
         args.export_catalog.parent.mkdir(parents=True, exist_ok=True)
-        args.export_catalog.write_text(json.dumps(old["types"], ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        args.export_catalog.write_text(
+            json.dumps(old["types"], ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
         return
     catalog = load_json(args.catalog) if args.catalog else old["types"]
     if not isinstance(catalog, dict) or not all(isinstance(v, dict) for v in catalog.values()):

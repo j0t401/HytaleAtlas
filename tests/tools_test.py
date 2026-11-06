@@ -1,4 +1,5 @@
 """Round-trip a numerical prefab through both documented CLI formats."""
+
 import importlib.util
 import json
 from pathlib import Path
@@ -9,7 +10,9 @@ spec = importlib.util.spec_from_file_location("prefab_assets", ROOT / "tools/pre
 assets = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(assets)
 manifest = json.loads((ROOT / "site/data/native-prefabs/manifest.json").read_text(encoding="utf-8"))
-reference = json.loads((ROOT / "tests/fixtures/prefab-references.json").read_text(encoding="utf-8"))[0]
+reference = json.loads(
+    (ROOT / "tests/fixtures/prefab-references.json").read_text(encoding="utf-8")
+)[0]
 name = reference["path"]
 small = {**manifest, "prefabs": {name: manifest["prefabs"][name]}}
 with tempfile.TemporaryDirectory(prefix="atlas-prefab-test-") as temporary:

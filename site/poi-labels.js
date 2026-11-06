@@ -1,7 +1,20 @@
 'use strict';
+function hasRegionalStructure(path) {
+  return /Monuments|Dungeon|Temple|Mineshaft|Klops|Treasure|Scarak|Npc\/(?:Kweebec|Outlander|Trork|Feran|Goblin)/i.test(
+    path,
+  );
+}
 function structureType(path) {
   const s = path.toLowerCase();
   if (/portal/.test(s)) return 'structure:portal';
+  if (s.includes('kweebec'))
+    return (
+      'structure:kweebec' + (s.includes('camp') ? '-camp' : s.includes('garden') ? '-garden' : '')
+    );
+  if (s.includes('outlander'))
+    return (
+      'structure:outlander' + (s.includes('temple') ? '-temple' : s.includes('camp') ? '-camp' : '')
+    );
   for (const [word, key] of [
     ['temple', 'temple'],
     ['dungeon', 'dungeon'],
@@ -22,6 +35,12 @@ function structureType(path) {
   return 'structure:other';
 }
 const structureNames = {
+  kweebec: 'Asentamientos Kweebec',
+  'kweebec-camp': 'Campamentos Kweebec',
+  'kweebec-garden': 'Huertos Kweebec',
+  outlander: 'Asentamientos Outlander',
+  'outlander-temple': 'Templos Outlander',
+  'outlander-camp': 'Campamentos Outlander',
   temple: 'Templos y entradas',
   dungeon: 'Mazmorras',
   mine: 'Minas',
@@ -84,10 +103,18 @@ function atlasRarity(t) {
   return 'Unclassified';
 }
 function poiFamily(t) {
-  return t.kind === 'mob' && /Golem/.test(t.key) ? 'golems' : t.kind;
+  if (t.kind === 'structures' && t.key.startsWith('structure:kweebec')) return 'kweebec';
+  if (t.kind === 'structures' && t.key.startsWith('structure:outlander')) return 'outlander';
+  if (t.kind === 'mob' && /Golem/.test(t.key)) return 'golems';
+  if (t.kind === 'mob' && /Dragon|Boss|Hedera|Yeti|Rex|Broodmother|Feastmaster|Wraith/.test(t.key))
+    return 'iconic';
+  return t.kind;
 }
 const poiFamilyNames = {
   structures: 'Estructuras',
+  kweebec: 'Kweebec',
+  outlander: 'Outlanders',
+  iconic: 'Mobs destacados',
   golems: 'Gólems',
   mob: 'Otros mobs fijos',
   wood: 'Maderas',

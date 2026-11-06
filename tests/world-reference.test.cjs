@@ -88,6 +88,20 @@ function digest(chunk) {
       summary.structures.every((s) => !('config' in s)),
       'Do not clone static generator graphs into UI summaries',
     );
+    for (const group of summary.groups.filter((g) => g.kind === 'ore')) {
+      assert.equal(
+        Object.values(group.heightCounts).reduce((sum, n) => sum + n, 0),
+        group.count,
+      );
+      for (const [y, [x, z]] of Object.entries(group.levelPositions)) {
+        const block = chunk.getBlock(x - ref.chunkX * 32, Number(y), z - ref.chunkZ * 32);
+        assert.equal(
+          engine.rules.catalog.resources[block]?.key,
+          group.key,
+          'Each height-specific point must identify an actual native ore block',
+        );
+      }
+    }
     phases += 4;
     console.log(`Matched four native phases: seed ${ref.seed}, chunk ${ref.chunkX}, ${ref.chunkZ}`);
   }

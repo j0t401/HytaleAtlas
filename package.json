@@ -1,8 +1,8 @@
 {
   "name": "hytale-atlas",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "private": true,
-  "description": "Explorador estático de semillas de Hytale WorldGen V1",
+  "description": "Explorador estÃ¡tico de semillas de Hytale WorldGen V1",
   "license": "MIT",
   "scripts": {
     "start": "python serve.py",
@@ -11,7 +11,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test:world": "node tests/world-reference.test.cjs",
-    "test:all": "node tools/run-tests.cjs --world"
+    "test:all": "node tools/run-tests.cjs --world",
+    "build:ore-profile": "node tools/build-ore-profile.cjs"
   },
   "devDependencies": {
     "prettier": "3.9.10"
