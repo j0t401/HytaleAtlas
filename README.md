@@ -1,8 +1,8 @@
 # Hytale Atlas
 
-Explorador de semillas de Hytale con mapa oscuro en 2D, biomas de superficie y subsuelo, estructuras, recursos y marcadores fijos de mobs. Se publica como una web estática: los cálculos se ejecutan en el navegador, sin servidor de Hytale ni archivos del juego en el PC del visitante.
+Explorador de semillas de Hytale con mapa oscuro en 2D, biomas de superficie y subsuelo, estructuras, recursos, anclas de mobs y zonas posibles de aparición. Se publica como una web estática: los cálculos se ejecutan en el navegador, sin servidor de Hytale ni archivos del juego en el PC del visitante.
 
-**Atlas 0.11.1 · perfil incluido: Hytale 0.8.0-pre.4, WorldGen V1 · experimental.** El número del Atlas es independiente de la versión del juego. Las pre-releases nuevas necesitan otro perfil de datos y validación; el proyecto no lo actualiza automáticamente.
+**Atlas 0.12.0 · perfil incluido: Hytale 0.8.0-pre.4, WorldGen V1 · experimental.** El número del Atlas es independiente de la versión del juego. Las pre-releases nuevas necesitan otro perfil de datos y validación; el proyecto no lo actualiza automáticamente.
 
 ## Empezar
 
@@ -32,6 +32,10 @@ Prettier es una dependencia de desarrollo. El formato de Python usa Black, fijad
 5. Las anclas de cofres, maderas y mobs aparecen primero mediante sus prefabs. **Verificar con bloques finales** ejecuta el cálculo detallado, que cuesta más. La pestaña Minerales muestra zonas de origen, franjas Y y resultados de la vista. Los resultados comprobados almacenan conteos y posiciones por nivel; filtrar Y no vuelve a generar el mundo. Los minerales del terreno activan ese cálculo porque no dependen solo de estructuras.
 
 Pulsa cualquier punto libre del mapa para colocar un marcador. Usa **Elegir punto del mapa** para señalar incluso encima de un icono, o la bandera para marcar el centro. El detalle permite copiar las coordenadas o `/tp X Y Z`, editar Y y quitar el marcador. En superficie, Y procede del terreno base; en subsuelo usa la altura seleccionada. Abrir un elemento también señala su posición. En pantallas sin cursor aparece una cruceta central y el panel inferior izquierdo consulta ese centro; dos dedos permiten acercar, alejar y desplazar el mapa.
+
+Los mobs distinguen **anclas**, **marcadores condicionales** y **hábitats**. Al seleccionar el oso grizzly (también se encuentra como «grezly» u «oso»), se sombrean los entornos compatibles y aparecen iconos con **≈**. Estos iconos señalan zonas, no animales situados en esas coordenadas. El detalle incluye horarios, suelo o agua, luz y condiciones de baliza cuando existen. El subsuelo usa las franjas guardadas de la altura elegida; seleccionar un hábitat no genera bloques finales.
+
+La auditoría del perfil revisó 321 reglas de marcadores, 5.135 prefabs y 194 configuraciones de aparición natural/balizas. Hay 518 roles en el catálogo: **262 con una fuente localizable** y **256 sin ubicación identificada** en este perfil V1. De los localizables, 176 disponen de reglas de hábitat; algunos también tienen marcadores. Los no localizables permanecen identificados y deshabilitados, porque pueden depender de instancias, eventos o fuentes no incluidas. Consulta el [informe de cobertura](docs/validation/mob-coverage-0.12.0.json); no se afirma que todos los roles se generen en el mundo normal.
 
 Las rarezas son categorías orientativas y editables del Atlas, no probabilidades de aparición medidas. Goldenwood Log es una categoría de recurso que agrupa los troncos compatibles del juego. El catálogo identifica siete gólems: cinco con reglas de marcador fijo y dos sin ancla fija localizable en este perfil. Un ancla no garantiza que exista un NPC vivo si no se cumplen las condiciones del juego.
 
@@ -72,6 +76,8 @@ Lee [arquitectura](docs/ARCHITECTURE.md) para seguir el flujo completo y [datos 
 | Reglas de generación                                     | [`site/engine/`](site/engine/); conserva las referencias nativas al modificar la aritmética.                                |
 | Alojamiento y caché HTTP                                 | [`vercel.json`](vercel.json).                                                                                               |
 
+Para cambiar la extracción y presentación de mobs: [`tools/build-mob-profile.py`](tools/build-mob-profile.py), [`tools/rebuild-poi.py`](tools/rebuild-poi.py) y [`site/mob-habitats.js`](site/mob-habitats.js). La extracción de desarrollo requiere los archivos de una instalación de la versión indicada; los visitantes y las pruebas utilizan únicamente los datos ya publicados.
+
 Los nombres y ubicaciones de recursos nuevos deben proceder del perfil y de sus reglas. Añadir una opción a la interfaz no crea por sí solo un cálculo válido para ese recurso.
 
 ## Comprobar cambios
@@ -96,7 +102,7 @@ Los contenedores `.apf` y las tablas de clima usan nombres ligados al contenido 
 
 ## Rendimiento y límites
 
-La versión 0.11 conserva las muestras, alturas, franjas e iconos. Reduce trabajo innecesario: controles diferidos, estado climático compartido entre workers con validación de semilla y perfil, agrupación opcional de depósitos, buffers transferidos, resúmenes de chunks sin matrices duplicadas y un único archivo por prefab. Los contenedores conservan todos los bloques y metadatos sin pérdidas. [CHANGELOG](CHANGELOG.md) resume los cambios.
+La versión 0.12 conserva las muestras, alturas, franjas e iconos. Reduce trabajo innecesario: controles diferidos, estado climático compartido entre workers con validación de semilla y perfil, agrupación opcional de depósitos, buffers transferidos, resúmenes de chunks sin matrices duplicadas y un único archivo por prefab. Los contenedores conservan todos los bloques y metadatos sin pérdidas. [CHANGELOG](CHANGELOG.md) resume los cambios.
 
 La primera consulta de muchos tipos puede tardar; los tiempos de los informes son pruebas locales en Node, no un benchmark de Vercel. Los ríos de superficie siguen desactivados. El suavizado visual no añade precisión a las muestras. Las anclas ligeras no garantizan el bloque final tras máscaras o reemplazos; algunas ramas de prefabs requieren verificación detallada. Los contenedores se reconocen por nombres de bloque, por lo que su clasificación sigue siendo heurística.
 

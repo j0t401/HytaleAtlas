@@ -162,7 +162,19 @@ async function saveTile(key, value) {
 }
 // Transfer buffers only after IndexedDB has serialized its own copy.
 function postTile(tile) {
-  const { key, x, z, step, n, pixels, ids, strataOffsets, strataValues, preview = false } = tile;
+  const {
+    key,
+    x,
+    z,
+    step,
+    n,
+    pixels,
+    ids,
+    strataOffsets,
+    strataValues,
+    surfaceEnvironments,
+    preview = false,
+  } = tile;
   postMessage(
     {
       type: 'tile',
@@ -177,8 +189,15 @@ function postTile(tile) {
       ids,
       strataOffsets,
       strataValues,
+      surfaceEnvironments,
     },
-    [pixels.buffer, ids.buffer, strataOffsets.buffer, strataValues.buffer],
+    [
+      pixels.buffer,
+      ids.buffer,
+      strataOffsets.buffer,
+      strataValues.buffer,
+      surfaceEnvironments.buffer,
+    ],
   );
 }
 async function render(task, preview) {
@@ -189,11 +208,12 @@ async function render(task, preview) {
     { key, x, z } = task,
     pixels = new Uint8ClampedArray(n * n * 4),
     ids = new Uint16Array(n * n),
+    surfaceEnvironments = new Uint16Array(n * n),
     strataOffsets = new Uint32Array(n * n + 1),
     strataRuns = [],
     strataColumn = new Uint16Array(320);
   const obsolete = () => epoch !== generation || !wanted.has(key);
-  const diskKey = 'strata-v2/' + tileSeed + '/' + key;
+  const diskKey = 'strata-v3/' + tileSeed + '/' + key;
   if (task.restored && !preview) return;
   const saved = await readTile(diskKey);
   if (obsolete()) return;
@@ -214,6 +234,7 @@ async function render(task, preview) {
       const b = kernel.at(wx, wz),
         color = colors.get(b.biomeId);
       ids[i] = b.biomeId;
+      surfaceEnvironments[i] = kernel.environmentAt(wx, wz);
       pixels[i * 4] = color >>> 16;
       pixels[i * 4 + 1] = (color >>> 8) & 255;
       pixels[i * 4 + 2] = color & 255;
@@ -241,6 +262,7 @@ async function render(task, preview) {
         ids,
         strataOffsets,
         strataValues,
+        surfaceEnvironments,
       });
     if (!obsolete())
       postTile({
@@ -256,6 +278,7 @@ async function render(task, preview) {
         ids,
         strataOffsets,
         strataValues,
+        surfaceEnvironments,
       });
   }
 }

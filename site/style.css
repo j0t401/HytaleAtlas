@@ -1210,3 +1210,13 @@ button.primary:hover {
   flex: 1 1 45%;
   min-width: 0;
 }
+
+.habitat-note {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #9ee1ca;
+  border: 1px solid #31594d;
+  border-radius: 7px;
+  padding: 8px;
+  margin: 8px 0;
+}

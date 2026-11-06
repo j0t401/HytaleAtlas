@@ -10,7 +10,7 @@ let strataCatalog = {},
 let worker,
   workerFailed = false;
 try {
-  worker = fileMode ? { postMessage() {} } : new Worker('worker.js?v=0.11.1');
+  worker = fileMode ? { postMessage() {} } : new Worker('worker.js?v=0.12.0');
 } catch (e) {
   workerFailed = true;
   worker = { postMessage() {} };
@@ -148,6 +148,7 @@ function drawFixedMob(s) {
 }
 function draw() {
   drawQueued = false;
+  if (typeof beginHabitatFrame === 'function') beginHabitatFrame();
   ctx.fillStyle = '#101922';
   ctx.fillRect(0, 0, w, h);
   ctx.imageSmoothingEnabled = true;
@@ -211,10 +212,12 @@ function draw() {
       image = t.mask;
     }
     ctx.drawImage(image, x, z, size + 0.2, size + 0.2);
+    if (typeof paintHabitatTile === 'function') paintHabitatTile(t, x, z, size);
   }
   if (typeof updateStrataLegend === 'function') updateStrataLegend();
   if (typeof drawSelectedPOIs === 'function') drawSelectedPOIs();
   if (typeof drawIntegration === 'function') drawIntegration();
+  if (typeof drawHabitatMarkers === 'function') drawHabitatMarkers();
   if ($('grid').checked) {
     const spacing = 2 ** Math.ceil(Math.log2(100 / zoom));
     ctx.strokeStyle = '#d9e8ef33';

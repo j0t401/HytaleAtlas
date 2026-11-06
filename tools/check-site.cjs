@@ -88,3 +88,14 @@ console.log({
   localIcons: new Set(Object.values(iconManifest.entries)).size,
   oreGeometryAvailable: true,
 });
+
+const mobProfile = JSON.parse(
+  require('node:zlib').gunzipSync(fs.readFileSync(path.join(site, 'data/mob-spawns.json.gz'))),
+);
+assert.equal(
+  mobProfile.datasetId,
+  manifest.datasetId,
+  'Mob profile extraction must match the world',
+);
+assert(mobProfile.mobs['mob:Bear_Grizzly'].habitatEnvironments.length > 0);
+console.log({ mobTypes: Object.keys(mobProfile.mobs).length, mobProfileAvailable: true });

@@ -254,6 +254,13 @@ function paintPOI(p) {
   paintedPointIds.add(id);
   poiHitTargets.push({ key, p, x, z });
   ctx.drawImage(poiSprite(kind, key), x - 12, z - 12, 24, 24);
+  if (p.source === 'habitat') {
+    ctx.font = 'bold 12px Segoe UI';
+    ctx.fillStyle = '#10212f';
+    ctx.fillRect(x + 4, z + 3, 13, 13);
+    ctx.fillStyle = '#7de4c7';
+    ctx.fillText('≈', x + 5, z + 13);
+  }
   if (p.clusterCount > 1) {
     const text =
       p.clusterCount > 999 ? (p.clusterCount / 1000).toFixed(1) + 'k' : String(p.clusterCount);
@@ -346,6 +353,7 @@ function poiMatches(t, query, family, rarity) {
   const words = [
     t.name,
     t.description || '',
+    ...(t.searchNames || []),
     poiFamilyNames[poiFamily(t)],
     poiRarityNames[selectedRarity(t)],
   ]
@@ -367,7 +375,7 @@ function createPoiChoice(t) {
   button.disabled = t.available === false;
   button.title =
     t.available === false
-      ? 'Sin marcador fijo en WorldGen V1 de este perfil'
+      ? 'Sin ubicación identificada en el perfil V1; puede pertenecer a eventos, instancias u otro contexto'
       : t.description || t.name;
   const file = typeof AtlasIconArt !== 'undefined' ? AtlasIconArt.url(t.key, t.kind) : null;
   const icon = document.createElement(file ? 'img' : 'canvas');
@@ -379,7 +387,15 @@ function createPoiChoice(t) {
     icon.className = 'item-art rarity-' + selectedRarity(t);
   } else icon.getContext('2d').drawImage(poiSprite(t.kind, t.key), 0, 0, 32, 32);
   const label = document.createElement('span');
-  label.textContent = t.name + (t.available === false ? ' · sin ancla fija' : '');
+  label.textContent =
+    t.name +
+    (t.available === false
+      ? ' · sin ubicación en V1'
+      : t.spawnMode === 'habitat'
+        ? ' · hábitat'
+        : t.spawnMode === 'possible-marker'
+          ? ' · condicional'
+          : '');
   button.append(icon, label);
   button.onclick = () => togglePoiTypes([t], !poiSelected.has(t.key));
   const select = document.createElement('select');
@@ -480,7 +496,7 @@ function renderPoiPicker() {
 function queryPOIs() {
   if (!initialized) return;
   if (!poiWorker) {
-    poiWorker = new Worker('poi-worker.js?v=0.11.1');
+    poiWorker = new Worker('poi-worker.js?v=0.12.0');
     poiWorker.onmessage = ({ data: d }) => {
       if (d.type === 'catalog') {
         for (const t of d.types) {
@@ -520,7 +536,13 @@ function queryPOIs() {
   }
   if (!poiCatalogReady) return;
   const types = [...poiSelected].filter(
-      (k) => k !== 'unique:spawn' && poiTypes.get(k)?.available !== false,
+      (k) =>
+        k !== 'unique:spawn' &&
+        poiTypes.get(k)?.available !== false &&
+        (poiTypes.get(k)?.kind !== 'mob' ||
+          poiTypes.get(k)?.spawnMode === undefined ||
+          poiTypes.get(k)?.fixedPrefabCount > 0 ||
+          poiTypes.get(k)?.possiblePrefabCount > 0),
     ),
     regionSize = types.some((k) => ['wood', 'ore'].includes(poiTypes.get(k)?.kind)) ? 128 : 512,
     regions = [];
@@ -549,8 +571,11 @@ function queryPOIs() {
     types,
     regions: types.length ? regions : [],
   });
-  $('poi-status').textContent =
-    `Consultando ${regions.length} regiones · anclas sin generar bloques`;
+  $('poi-status').textContent = types.length
+    ? `Consultando ${regions.length} regiones · anclas sin generar bloques`
+    : [...poiSelected].some((key) => poiTypes.get(key)?.habitatEnvironments?.length)
+      ? 'Hábitats mostrados desde las zonas del mapa en caché'
+      : 'Selecciona elementos para mostrarlos en el mapa';
 }
 const oldQueueIntegration = queueIntegration;
 queueIntegration = () => {
@@ -671,7 +696,7 @@ canvas.onpointermove = (e) => {
   clearTimeout(hoverTimer);
   $('biome').textContent = poiTypes.get(hit.key)?.name || 'Elemento del mapa';
   $('position').textContent =
-    `X: ${Math.round(hit.p.x)} · Y: ${Math.round(hit.p.y || 0)} · Z: ${Math.round(hit.p.z)} · ${hit.p.confirmed ? 'Calculado con bloques finales' : 'Ancla de prefab'}`;
+    `X: ${Math.round(hit.p.x)} · Y: ${Number.isFinite(hit.p.y) ? Math.round(hit.p.y) : 'sin determinar'} · Z: ${Math.round(hit.p.z)} · ${hit.p.source === 'habitat' ? 'Zona posible de aparición' : hit.p.source === 'prefab-possible' ? 'Marcador condicional' : hit.p.confirmed ? 'Calculado con bloques finales' : 'Ancla de prefab'}`;
 };
 
 $('structures').onchange = () =>

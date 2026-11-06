@@ -67,7 +67,7 @@ const AtlasIconArt = (() => {
     paint();
     return true;
   }
-  const ready = fetch('assets/icons/manifest.json?v=0.11.1')
+  const ready = fetch('assets/icons/manifest.json?v=0.12.0')
     .then((r) => {
       if (!r.ok) throw Error('Icon manifest unavailable');
       return r.json();

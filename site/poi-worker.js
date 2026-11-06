@@ -352,7 +352,7 @@ async function diskWrite(key, value) {
 }
 function regionalCacheKey(seed, task) {
   return [
-    'contents-v5',
+    'contents-v6',
     oreProfile.revision,
     contents.data.revision || 'legacy',
     datasetId,

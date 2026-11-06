@@ -1,5 +1,14 @@
 # Cambios
 
+## 0.12.0
+
+- Auditoría de 321 reglas de marcador, 5.135 prefabs, 502 roles concretos y 194 configuraciones de aparición natural/balizas.
+- Catálogo de 518 roles: 262 localizables y 256 sin una fuente localizada en el perfil V1, identificados y deshabilitados.
+- Hábitats de 176 tipos de mob, incluido el oso grizzly, con sombreado e iconos de guía ≈ a partir de los entornos reales del mapa.
+- Información de horario, suelo/agua, luz y contexto de balizas; los puntos de hábitat no afirman la posición de un NPC vivo.
+- Marcadores con alternativas, grupos, activación manual y ramas condicionales de prefab conservados como posibilidades explícitas.
+- Entornos de superficie almacenados con las teselas, máscaras de hábitat reutilizadas y exclusión de escaneo de prefabs/bloques para selecciones que solo requieren hábitats.
+
 ## 0.11.1
 
 - Marcador al pulsar el mapa o marcar su centro, con coordenadas, altura editable, copia normal o como comando `/tp`, y eliminación.

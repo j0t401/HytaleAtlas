@@ -215,7 +215,7 @@ s.tiles = new Map([
 s.strataCatalog = { 1: { name: 'Env_Zone4_Jungle' } };
 s.V1Strata = { at: () => 1 };
 vm.runInContext('setTouchInspection(true)', c);
-assert.equal(get('biome').textContent, 'Jungle');
+assert.equal(get('biome').textContent, 'Zona 4 · Jungle');
 assert.equal(get('inspect-label').textContent, 'CENTRO DEL MAPA');
 vm.runInContext('clearMapPin()', c);
 assert.equal(vm.runInContext('mapPin', c), null);

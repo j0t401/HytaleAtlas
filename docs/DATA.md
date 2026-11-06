@@ -70,3 +70,16 @@ python tools/import-icons.py /ruta/a/la/carpeta/de/iconos
 El perfil de minerales se deriva de los datos numéricos incluidos: identifica depósitos de relleno y fuentes de prefab, y genera una proyección mínima de geometría. Los intervalos Y se obtienen de cada depósito calculado, no de tablas de Minecraft. Los resultados finales conservan `heightCounts` y `levelPositions` para filtrar capas sin volver a calcular bloques.
 
 Los PNG se deduplican con SHA-256 y se publican con nombres derivados de su contenido. `assets/icons/manifest.json` relaciona esos archivos con tipos y familias; la interfaz añade tamaños y bordes uniformes. Solo se cargan los recursos que necesita la vista. Consulta `THIRD_PARTY.md` para su procedencia y exclusión de la licencia MIT del código.
+
+## Perfil y auditoría de mobs
+
+```sh
+python tools/build-mob-profile.py --assets /ruta/Assets.zip --server /ruta/HytaleServer.jar
+python tools/rebuild-poi.py
+```
+
+La herramienta de desarrollo comprueba la versión del manifiesto del servidor y el dataset de los datos numéricos. Lee nombres traducidos, configuraciones de aparición natural/balizas y referencias de marcadores de los contenedores ya incluidos. Exporta únicamente los datos de localización y condiciones a `data/mob-spawns.json.gz`; el índice `poi-contents.json.gz` incorpora el catálogo para el navegador. No distribuye el servidor, Assets.zip ni código descompilado. La semántica de IDs exactos de entorno se contrastó con NPCSpawn y WorldSpawnManager de 0.8.0-pre.4.
+
+`docs/validation/mob-coverage-0.12.0.json` enumera los roles sin ubicación identificada y detalla el caso grizzly. La disponibilidad no equivale a presencia garantizada: los hábitats dependen de condiciones dinámicas y los marcadores condicionales pueden ser alternativas o activaciones de evento. Los pesos de selección no se presentan como porcentajes de aparición.
+
+Las herramientas de reconstrucción y las pruebas normales usan el perfil incluido; solo la actualización de estas reglas requiere los archivos locales indicados. Si se cambia de versión o de extracción, deben regenerarse y validarse conjuntamente, nunca combinar IDs de distintas capturas.

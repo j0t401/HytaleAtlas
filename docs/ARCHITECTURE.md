@@ -68,3 +68,13 @@ El worker del mapa comparte las posiciones climáticas que ya calculó. `setSeed
 Las regiones pequeñas pueden heredar puntos y tipos ya completados de su región padre para evitar repetir las estructuras al activar un mineral. Las estructuras de cuevas se agrupan por complejo/tipo. Las decoraciones se calculan solo cuando pueden aportar los tipos solicitados, y se conservan para selecciones posteriores.
 
 La agrupación visual de minerales usa celdas alineadas al mundo, conserva todos sus miembros y puede desactivarse a cualquier zoom. Los filtros de altura y esta agrupación solo procesan datos guardados; no programan generación nueva.
+
+## Mobs y hábitats
+
+El catálogo deriva de los marcadores, roles concretos y configuraciones de aparición compatibles con el perfil incluido. La disponibilidad depende de una fuente real: marcador en un prefab alcanzable o regla con un entorno presente en V1. Un rol definido o una regla llamada Bear no implica un marcador de oso colocado en el mundo.
+
+`mob-habitats.js` cruza los IDs de entorno de las teselas con las reglas seleccionadas. Usa `surfaceEnvironments` en superficie y `strataOffsets/strataValues` en la altura subterránea elegida. No hereda hábitats de entornos padre: el código nativo de NPCSpawn resuelve directamente los nombres configurados. El sombreado representa elegibilidad del entorno, sin simular horario, luz, suelo concreto, población ni activación de balizas. Un icono ≈ toma una muestra compatible como guía de la zona y conserva las reglas de ese entorno.
+
+Las máscaras se guardan por objeto de tesela, selección y altura, con dos entradas recientes por tesela. Los iconos de guía se agrupan por especie/entorno y celda visual; no se suprime una especie por zoom. Las selecciones que solo requieren hábitats no solicitan escaneo de prefabs, cuevas ni bloques finales. La caché de teselas cambia a `strata-v3` para incorporar los entornos superficiales; el índice de anclas usa `contents-v6` y su revisión de contenido.
+
+El índice conserva las alternativas positivas de marcadores y las ramas condicionales de prefabs como `prefab-possible`. Las posiciones de esas ramas no certifican la elección final, las máscaras o la altura. Los marcadores únicos deterministas conservan sus coordenadas de referencia.

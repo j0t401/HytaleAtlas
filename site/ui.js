@@ -376,17 +376,22 @@ function openPoint(point, center = false) {
     '--point-rarity',
     typeof AtlasIconArt !== 'undefined' ? AtlasIconArt.rarityColor(rarity) : '#8195a8',
   );
-  $('point-state').textContent = isPin
-    ? Number.isFinite(point.y)
-      ? point.heightSource
-      : 'Consultando altura del terreno…'
-    : point.clusterPoints
-      ? 'Grupo de ' + point.clusterCount + ' resultados'
-      : point.confirmed
-        ? 'Comprobado con bloques finales'
-        : point.source === 'ore-deposit'
-          ? 'Depósito previsto · pendiente de verificación'
-          : 'Ancla de prefab · condiciones por verificar';
+  $('point-state').textContent =
+    point.source === 'habitat'
+      ? 'Hábitat posible · no es un individuo fijo'
+      : point.source === 'prefab-possible'
+        ? 'Marcador condicional · aparición no garantizada'
+        : isPin
+          ? Number.isFinite(point.y)
+            ? point.heightSource
+            : 'Consultando altura del terreno…'
+          : point.clusterPoints
+            ? 'Grupo de ' + point.clusterCount + ' resultados'
+            : point.confirmed
+              ? 'Comprobado con bloques finales'
+              : point.source === 'ore-deposit'
+                ? 'Depósito previsto · pendiente de verificación'
+                : 'Ancla de prefab · condiciones por verificar';
   $('point-state').className = 'point-state' + (point.confirmed ? ' confirmed' : '');
   const information = $('point-information');
   information.replaceChildren();
@@ -395,7 +400,15 @@ function openPoint(point, center = false) {
     const cell = element('div');
     cell.append(
       element('small', null, axis.toUpperCase()),
-      element('strong', null, Number.isFinite(point[axis]) ? coordinateText(point[axis]) : '…'),
+      element(
+        'strong',
+        null,
+        Number.isFinite(point[axis])
+          ? coordinateText(point[axis])
+          : point.source === 'habitat'
+            ? '—'
+            : '…',
+      ),
     );
     coordinates.append(cell);
   }
@@ -480,22 +493,125 @@ function openPoint(point, center = false) {
       information.append(section);
     }
   } else if (type.kind === 'mob') {
-    information.append(
-      element(
-        'p',
-        'point-note',
-        'Marcador fijo en X/Z. La criatura puede no aparecer si no se cumplen sus condiciones o ya fue derrotada.',
-      ),
-    );
-    if (type.spawn)
+    if (point.source === 'habitat') {
       information.append(
-        guideRow(
-          'Ajuste vertical',
-          'Hasta ' +
-            type.spawn.verticalSearch +
-            ' bloques de búsqueda vertical según las reglas de este tipo.',
+        element(
+          'p',
+          'point-note',
+          'El sombreado señala entornos compatibles. El icono es una guía de la zona, no la posición de un animal. La presencia real depende del horario, luz, suelo, agua, población y otros estados del juego.',
         ),
       );
+      const env = strataCatalog[point.environmentId];
+      information.append(
+        guideRow(
+          'Entorno',
+          env
+            ? env.name
+                .replace(/^Env_/, '')
+                .replace(/^Zone(\d)_/, 'Zona $1 · ')
+                .replaceAll('_', ' ')
+            : 'Zona compatible',
+        ),
+      );
+      for (const rule of point.habitatRules || []) {
+        const section = element('details', 'height-details');
+        section.append(
+          element(
+            'summary',
+            null,
+            rule.source === 'beacon' ? 'Aparición condicionada por baliza' : 'Aparición natural',
+          ),
+        );
+        if (rule.DayTimeRange)
+          section.append(guideRow('Horario', rule.DayTimeRange.join('–') + ' h del juego'));
+        if (rule.SpawnBlockSet)
+          section.append(
+            guideRow(
+              'Suelo requerido',
+              {
+                Birds: 'Superficies aptas para aves',
+                Grass: 'Hierba',
+                IceAndSnow: 'Hielo y nieve',
+                Mud: 'Barro',
+                Outlander: 'Superficies de asentamientos Outlander',
+                Portals_Oasis_Orange: 'Suelo naranja del oasis de portal',
+                Portals_Oasis_Soil: 'Suelo del oasis de portal',
+                Rock: 'Roca',
+                Sand: 'Arena',
+                Soil: 'Suelo',
+                Soil_NoSnow: 'Suelo sin nieve',
+                Stone: 'Piedra',
+                StoneAndSoil: 'Piedra y suelo',
+                Trash: 'Residuos',
+                Volcanic: 'Superficies volcánicas',
+              }[rule.SpawnBlockSet] || rule.SpawnBlockSet.replaceAll('_', ' '),
+            ),
+          );
+        if (rule.SpawnFluidTag)
+          section.append(
+            guideRow(
+              'Fluido requerido',
+              rule.SpawnFluidTag === 'Water' ? 'Agua' : rule.SpawnFluidTag,
+            ),
+          );
+        if (rule.LightRanges)
+          section.append(
+            guideRow(
+              'Luz',
+              Object.entries(rule.LightRanges)
+                .map(([k, v]) => k + ': ' + v.join('–'))
+                .join(', '),
+            ),
+          );
+        if (rule.Flock)
+          section.append(
+            guideRow(
+              'Grupo',
+              {
+                Group_Large: 'Grupo grande',
+                Group_Medium: 'Grupo mediano',
+                Group_Small: 'Grupo pequeño',
+                Group_Tiny: 'Grupo reducido',
+                One_Or_Two: 'Uno o dos',
+              }[rule.Flock] || rule.Flock.replaceAll('_', ' '),
+            ),
+          );
+        if (rule.MoonPhaseWeightModifiers)
+          section.append(guideRow('Fases lunares', rule.MoonPhaseWeightModifiers.join(', ')));
+        if (rule.source === 'beacon')
+          section.append(
+            element(
+              'p',
+              'point-note',
+              'Requiere una baliza o contexto de aparición activo; el entorno por sí solo no garantiza la criatura.',
+            ),
+          );
+        information.append(section);
+      }
+    } else {
+      information.append(
+        element(
+          'p',
+          'point-note',
+          point.source === 'prefab-possible'
+            ? 'Punto de referencia de un prefab o marcador con alternativas o condiciones. El mob puede aparecer en sus proximidades; no se afirma que esta variante haya sido elegida.'
+            : 'Marcador fijo en X/Z. La criatura puede no aparecer si no se cumplen sus condiciones o ya fue derrotada.',
+        ),
+      );
+      if (point.manualTrigger)
+        information.append(guideRow('Activación', 'Requiere un desencadenante manual o de evento'));
+      if (point.horizontalRadius)
+        information.append(
+          guideRow('Desplazamiento horizontal', 'Hasta ' + point.horizontalRadius + ' bloques'),
+        );
+      if (type.spawn)
+        information.append(
+          guideRow(
+            'Ajuste vertical',
+            'Hasta ' + type.spawn.verticalSearch + ' bloques de búsqueda vertical.',
+          ),
+        );
+    }
   } else if (type.kind === 'chest')
     information.append(
       element(
@@ -727,7 +843,10 @@ function queueCenterProbe() {
       ? strataCatalog[V1Strata.at(best.strataOffsets, best.strataValues, index, depth)]
       : null;
     $('biome').textContent = env
-      ? pretty(env.name.replace(/^Env_/, '').replace(/^Zone\d_/, ''))
+      ? env.name
+          .replace(/^Env_/, '')
+          .replace(/^Zone(\d)_/, 'Zona $1 · ')
+          .replaceAll('_', ' ')
       : 'Cargando zona subterránea…';
     $('position').textContent += ` · Y: ${depth}`;
     return;

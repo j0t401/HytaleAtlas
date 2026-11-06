@@ -48,7 +48,10 @@ class V1POIContents {
             x: s.x + dx + (q.kind === 'mob' ? 0.5 : 0),
             y: y + q.y + offset,
             z: s.z + dz + (q.kind === 'mob' ? 0.5 : 0),
-            source: 'prefab-anchor',
+            source: s.conditional || q.conditional ? 'prefab-possible' : 'prefab-anchor',
+            markerId: q.markerId,
+            manualTrigger: q.manualTrigger,
+            horizontalRadius: q.horizontalRadius,
             confirmed: false,
           });
       }
@@ -66,6 +69,7 @@ class V1POIContents {
             z,
             r: (s.r + Number(c.rotation.split('_')[1]) / 90) % 4,
             fit: c.fitHeightmap,
+            conditional: s.conditional || c.conditional,
           },
           depth + 1,
         );

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0d151e" />
     <title>Hytale Atlas · Explora tu semilla</title>
-    <link rel="stylesheet" href="style.css?v=0.11.1" />
+    <link rel="stylesheet" href="style.css?v=0.12.0" />
   </head>
   <body>
     <header class="app-header">
@@ -104,7 +104,7 @@
                   <option value="outlander">Outlanders</option>
                   <option value="golems">Gólems</option>
                   <option value="iconic">Mobs destacados</option>
-                  <option value="mob">Otros mobs fijos</option>
+                  <option value="mob">Mobs y hábitats</option>
                   <option value="wood">Maderas</option>
                   <option value="ore">Minerales</option>
                   <option value="chest">Cofres</option>
@@ -129,6 +129,7 @@
             </div>
 
             <small id="poi-count" class="catalog-count">Cargando catálogo…</small>
+            <p id="mob-habitat-status" class="habitat-note" hidden></p>
             <div id="poi-picker" class="poi-picker"></div>
             <p id="poi-status" class="note" role="status">Preparando elementos…</p>
             <details class="help">
@@ -203,7 +204,7 @@
                 ><input id="show-chest" type="checkbox" /> Cofres y contenedores</label
               >
               <label class="switch-row"
-                ><input id="show-mob" type="checkbox" /> Todos los mobs fijos</label
+                ><input id="show-mob" type="checkbox" /> Todos los mobs localizables</label
               >
             </details>
             <details class="subsection">
@@ -268,7 +269,7 @@
           </section>
         </div>
         <div class="panel-footer">
-          <span class="status-dot"></span> Atlas 0.11.1
+          <span class="status-dot"></span> Atlas 0.12.0
           <span class="muted">· Perfil V1 experimental</span>
         </div>
       </aside>
@@ -353,13 +354,14 @@
         </div>
       </section>
     </main>
-    <script src="engine/strata.js?v=0.11.1" defer></script>
-    <script src="map-gestures.js?v=0.11.1" defer></script>
-    <script src="app.js?v=0.11.1" defer></script>
-    <script src="integration.js?v=0.11.1" defer></script>
-    <script src="poi-labels.js?v=0.11.1" defer></script>
-    <script src="icon-art.js?v=0.11.1" defer></script>
-    <script src="points-ui.js?v=0.11.1" defer></script>
-    <script src="ui.js?v=0.11.1" defer></script>
+    <script src="engine/strata.js?v=0.12.0" defer></script>
+    <script src="map-gestures.js?v=0.12.0" defer></script>
+    <script src="app.js?v=0.12.0" defer></script>
+    <script src="integration.js?v=0.12.0" defer></script>
+    <script src="poi-labels.js?v=0.12.0" defer></script>
+    <script src="icon-art.js?v=0.12.0" defer></script>
+    <script src="points-ui.js?v=0.12.0" defer></script>
+    <script src="mob-habitats.js?v=0.12.0" defer></script>
+    <script src="ui.js?v=0.12.0" defer></script>
   </body>
 </html>

@@ -40,17 +40,33 @@ def rebuild(site, catalog):
     assets = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(assets)
     resources = rules["catalog"]["resources"]
+    mob_path = data / "mob-spawns.json.gz"
+    if mob_path.exists():
+        mob_profile = load_json(mob_path)
+        if mob_profile["datasetId"] != dataset:
+            raise ValueError("Mob profile does not match numerical extraction")
+        for key, value in mob_profile["mobs"].items():
+            catalog[key] = {**catalog.get(key, {}), **value}
     eligible = {}
     for rule in rules["catalog"]["markerRules"]:
         choices = [c for c in rule["choices"] if c.get("mob") and c["relativeWeight"] > 0]
-        if (
+        fixed = (
             not rule["manualTrigger"]
             and rule["maxHorizontalSpawnOffset"] == 0
             and choices
             and not any(c.get("flock") for c in choices)
             and len({c["mob"] for c in choices}) == 1
-        ):
-            eligible[rule["id"]] = "mob:" + choices[0]["mob"]
+        )
+        eligible[rule["id"]] = [
+            {
+                "key": "mob:" + role,
+                "markerId": rule["id"],
+                "conditional": not bool(fixed),
+                "manualTrigger": rule["manualTrigger"],
+                "horizontalRadius": rule["maxHorizontalSpawnOffset"],
+            }
+            for role in sorted({c["mob"] for c in choices})
+        ]
     shape_paths = {
         p["path"]
         for n in caves["nodes"]
@@ -62,13 +78,9 @@ def rebuild(site, catalog):
         metadata, blocks = assets.read_prefab(data / "native-prefabs", manifest, record)
         points, grouped = [], {}
         for marker in metadata["markers"]:
-            if marker["marker"] in eligible:
+            for choice in eligible.get(marker["marker"], []):
                 points.append(
-                    {
-                        "key": eligible[marker["marker"]],
-                        "kind": "mob",
-                        **{axis: marker[axis] for axis in ("x", "y", "z")},
-                    }
+                    {**choice, "kind": "mob", **{axis: marker[axis] for axis in ("x", "y", "z")}}
                 )
         for block in struct.iter_unpack("<5if5i", blocks):
             x, y, z, block_id, mask, chance = block[:6]
@@ -90,11 +102,15 @@ def rebuild(site, catalog):
         points.extend(grouped.values())
         children = []
         for child in metadata["children"]:
-            if len(child.get("choices", [])) == 1 and not child["inheritHeightCondition"]:
+            for choice in child.get("choices", []):
+                if child.get("weights", {}).get(choice["name"], child.get("defaultWeight", 1)) <= 0:
+                    continue
+                conditional = len(child["choices"]) != 1 or child["inheritHeightCondition"]
                 children.append(
                     {
                         **{k: child[k] for k in ("x", "y", "z", "rotation", "fitHeightmap")},
-                        "path": canonical(child["choices"][0]["path"]),
+                        "path": canonical(choice["path"]),
+                        "conditional": bool(conditional),
                     }
                 )
         prefabs[path] = {"points": points, "children": children}
@@ -127,7 +143,7 @@ def rebuild(site, catalog):
         "datasetId": dataset,
         "prefabs": {p: v for p, v in prefabs.items() if v["keys"]},
         "types": catalog,
-        "semantics": "Guaranteed buffer entries and fixed single-role markers; final terrain masks and replacements are separate. Only deterministic single-choice children without inherited height conditions are expanded.",
+        "semantics": "Prefab resource anchors and all positive marker choices. Conditional children and spawn choices are explicitly possible, never guaranteed. Final masks and live NPC conditions are separate.",
     }
     result["revision"] = hashlib.sha256(
         json.dumps(result, sort_keys=True, separators=(",", ":")).encode()

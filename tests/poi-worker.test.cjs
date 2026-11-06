@@ -52,6 +52,9 @@ async function wait(fn) {
   const cat = messages.find((m) => m.type === 'catalog').types;
   assert.equal(cat.filter((t) => t.family === 'golems').length, 7);
   assert(cat.some((t) => t.key === 'wood:Goldenwood' && t.name === 'Goldenwood Log'));
+  const bear = cat.find((t) => t.key === 'mob:Bear_Grizzly');
+  assert(bear.available && bear.spawnMode === 'habitat' && bear.habitatEnvironments.length > 0);
+  assert.equal(bear.fixedPrefabCount, 0);
   const started = performance.now(),
     types = ['container:all', 'mob:Golem_Crystal_Earth'];
   s.onmessage({
@@ -71,7 +74,11 @@ async function wait(fn) {
     partial.points.some((p) => p.kind === 'chest'),
     'Chest anchors are published before final blocks',
   );
-  assert(partial.points.every((p) => p.source === 'prefab-anchor' && p.confirmed === false));
+  assert(
+    partial.points.every(
+      (p) => ['prefab-anchor', 'prefab-possible'].includes(p.source) && p.confirmed === false,
+    ),
+  );
   await wait(() => messages.some((m) => m.type === 'region' && !m.partial));
   const lastMs = performance.now() - started,
     final = messages.find((m) => m.type === 'region' && !m.partial);

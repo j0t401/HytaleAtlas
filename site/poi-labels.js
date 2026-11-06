@@ -116,7 +116,7 @@ const poiFamilyNames = {
   outlander: 'Outlanders',
   iconic: 'Mobs destacados',
   golems: 'Gólems',
-  mob: 'Otros mobs fijos',
+  mob: 'Mobs y hábitats',
   wood: 'Maderas',
   ore: 'Minerales',
   chest: 'Cofres y contenedores',

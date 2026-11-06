@@ -107,6 +107,11 @@ async function wait(w, fn) {
   const first = a.messages.find((m) => m.type === 'tile' && !m.preview);
   assert.equal(first.strataOffsets.length, 1025);
   assert(first.strataValues.length >= 2048);
+  assert.equal(first.surfaceEnvironments.length, first.ids.length);
+  assert.equal(
+    first.surfaceEnvironments[0],
+    vm.runInContext('kernel.environmentAt(3200,-2200)', a.c),
+  );
   assert(writes > 0);
   const ms = performance.now() - t;
   const b = start();
@@ -116,6 +121,7 @@ async function wait(w, fn) {
   await wait(b, () => b.messages.some((m) => m.type === 'tile' && !m.preview));
   const saved = b.messages.find((m) => m.type === 'tile' && !m.preview);
   assert.deepEqual(Array.from(saved.strataValues), Array.from(first.strataValues));
+  assert.deepEqual(Array.from(saved.surfaceEnvironments), Array.from(first.surfaceEnvironments));
   assert(!a.reads.some((p) => p.includes('caves.json') || p.endsWith('.binz')));
   const report = {
     surfaceAndAllStrataTogether: true,

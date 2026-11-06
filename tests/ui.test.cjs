@@ -224,3 +224,27 @@ assert.equal(
   'Camera motion renders immediately without posting worker views on every event',
 );
 console.log({ offscreenOreProjectionSkipped: true, cameraEventsDoNotFloodWorkers: true });
+
+s.bearProfile = JSON.parse(
+  require('node:zlib').gunzipSync(fs.readFileSync(path.join(root, 'data/mob-spawns.json.gz'))),
+).mobs['mob:Bear_Grizzly'];
+vm.runInContext(
+  'poiTypes.set(bearProfile.key,bearProfile);poiSelected.clear();poiSelected.add(bearProfile.key);queryPOIs()',
+  c,
+);
+assert.equal(
+  p.messages.at(-1).types.length,
+  0,
+  'Habitat-only mobs must not trigger prefab/cave scans',
+);
+assert(
+  vm.runInContext("poiMatches(bearProfile,'grezly','','')", c),
+  'User spelling must find the grizzly',
+);
+vm.runInContext("$('world-objects').checked=true;requestIntegration()", c);
+assert.equal(
+  workers.filter((w) => w.url.startsWith('world-worker')).length,
+  0,
+  'Habitat-only selection does not start final-block generation',
+);
+console.log({ habitatOnlySelectionSkipsGeneration: true, grizzlySearchAlias: true });

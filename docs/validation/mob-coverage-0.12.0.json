@@ -1,0 +1,1641 @@
+{
+  "atlasVersion": "0.12.0",
+  "nativeProfile": "0.8.0-pre.4",
+  "datasetId": "c49f3f51d3d85e57cbe4555a6294b79bfd49bde4c145bde9b324efa3b46a9b3a",
+  "spawnConfigurationFiles": 194,
+  "roleFilesInspected": 0,
+  "concreteRoleFilesInspected": 502,
+  "roleSelection": "Non-test Variant roles plus every role referenced by world, beacon or marker spawning. Components, templates and cinematic-only Generic definitions are excluded unless referenced.",
+  "catalogMobs": 518,
+  "markerRulesInspected": 321,
+  "prefabsInspected": 5135,
+  "markerChoicesInspected": 391,
+  "coverage": {
+    "possible-marker": 19,
+    "fixed": 114,
+    "unlocated": 256,
+    "habitat": 129
+  },
+  "habitatMobs": 176,
+  "unlocated": [
+    {
+      "key": "mob:Shellfish_Lava",
+      "name": "Celacanto de Lava",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dragon_Frost",
+      "name": "Dragón de Escarcha",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Feastmaster_Boss",
+      "name": "Feastmaster",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Gobliterator_Phase1",
+      "name": "Goblin Gobliterator Phase1",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Gobliterator_Phase1_HM",
+      "name": "Goblin Gobliterator Phase1 HM",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Gobliterator_Phase2",
+      "name": "Goblin Gobliterator Phase2",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Gobliterator_Phase2_HM",
+      "name": "Goblin Gobliterator Phase2 HM",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Gobliterator_Phase3",
+      "name": "Goblin Gobliterator Phase3",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Gobliterator_Phase3_HM",
+      "name": "Goblin Gobliterator Phase3 HM",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Gobliterator_SawTransition",
+      "name": "Goblin Gobliterator SawTransition",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Gobliterator_SawTransition_HM",
+      "name": "Goblin Gobliterator SawTransition HM",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Gobliterator_Transition_Phase3",
+      "name": "Goblin Gobliterator Transition Phase3",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Gobliterator_Transition_Phase3_HM",
+      "name": "Goblin Gobliterator Transition Phase3 HM",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Bear_Voidtaken",
+      "name": "Voidtaken Grizzly",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": ["Bear_Voidtaken_Beacon"]
+    },
+    {
+      "key": "mob:Bear_Voidtaken_Tentacle",
+      "name": "Bear Voidtaken Tentacle",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Bear_Voidtaken_Tentacle_Marker",
+      "name": "Bear Voidtaken Tentacle Marker",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Bison_Calf",
+      "name": "Ternero de Bisonte",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Boar_Piglet",
+      "name": "Lechón de Jabalí",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Camel_Calf",
+      "name": "Ternero de Camello",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Chicken_Chick",
+      "name": "Polluelo",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Chicken_Desert_Chick",
+      "name": "Polluelo del Desierto",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Cow_Calf",
+      "name": "Ternero",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goat_Kid",
+      "name": "Cabrito",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Horse_Foal",
+      "name": "Potro",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Mouflon_Lamb",
+      "name": "Cordero de Muflón",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Pig_Piglet",
+      "name": "Cerdito",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Pig_Wild_Piglet",
+      "name": "Lechón Salvaje",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Ram_Lamb",
+      "name": "Cordero de Carnero",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Sheep_Lamb",
+      "name": "Cordero de Oveja",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skrill_Chick",
+      "name": "Cría de Skrill",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Bison",
+      "name": "Tamed Bison",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Bison_Calf",
+      "name": "Tamed Bison Calf",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Boar",
+      "name": "Tamed Boar",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Boar_Piglet",
+      "name": "Tamed Boar Piglet",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Bunny",
+      "name": "Tamed Bunny",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Camel",
+      "name": "Tamed Camel",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Camel_Calf",
+      "name": "Tamed Camel Calf",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Chicken",
+      "name": "Tamed Chicken",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Chicken_Chick",
+      "name": "Tamed Chicken Chick",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Chicken_Desert",
+      "name": "Tamed Chicken Desert",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Chicken_Desert_Chick",
+      "name": "Tamed Chicken Desert Chick",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Cow",
+      "name": "Tamed Cow",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Cow_Calf",
+      "name": "Tamed Cow Calf",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Goat",
+      "name": "Tamed Goat",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Goat_Kid",
+      "name": "Tamed Goat Kid",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Horse",
+      "name": "Tamed Horse",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Horse_Foal",
+      "name": "Tamed Horse Foal",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Mosshorn",
+      "name": "Tamed Mosshorn",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Mosshorn_Plain",
+      "name": "Tamed Mosshorn Plain",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Mouflon",
+      "name": "Tamed Mouflon",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Mouflon_Lamb",
+      "name": "Tamed Mouflon Lamb",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Pig",
+      "name": "Tamed Pig",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Pig_Piglet",
+      "name": "Tamed Pig Piglet",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Pig_Wild",
+      "name": "Tamed Pig Wild",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Pig_Wild_Piglet",
+      "name": "Tamed Pig Wild Piglet",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Rabbit",
+      "name": "Tamed Rabbit",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Ram",
+      "name": "Tamed Ram",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Ram_Lamb",
+      "name": "Tamed Ram Lamb",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Sheep",
+      "name": "Tamed Sheep",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Sheep_Lamb",
+      "name": "Tamed Sheep Lamb",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Skrill",
+      "name": "Tamed Skrill",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Skrill_Chick",
+      "name": "Tamed Skrill Chick",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Turkey",
+      "name": "Tamed Turkey",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Turkey_Chick",
+      "name": "Tamed Turkey Chick",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Warthog",
+      "name": "Tamed Warthog",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tamed_Warthog_Piglet",
+      "name": "Tamed Warthog Piglet",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Turkey_Chick",
+      "name": "Pichón de Pavo",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Warthog_Piglet",
+      "name": "Lechón de Facóquero",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Deer_Doe",
+      "name": "Cierva",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Moose_Cow",
+      "name": "Alce Hembra",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Hatworm",
+      "name": "Gusano Coronado",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Spider_Cave_Ambush",
+      "name": "Spider Cave Ambush",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Spider_Cave_Spiderling",
+      "name": "Spider Cave Spiderling",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Golem_Crystal_Thunder",
+      "name": "Gólem de Trueno",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Spirit_Ember",
+      "name": "Espíritu de Brasa",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Spirit_Frost",
+      "name": "Espíritu de Escarcha",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": [
+        "Zone3_Elemental_Circle_Tier1",
+        "Zone3_Elemental_Circle_Tier2",
+        "Zone3_Elemental_Circle_Tier3"
+      ]
+    },
+    {
+      "key": "mob:Spirit_Thunder",
+      "name": "Espíritu de Trueno",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": [
+        "Zone2_Elemental_Circle_Tier1",
+        "Zone2_Elemental_Circle_Tier2",
+        "Zone2_Elemental_Circle_Tier3"
+      ]
+    },
+    {
+      "key": "mob:Feran_Cub",
+      "name": "Feran Cachorro",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Coffer_Goblin_Burner",
+      "name": "Coffer Goblin Burner",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Coffer_Goblin_Glutton",
+      "name": "Coffer Goblin Glutton",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Coffer_Goblin_Guardian",
+      "name": "Coffer Goblin Guardian",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Coffer_Goblin_Lobber",
+      "name": "Coffer Goblin Lobber",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Coffer_Goblin_Miner",
+      "name": "Coffer Goblin Miner",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Coffer_Goblin_Scrapper",
+      "name": "Coffer Goblin Scrapper",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Coffer_Goblin_Turret",
+      "name": "Coffer Goblin Turret",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Feastmaster_Scrapper",
+      "name": "Dungeon Feastmaster Scrapper",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Burner",
+      "name": "Dungeon Goblin Burner",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Burner_Patrol",
+      "name": "Dungeon Goblin Burner Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Glutton",
+      "name": "Dungeon Goblin Glutton",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Guardian",
+      "name": "Dungeon Goblin Guardian",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Lobber",
+      "name": "Dungeon Goblin Lobber",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Lobber_Patrol",
+      "name": "Dungeon Goblin Lobber Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Lobber_Turret",
+      "name": "Dungeon Goblin Lobber Turret",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Mace",
+      "name": "Goblin Guardian Mace",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Miner",
+      "name": "Dungeon Goblin Miner",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Miner_Patrol",
+      "name": "Dungeon Goblin Miner Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Scrapper",
+      "name": "Dungeon Goblin Scrapper",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Scrapper_Enrage",
+      "name": "Dungeon Goblin Scrapper Enrage",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Scrapper_Patrol",
+      "name": "Dungeon Goblin Scrapper Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Thief",
+      "name": "Dungeon Goblin Thief",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Thief_Patrol",
+      "name": "Dungeon Goblin Thief Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Turret",
+      "name": "Dungeon Goblin Turret",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Glutton",
+      "name": "Goblin Glutton",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Guardian",
+      "name": "Guardián Goblin",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Lobber_Turret",
+      "name": "Goblin Lobber Turret",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Edible_Goblin_Scrapper",
+      "name": "Edible Goblin Scrapper",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": ["Edible_Goblin_Scrapper"]
+    },
+    {
+      "key": "mob:Edible_Rat",
+      "name": "Edible Rat",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": ["Edible_Rat"]
+    },
+    {
+      "key": "mob:Goblin_Duke",
+      "name": "Duque Goblin",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Duke_Phase_2",
+      "name": "Goblin Duke Phase 2",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Duke_Phase_3_Fast",
+      "name": "Goblin Duke Phase 3 Fast",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Duke_Phase_3_Slow",
+      "name": "Goblin Duke Phase 3 Slow",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Kweebec_Elder",
+      "name": "Kweebec Anciano",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Kweebec_Rootling",
+      "name": "Kweebec de las Raíces",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Kweebec_Seedling",
+      "name": "Kweebec Semillita",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Wolf_Outlander_Priest",
+      "name": "Wolf Outlander Priest",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Wolf_Outlander_Sorcerer",
+      "name": "Wolf Outlander Sorcerer",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Scarak_Seeker",
+      "name": "Dungeon Scarak Seeker",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Scarak_Broodmother",
+      "name": "Scarak Progenitora",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Scarak_Defender",
+      "name": "Scarak Defensor",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Scarak_Defender_Patrol",
+      "name": "Scarak Defender Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Scarak_Fighter_Patrol",
+      "name": "Scarak Fighter Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Scarak_Fighter_Royal_Guard",
+      "name": "Scarak Guardia Imperial",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Trork_Sentry_Patrol",
+      "name": "Trork Sentry Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Trork_Unarmed",
+      "name": "Trork",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Trork_Warrior_Patrol",
+      "name": "Trork Warrior Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Wolf_Trork_Hunter",
+      "name": "Lobo Cazador",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Wolf_Trork_Shaman",
+      "name": "Wolf Trork Shaman",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Tuluk_Fisherman",
+      "name": "Tuluk Pescador",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Hedera",
+      "name": "La Hedera",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Klops_Merchant_Patrol",
+      "name": "Klops Merchant Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Klops_Miner",
+      "name": "Klops Minero",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Klops_Miner_Patrol",
+      "name": "Klops Miner Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Lab_Scrapper",
+      "name": "Goblin Lab Scrapper",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Scientist",
+      "name": "Goblin Makinomagistra",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Bluebird",
+      "name": "Temple Bluebird",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Bunny",
+      "name": "Temple Bunny",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Deer_Doe",
+      "name": "Temple Deer Doe",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Deer_Stag",
+      "name": "Temple Deer Stag",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Duck",
+      "name": "Temple Duck",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Feran",
+      "name": "Temple Feran",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Feran_Longtooth",
+      "name": "Temple Feran Longtooth",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Finch_Green",
+      "name": "Temple Finch Green",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Frog_Blue",
+      "name": "Temple Frog Blue",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Frog_Green",
+      "name": "Temple Frog Green",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Frog_Orange",
+      "name": "Temple Frog Orange",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Goblin_Lab_Repair_Static",
+      "name": "Temple Goblin Lab Repair Static",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Goblin_Scrapper",
+      "name": "Temple Goblin Scrapper",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Klops",
+      "name": "Temple Klops",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Klops_Merchant",
+      "name": "Temple Klops Merchant",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Kweebec",
+      "name": "Temple Kweebec",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Kweebec_Elder",
+      "name": "Temple Kweebec Elder",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Kweebec_Merchant",
+      "name": "Temple Kweebec Merchant",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Kweebec_Razorleaf",
+      "name": "Temple Kweebec Razorleaf",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Kweebec_Razorleaf_Guard",
+      "name": "Temple Kweebec Razorleaf Guard",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Kweebec_Razorleaf_Patrol",
+      "name": "Temple Kweebec Razorleaf Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Kweebec_Razorleaf_Patrol1",
+      "name": "Temple Kweebec Razorleaf Patrol1",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Kweebec_Razorleaf_Patrol2",
+      "name": "Temple Kweebec Razorleaf Patrol2",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Kweebec_Razorleaf_Patrol3",
+      "name": "Temple Kweebec Razorleaf Patrol3",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Kweebec_Razorleaf_Patrol4",
+      "name": "Temple Kweebec Razorleaf Patrol4",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Kweebec_Razorleaf_Patrol5",
+      "name": "Temple Kweebec Razorleaf Patrol5",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Kweebec_Rootling_Static",
+      "name": "Temple Kweebec Rootling Static",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Kweebec_Scared",
+      "name": "Temple Kweebec Scared",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Kweebec_Seedling",
+      "name": "Temple Kweebec Seedling",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Kweebec_Seedling_Static",
+      "name": "Temple Kweebec Seedling Static",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Kweebec_Static",
+      "name": "Temple Kweebec Static",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Mithril_Guard",
+      "name": "Temple Mithril Guard",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Owl_Brown",
+      "name": "Temple Owl Brown",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Squirrel",
+      "name": "Temple Squirrel",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Ghoul",
+      "name": "Espíritu",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Horse_Skeleton_Armored",
+      "name": "Caballo Esqueleto Blindado",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Shadow_Knight",
+      "name": "Caballero Oscuro",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Risen_Gunner",
+      "name": "Risen Gunner",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Risen_Knight",
+      "name": "Risen Knight",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton",
+      "name": "Esqueleto",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": [
+        "Test_Modes_Legacy",
+        "Test_Modes_Skeletons_Default",
+        "Test_Modes_Skeletons_InWater",
+        "Test_Modes_Skeletons_Underwater",
+        "Test_Modes_Skeletons_Wade",
+        "Test_Modes_Skeletons_Wade_Water"
+      ]
+    },
+    {
+      "key": "mob:Skeleton_Archer_Turret",
+      "name": "Skeleton Archer Turret",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Archer_Wander",
+      "name": "Skeleton Archer Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Archmage_Wander",
+      "name": "Skeleton Archmage Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Elite",
+      "name": "Revenant Guardian",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Elite_Phase_2",
+      "name": "Skeleton Elite Phase 2",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Knight_Wander",
+      "name": "Skeleton Knight Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Ranger_Wander",
+      "name": "Skeleton Ranger Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Soldier_Wander",
+      "name": "Skeleton Soldier Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Burnt_Alchemist_Patrol",
+      "name": "Skeleton Burnt Alchemist Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Burnt_Alchemist_Wander",
+      "name": "Skeleton Burnt Alchemist Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Burnt_Archer_Wander",
+      "name": "Skeleton Burnt Archer Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Burnt_Gunner_Patrol",
+      "name": "Skeleton Burnt Gunner Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Burnt_Gunner_Wander",
+      "name": "Skeleton Burnt Gunner Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Burnt_Knight_Wander",
+      "name": "Skeleton Burnt Knight Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Burnt_Lancer_Patrol",
+      "name": "Skeleton Burnt Lancer Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Burnt_Wizard_Patrol",
+      "name": "Skeleton Burnt Wizard Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Burnt_Wizard_Wander",
+      "name": "Skeleton Burnt Wizard Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Frost_Archer_Patrol",
+      "name": "Skeleton Frost Archer Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Frost_Archer_Wander",
+      "name": "Skeleton Frost Archer Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Frost_Archmage",
+      "name": "Archimago Esqueleto de Escarcha",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Frost_Archmage_Wander",
+      "name": "Skeleton Frost Archmage Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Frost_Fighter_Patrol",
+      "name": "Skeleton Frost Fighter Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Frost_Mage_Patrol",
+      "name": "Skeleton Frost Mage Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Frost_Ranger_Wander",
+      "name": "Skeleton Frost Ranger Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Frost_Scout_Patrol",
+      "name": "Skeleton Frost Scout Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Frost_Scout_Wander",
+      "name": "Skeleton Frost Scout Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Frost_Soldier_Patrol",
+      "name": "Skeleton Frost Soldier Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Incandescent_Fighter_Patrol",
+      "name": "Skeleton Incandescent Fighter Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Incandescent_Fighter_Wander",
+      "name": "Skeleton Incandescent Fighter Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Incandescent_Footman",
+      "name": "Lacayo Esqueleto Incandescente",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Incandescent_Footman_Patrol",
+      "name": "Skeleton Incandescent Footman Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Incandescent_Mage_Patrol",
+      "name": "Skeleton Incandescent Mage Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Pirate_Captain",
+      "name": "Capitán Pirata Esqueleto",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Pirate_Captain_Patrol",
+      "name": "Skeleton Pirate Captain Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Pirate_Captain_Wander",
+      "name": "Skeleton Pirate Captain Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Pirate_Gunner",
+      "name": "Cañonero Pirata Esqueleto",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Pirate_Gunner_Patrol",
+      "name": "Skeleton Pirate Gunner Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Pirate_Gunner_Wander",
+      "name": "Skeleton Pirate Gunner Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Pirate_Striker",
+      "name": "Pirata Esqueleto Atacante",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Pirate_Striker_Patrol",
+      "name": "Skeleton Pirate Striker Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Pirate_Striker_Wander",
+      "name": "Skeleton Pirate Striker Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Sand_Archer_Patrol",
+      "name": "Skeleton Sand Archer Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Sand_Archer_Wander",
+      "name": "Skeleton Sand Archer Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Sand_Archmage_Patrol",
+      "name": "Skeleton Sand Archmage Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Sand_Archmage_Wander",
+      "name": "Skeleton Sand Archmage Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Sand_Mage_Patrol",
+      "name": "Skeleton Sand Mage Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Sand_Ranger_Patrol",
+      "name": "Skeleton Sand Ranger Patrol",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Sand_Ranger_Wander",
+      "name": "Skeleton Sand Ranger Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Sand_Scout_Wander",
+      "name": "Skeleton Sand Scout Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Skeleton_Sand_Soldier_Wander",
+      "name": "Skeleton Sand Soldier Wander",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Werewolf",
+      "name": "Hombre Lobo",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Wraith_Lantern",
+      "name": "Linterna Espectral",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Zombie_Aberrant",
+      "name": "Zombi Aberrante",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Zombie_Aberrant_Big",
+      "name": "Zombi Aberrante Grande",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Zombie_Aberrant_Small",
+      "name": "Zombi Aberrante Pequeño",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Zombie_Frost",
+      "name": "Zombi de Escarcha",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Crawler_Void_Anomaly",
+      "name": "Crawler Void Anomaly",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Void_Anomaly_Crystal_Keystone",
+      "name": "Void Anomaly Crystal Keystone",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Void_Anomaly_Crystal_Large",
+      "name": "Void Anomaly Crystal Large",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Void_Anomaly_Crystal_Medium",
+      "name": "Void Anomaly Crystal Medium",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Void_Anomaly_Crystal_Small",
+      "name": "Void Anomaly Crystal Small",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Void_Spawn",
+      "name": "Void Spawn",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Void_Spawn_Entombed",
+      "name": "Void Spawn Entombed",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Void_Spawn_Entombed_Anomaly",
+      "name": "Void Spawn Entombed Anomaly",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Void_Spectre_Static",
+      "name": "Void Spectre Static",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Void_Tentacle",
+      "name": "Void Tentacle",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Void_Tentacle_Surge_Anomaly",
+      "name": "Void Tentacle Surge Anomaly",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Test_Bird_TakeOff",
+      "name": "Test Bird TakeOff",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": ["Test_Modes_Birds"]
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Shroom_Carrier",
+      "name": "Goblin Shroom Bearer",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Goblin_Food_Carrier",
+      "name": "Goblin Food Bearer",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Dungeon_Klops_Scrap_Trader",
+      "name": "Klops Scrap Trader",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Goblin_Spectator",
+      "name": "Goblin Spectator",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Temple_Goblin_Scrapper_Sleep_Static",
+      "name": "Temple Goblin Scrapper Sleep Static",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Test_Boss_Basic_Intro",
+      "name": "Test Boss Basic Intro",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Test_Combat_Elite_Goblin",
+      "name": "Test Combat Elite Goblin",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Test_Combat_Knight",
+      "name": "Test Combat Knight",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Test_Dummy",
+      "name": "Test Dummy",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Test_Dive_Stationary",
+      "name": "Test Dive Stationary",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Test_Dragon_Stationary",
+      "name": "Test Dragon Stationary",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Test_Crawler_Stationary",
+      "name": "Test Crawler Stationary",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Test_Dummy_Stationary",
+      "name": "Test Dummy Stationary",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    },
+    {
+      "key": "mob:Test_Scarak_Broodmother_Young_Stationary",
+      "name": "Test Scarak Broodmother Young Stationary",
+      "reason": "events/instances or no located source in included V1 data",
+      "events": []
+    }
+  ],
+  "grizzly": {
+    "key": "mob:Bear_Grizzly",
+    "kind": "mob",
+    "name": "Oso Grizzly",
+    "searchNames": ["Grizzly Bear", "Bear_Grizzly"],
+    "habitats": [
+      {
+        "source": "world",
+        "rule": "Spawns_Portals_Goblin_Surface",
+        "environments": ["Env_Portal_Goblin_Surface"],
+        "environmentIds": [30],
+        "weight": 5,
+        "DayTimeRange": [6, 18],
+        "SpawnBlockSet": "Soil"
+      },
+      {
+        "source": "world",
+        "rule": "Spawns_Zone1_Forests_Predator",
+        "environments": ["Env_Zone1_Forests", "Env_Zone1_Autumn", "Env_Zone1_Azure"],
+        "environmentIds": [93, 24, 73],
+        "weight": 5,
+        "DayTimeRange": [6, 18],
+        "SpawnBlockSet": "Soil"
+      },
+      {
+        "source": "world",
+        "rule": "Spawns_Zone1_Mountains_Predator",
+        "environments": ["Env_Zone1_Mountains"],
+        "environmentIds": [120],
+        "weight": 5,
+        "DayTimeRange": [6, 18],
+        "SpawnBlockSet": "Soil"
+      },
+      {
+        "source": "world",
+        "rule": "Spawns_Zone3_Forests_Predator",
+        "environments": ["Env_Zone3_Forests"],
+        "environmentIds": [10],
+        "weight": 5,
+        "DayTimeRange": [6, 18],
+        "SpawnBlockSet": "Soil_NoSnow"
+      }
+    ],
+    "markers": [
+      {
+        "rule": "Bear",
+        "prefabCount": 0,
+        "fixed": true,
+        "manualTrigger": false,
+        "horizontalRadius": 0.0
+      },
+      {
+        "rule": "Welcome_Animal",
+        "prefabCount": 0,
+        "fixed": false,
+        "manualTrigger": true,
+        "horizontalRadius": 0.0
+      }
+    ],
+    "events": [],
+    "habitatEnvironments": [10, 24, 30, 73, 93, 120],
+    "fixedPrefabCount": 0,
+    "possiblePrefabCount": 0,
+    "available": true,
+    "spawnMode": "habitat",
+    "description": "Grizzly Bear · Bear_Grizzly · Zona posible de aparición, no individuo garantizado · oso grizzly grizly grezly oso pardo"
+  },
+  "scope": "Habitat eligibility and prefab anchors, not a prediction of living NPC positions. Test templates excluded; source version checked against server manifest."
+}

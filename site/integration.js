@@ -16,6 +16,24 @@ function requestIntegration() {
     if (worldWorker) worldWorker.postMessage({ seed, generation: epoch, chunks: [] });
     return;
   }
+  if (
+    typeof poiSelected !== 'undefined' &&
+    ![...poiSelected].some((key) => {
+      const t = poiTypes.get(key);
+      return (
+        ['wood', 'ore', 'chest', 'mob'].includes(t?.kind) &&
+        (t.kind !== 'mob' ||
+          t.spawnMode === undefined ||
+          t.fixedPrefabCount > 0 ||
+          t.possiblePrefabCount > 0)
+      );
+    })
+  ) {
+    if (worldWorker) worldWorker.postMessage({ seed, generation: epoch, chunks: [] });
+    $('world-status').textContent =
+      'Las zonas de hábitat usan el mapa en caché; no necesitan bloques finales.';
+    return;
+  }
   const minX = Math.floor((cx - w / 2 / zoom) / 32),
     maxX = Math.floor((cx + w / 2 / zoom) / 32),
     minZ = Math.floor((cz - h / 2 / zoom) / 32),
@@ -39,7 +57,16 @@ function requestIntegration() {
       return g && (g.depositZones.length || g.prefabZones.length);
     }) &&
     !['wood', 'chest', 'mob'].some((kind) =>
-      [...poiSelected].some((key) => poiTypes.get(key)?.kind === kind),
+      [...poiSelected].some((key) => {
+        const t = poiTypes.get(key);
+        return (
+          t?.kind === kind &&
+          (kind !== 'mob' ||
+            t.spawnMode === undefined ||
+            t.fixedPrefabCount > 0 ||
+            t.possiblePrefabCount > 0)
+        );
+      }),
     );
   const oreChunks = new Set();
   if (oreOnly)
@@ -94,7 +121,7 @@ function requestIntegration() {
     return;
   }
   if (!worldWorker) {
-    worldWorker = new Worker('world-worker.js?v=0.11.1');
+    worldWorker = new Worker('world-worker.js?v=0.12.0');
     worldWorker.onmessage = ({ data: d }) => {
       if (d.type === 'error') {
         $('world-status').textContent = 'Error del motor detallado: ' + d.message;
